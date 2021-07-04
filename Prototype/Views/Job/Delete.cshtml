@@ -1,0 +1,27 @@
+﻿@model Prototype.Models.Job
+
+
+
+<h3> Remove Job</h3>
+
+
+<form method="post" asp-action="DeleteAction">
+    
+
+    <div class="mb-3">
+        <label asp-for="JobTitle" class="form-label">Job Title</label>
+        <input readonly asp-for="JobTitle" type="Text" class="form-control">
+
+
+    </div>
+    
+    <div class="mb-3">
+        <label  asp-for="JobId" class="form-label">Job Id</label>
+        <input readonly asp-for="JobId" type="text" class="form-control">
+
+    </div>
+    
+
+
+    <button type="submit"  class="btn btn-primary">Delete</button>
+</form>

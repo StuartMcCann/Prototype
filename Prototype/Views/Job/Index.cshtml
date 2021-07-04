@@ -1,0 +1,123 @@
+﻿
+@model IEnumerable<Prototype.Models.Job> //this adds object from method in controller
+@{
+
+    ViewData["Title"] = "Index";
+}
+
+<h1 class="heading">Available Jobs</h1>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-3 buffer">
+
+
+            <div class="dropdown buffer">
+                <!--Trigger-->
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1-1"
+                        data-toggle="dropdown">
+                    Filter By Level
+                </button>
+
+                <!--Menu-->
+                <div class="dropdown-menu dropdown-primary" id="your-custom-id">
+                    <input class="form-control" type="text" placeholder="Search" aria-label="Search">
+                    <a class="dropdown-item mdb-dropdownLink-1" href="#">Expert</a>
+                    <a class="dropdown-item mdb-dropdownLink-1" href="#">Intermediate</a>
+                    <a class="dropdown-item mdb-dropdownLink-1" href="#">Entry</a>
+
+                </div>
+            </div>
+
+            <div class="dropdown buffer">
+                <!--Trigger-->
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1-1"
+                        data-toggle="dropdown">
+                    Filter By Skill
+                </button>
+
+                <!--Menu-->
+                <div class="dropdown-menu dropdown-primary" id="your-custom-id">
+                    <input class="form-control" type="text" placeholder="Search" aria-label="Search">
+                    <a class="dropdown-item mdb-dropdownLink-1" href="#">Java</a>
+                    <a class="dropdown-item mdb-dropdownLink-1" href="#">Javascript</a>
+                    <a class="dropdown-item mdb-dropdownLink-1" href="#">SQL</a>
+                    <a class="dropdown-item mdb-dropdownLink-1" href="#">C</a>
+                    <a class="dropdown-item mdb-dropdownLink-1" href="#">PHP</a>
+                    <a class="dropdown-item mdb-dropdownLink-1" href="#">Python</a>
+
+                </div>
+            </div>
+
+
+
+
+        </div><!--End of filter column-->
+        <div class="col-sm-9">
+            <div class="container">
+                @if (Model.Count() > 0)
+                {
+                    foreach (var job in Model)
+                    {
+
+                <div class="row buffer">
+
+                    <div class="card text full-width">
+                        <div class="card-header text">
+                            <h4>@job.JobTitle</h4>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">£@job.LowerRate - @job.UpperRate per hour</h5>
+                            <p class="card-text">@job.Duration weeks</p>
+
+                            <p>Preferred Start date: @job.StartDate.ToShortDateString()</p>
+                            @if (job.JobDescription.Length >= 149)
+                            {
+                                <p class="card-text">@job.JobDescription.Substring(0, 150) ....</p>
+                            }
+                            else
+                            {
+                                <p class="card-text">@job.JobDescription.</p>
+                            }
+
+
+                            <a href="#" class="card-link">Find out more</a>
+                        </div>
+                    </div>
+
+
+
+
+
+                </div><!--End of Row-->
+
+
+
+
+
+
+                    }
+
+
+
+                }
+                else
+                {
+                    <p>No Live Jobs Available</p>
+                }
+
+            </div>
+
+
+
+
+
+            </div><!-- end of jobs column-->
+    </div>
+    
+</div>
+
+
+
+
+
