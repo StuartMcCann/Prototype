@@ -20,6 +20,7 @@ namespace Prototype.Models
         public String Name { get; set; }
         public String Level { get; set; }
 
+        //skill will need one to many 
         public String Skill { get; set; }
 
         public double Rating { get; set; }

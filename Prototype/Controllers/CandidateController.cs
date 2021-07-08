@@ -25,6 +25,34 @@ namespace Prototype.Controllers
             return View(candidateList);
         }
 
-       
+        public IActionResult CandidateProfile(int id)
+        {
+
+            var candidate = (from c in _db.Candidates
+                             join r in _db.Reviews on c.CandidateId equals
+                             r.CandidateRefId
+
+                             select new CandidateProfile
+                             {
+                                 CandidateId = c.CandidateId,
+                                 Name = c.Name,
+                                 Level = c.Level,
+                                 Skill = c.Skill,
+                                 Rating = c.Rating,
+                                 Rate = c.Rate,
+                                 //for loop here to add to list of reviews or can do ajax call on page t print 
+
+                             }).ToList();
+
+
+
+            if (candidate == null)
+            {
+                return NotFound();
+            }
+            return View(candidate);
+        }
+
+
     }
 }
