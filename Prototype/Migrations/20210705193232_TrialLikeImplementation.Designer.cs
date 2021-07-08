@@ -3,21 +3,53 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Prototype.Data;
 
 namespace Prototype.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210705193232_TrialLikeImplementation")]
+    partial class TrialLikeImplementation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.6")
+                .HasAnnotation("ProductVersion", "5.0.7")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("CandidateEmployer", b =>
+                {
+                    b.Property<int>("CandidatesCandidateId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EmployersEmployerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CandidatesCandidateId", "EmployersEmployerId");
+
+                    b.HasIndex("EmployersEmployerId");
+
+                    b.ToTable("CandidateEmployer");
+                });
+
+            modelBuilder.Entity("CandidateJob", b =>
+                {
+                    b.Property<int>("CandidatesCandidateId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("JobsJobId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CandidatesCandidateId", "JobsJobId");
+
+                    b.HasIndex("JobsJobId");
+
+                    b.ToTable("CandidateJob");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -274,9 +306,6 @@ namespace Prototype.Migrations
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Rating")
-                        .HasColumnType("float");
-
                     b.HasKey("EmployerId");
 
                     b.ToTable("Employers");
@@ -349,36 +378,6 @@ namespace Prototype.Migrations
                     b.ToTable("JobTitle");
                 });
 
-            modelBuilder.Entity("Prototype.Models.Like", b =>
-                {
-                    b.Property<int>("LikeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CandidateId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("EmployerId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("JobId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LikeType")
-                        .HasColumnType("int");
-
-                    b.HasKey("LikeId");
-
-                    b.HasIndex("CandidateId");
-
-                    b.HasIndex("EmployerId");
-
-                    b.HasIndex("JobId");
-
-                    b.ToTable("Likes");
-                });
-
             modelBuilder.Entity("Prototype.Models.Review", b =>
                 {
                     b.Property<int>("ReviewId")
@@ -403,6 +402,36 @@ namespace Prototype.Migrations
                     b.HasIndex("CandidateId");
 
                     b.ToTable("Reviews");
+                });
+
+            modelBuilder.Entity("CandidateEmployer", b =>
+                {
+                    b.HasOne("Prototype.Models.Candidate", null)
+                        .WithMany()
+                        .HasForeignKey("CandidatesCandidateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Prototype.Models.Employer", null)
+                        .WithMany()
+                        .HasForeignKey("EmployersEmployerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CandidateJob", b =>
+                {
+                    b.HasOne("Prototype.Models.Candidate", null)
+                        .WithMany()
+                        .HasForeignKey("CandidatesCandidateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Prototype.Models.Job", null)
+                        .WithMany()
+                        .HasForeignKey("JobsJobId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -473,29 +502,6 @@ namespace Prototype.Migrations
                     b.Navigation("JobTitleFK");
                 });
 
-            modelBuilder.Entity("Prototype.Models.Like", b =>
-                {
-                    b.HasOne("Prototype.Models.Candidate", "Candidate")
-                        .WithMany("Likes")
-                        .HasForeignKey("CandidateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Prototype.Models.Employer", "Employer")
-                        .WithMany("Likes")
-                        .HasForeignKey("EmployerId");
-
-                    b.HasOne("Prototype.Models.Job", "Job")
-                        .WithMany("Likes")
-                        .HasForeignKey("JobId");
-
-                    b.Navigation("Candidate");
-
-                    b.Navigation("Employer");
-
-                    b.Navigation("Job");
-                });
-
             modelBuilder.Entity("Prototype.Models.Review", b =>
                 {
                     b.HasOne("Prototype.Models.Candidate", "Candidate")
@@ -507,21 +513,12 @@ namespace Prototype.Migrations
 
             modelBuilder.Entity("Prototype.Models.Candidate", b =>
                 {
-                    b.Navigation("Likes");
-
                     b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("Prototype.Models.Employer", b =>
                 {
                     b.Navigation("Jobs");
-
-                    b.Navigation("Likes");
-                });
-
-            modelBuilder.Entity("Prototype.Models.Job", b =>
-                {
-                    b.Navigation("Likes");
                 });
 
             modelBuilder.Entity("Prototype.Models.JobTitle", b =>

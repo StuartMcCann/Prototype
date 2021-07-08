@@ -19,6 +19,11 @@ namespace Prototype.Data
         public DbSet<Job> Jobs { get; set; }
 
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<Like> Likes { get; set; }
+        public DbSet<JobTitle> JobTitle { get; set; }
+
+
+
 
     }
 }

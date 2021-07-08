@@ -3,20 +3,22 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Prototype.Data;
 
 namespace Prototype.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210705195804_RevertTrialLikeImplementation")]
+    partial class RevertTrialLikeImplementation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.6")
+                .HasAnnotation("ProductVersion", "5.0.7")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -274,9 +276,6 @@ namespace Prototype.Migrations
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Rating")
-                        .HasColumnType("float");
-
                     b.HasKey("EmployerId");
 
                     b.ToTable("Employers");
@@ -347,36 +346,6 @@ namespace Prototype.Migrations
                     b.HasKey("JobTitleId");
 
                     b.ToTable("JobTitle");
-                });
-
-            modelBuilder.Entity("Prototype.Models.Like", b =>
-                {
-                    b.Property<int>("LikeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CandidateId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("EmployerId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("JobId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LikeType")
-                        .HasColumnType("int");
-
-                    b.HasKey("LikeId");
-
-                    b.HasIndex("CandidateId");
-
-                    b.HasIndex("EmployerId");
-
-                    b.HasIndex("JobId");
-
-                    b.ToTable("Likes");
                 });
 
             modelBuilder.Entity("Prototype.Models.Review", b =>
@@ -473,29 +442,6 @@ namespace Prototype.Migrations
                     b.Navigation("JobTitleFK");
                 });
 
-            modelBuilder.Entity("Prototype.Models.Like", b =>
-                {
-                    b.HasOne("Prototype.Models.Candidate", "Candidate")
-                        .WithMany("Likes")
-                        .HasForeignKey("CandidateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Prototype.Models.Employer", "Employer")
-                        .WithMany("Likes")
-                        .HasForeignKey("EmployerId");
-
-                    b.HasOne("Prototype.Models.Job", "Job")
-                        .WithMany("Likes")
-                        .HasForeignKey("JobId");
-
-                    b.Navigation("Candidate");
-
-                    b.Navigation("Employer");
-
-                    b.Navigation("Job");
-                });
-
             modelBuilder.Entity("Prototype.Models.Review", b =>
                 {
                     b.HasOne("Prototype.Models.Candidate", "Candidate")
@@ -507,21 +453,12 @@ namespace Prototype.Migrations
 
             modelBuilder.Entity("Prototype.Models.Candidate", b =>
                 {
-                    b.Navigation("Likes");
-
                     b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("Prototype.Models.Employer", b =>
                 {
                     b.Navigation("Jobs");
-
-                    b.Navigation("Likes");
-                });
-
-            modelBuilder.Entity("Prototype.Models.Job", b =>
-                {
-                    b.Navigation("Likes");
                 });
 
             modelBuilder.Entity("Prototype.Models.JobTitle", b =>

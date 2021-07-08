@@ -81,7 +81,9 @@
                             }
 
 
-                            <a href="#" class="card-link">Find out more</a>
+                            
+                            @Html.ActionLink("View more", "JobProfile", new { id = job.JobId })
+
                         </div>
                     </div>
 

@@ -8,6 +8,13 @@ namespace Prototype.Models
 {
     public class Candidate : User
     {
+
+       /* public Candidate()
+        {
+            this.Jobs = new HashSet<Job>();
+            this.Employers = new HashSet<Employer>(); 
+        }*/
+
         [Key]
         public int CandidateId { get; set; }
         public String Name { get; set; }
@@ -21,5 +28,10 @@ namespace Prototype.Models
 
         //Forign Key for one to Many with Reviews
         public ICollection<Review> Reviews { get; set; }
+
+        /*Many to many With Jobs and Employer for Likes
+        public ICollection<Job> Jobs { get; set; }
+        public ICollection<Employer> Employers { get; set; }*/
+        public ICollection<Like> Likes { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Prototype.Data;
 using Prototype.Models;
 using System.Collections.Generic;
@@ -47,7 +48,43 @@ namespace Prototype.Controllers
 
             }
             return View(job);
+           
 
+
+        }
+
+        //get by id method
+        public IActionResult JobProfile(int id)
+        {
+
+
+            // var job = _db.Jobs.Find(id);
+            var job = (from j in _db.Jobs
+                      join employers in _db.Employers on j.EmployerRefId
+                      equals employers.EmployerId
+                      join jobTitle in _db.JobTitle on
+                      j.JobTitleRefId equals jobTitle.JobTitleId
+                      select new JobProfile
+                      {
+                         JobID= j.JobId,
+                         JobDescription= j.JobDescription,
+                         UpperRate = j.UpperRate,
+                         LowerRate = j.LowerRate,
+                         JobTitle =jobTitle.Title,
+                         CompanyName =employers.CompanyName,
+                         Duration =  j.Duration,
+                         StartDate=  j.StartDate,
+                         Rating=employers.Rating
+
+                      }).ToList(); 
+
+
+
+             if (job == null)
+            {
+                return NotFound();
+            }
+            return View(job);
 
         }
 

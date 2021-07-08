@@ -9,6 +9,11 @@ namespace Prototype.Models
     public class Job
     {
 
+        /*public Job()
+        {
+            this.Candidates = new HashSet<Candidate>(); 
+        }*/
+
         [Key]
         public int JobId { get; set; }
 
@@ -33,5 +38,13 @@ namespace Prototype.Models
         public int EmployerRefId { get; set; }
         public Employer Employer { get; set; }
 
+        /*Many to many With Candidates for Likes
+        public ICollection<Candidate> Candidates { get; set; }*/
+        public ICollection<Like> Likes { get; set; }
+        
+
     }
+
+    
+
 }
