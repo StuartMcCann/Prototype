@@ -73,7 +73,9 @@
                                         <p class="card-text">Level: @candidate.Level</p>
                                         <p class="card-text">Skills: @candidate.Skill</p>
                                         <p class="card-text">Charge Rate: @candidate.Rate per hour </p>
-                                        <a href="#" class="card-link">View Profile</a>
+                                        
+                                        @Html.ActionLink("View more", "CandidateProfile", new { id = candidate.CandidateId })
+
 
                                     </div>
                                 </div>

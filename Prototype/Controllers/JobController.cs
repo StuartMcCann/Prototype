@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Prototype.Data;
 using Prototype.Models;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json; 
 
 namespace Prototype.Controllers
 {
@@ -47,9 +49,96 @@ namespace Prototype.Controllers
 
             }
             return View(job);
+           
 
 
         }
+
+        public ActionResult GetJobsLikeThis(string title)
+        {
+            var jobsLikeThis = (from j in _db.Jobs
+                       join employers in _db.Employers on j.EmployerRefId
+                       equals employers.EmployerId
+                       join jobTitle in _db.JobTitle on
+                       j.JobTitleRefId equals jobTitle.JobTitleId
+                       where j.JobTitle == title
+                       select new JobProfile
+                       {
+                           JobID = j.JobId,
+                           //remove title when normalise properly 
+                           Title = j.JobTitle, 
+                           JobDescription = j.JobDescription,
+                           UpperRate = j.UpperRate,
+                           LowerRate = j.LowerRate,
+                           JobTitle = jobTitle.Title,
+                           CompanyName = employers.CompanyName,
+                           Duration = j.Duration,
+                           StartDate = j.StartDate,
+                           Rating = employers.Rating
+
+                       }).ToList();
+
+            return Json(new { data = jobsLikeThis });
+
+        }
+
+
+        public ActionResult GetJobTitles()
+        {
+            List<JobTitle> jobTitles = _db.JobTitle.ToList();
+
+            return Json(new { data = jobTitles }); 
+
+        }
+
+        public ActionResult GetJobSkills()
+        {
+            List<JobTitle> jobTitles = _db.JobTitle.ToList();
+
+            return Json(new { data = jobTitles });
+
+        }
+
+
+
+        //get by id method
+        public IActionResult JobProfile(int id)
+        {
+
+
+            // var job = _db.Jobs.Find(id);
+            var job = (from j in _db.Jobs
+                      join employers in _db.Employers on j.EmployerRefId
+                      equals employers.EmployerId
+                      join jobTitle in _db.JobTitle on
+                      j.JobTitleRefId equals jobTitle.JobTitleId
+                      where j.JobId == id
+                      select new JobProfile
+                      {
+                         JobID= j.JobId,
+                         Title = j.JobTitle,
+                          JobDescription = j.JobDescription,
+                         UpperRate = j.UpperRate,
+                         LowerRate = j.LowerRate,
+                         JobTitle =jobTitle.Title,
+                         CompanyName =employers.CompanyName,
+                         Duration =  j.Duration,
+                         StartDate=  j.StartDate,
+                         Rating=employers.Rating
+
+                      }).ToList(); 
+
+
+
+             if (job == null)
+            {
+                return NotFound();
+            }
+            return View(job);
+
+        }
+
+        
 
         //GET for Edit
         public IActionResult Edit(int? id)
