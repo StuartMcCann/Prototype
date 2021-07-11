@@ -3,22 +3,85 @@
 @foreach (var candidate in Model)
 {
 
+    <script type="text/javascript">
 
-    <div class="container">
+    $(document).ready(function () {
+
+
+        $.ajax({
+            url: '/Candidate/GetCandidatesLikeThis',
+            dataType: "Json",
+            type: "GET",
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+            //this needs changed whe table fully normalised
+            data: { skill: "@candidate.Skill", id : @candidate.CandidateId}  ,
+            success: function (data) {
+                console.log(data); 
+                //loops through values returned in json format by above url
+                $.each(data.data, function (key, val) {
+                    //need to add validation that not empty here
+
+                    //$("#output").append(val.title);
+                    $("#output").append(
+                        "<div class='buffer'>"+
+                            "<div class='card'>"+
+                       "<h5 class= 'card-header'>"+val.name+"</h5>"+
+                                "<div class='card-body'>"+
+                        "<h5 class='card-title'>Rate: £" + val.rate + "</h5>" +
+                        @*@{ var level = Int32.Parse(  "<%=val.level%>");
+                            var newLevel = (Level)level; 
+                            
+                            }*@
+                       "<h5 class='card-title'>" +val.level + "</h5>" +
+                        
+                        "<h5 class='card-title'>" + val.levelEnum + "</h5>" +
+                                "<h5 class='card-title'>"+val.skill+"</h5>"+
+                               @*+ "@Html.ActionLink('View more', 'JobProfile', new { id = jobProfile.JobID })"+*@
+                            "</div>"+
+                            "</div>"+
+                        "</div>"
+                    );
+                });
+
+
+
+                console.log(data);
+            },
+            error: function (xhr) {
+                alert('error');
+            }
+
+        }); //end ajax
+
+    }); //end document.load
+
+
+    </script>
+
+
+    <div class="container buffer text">
         <div class="row">
-            <div class="col-sm-8"><h1>NAME</h1></div>
-            <div class="col-sm-4">col-sm-4</div>
+            <div class="col-sm-8"><h1 class=" heading">@candidate.Name</h1></div>
+            <div class="col-sm-4"><h2 class="heading">Candidate Rating: 4/5</h2></div>
         </div>
-        <div class="row">
-            <div class="col-sm">
-                <h3>Title</h3>
-                <h3>Level</h3>
-                <h3>Charge</h3>
+        <div class="row buffer">
+            <div class="col-sm-9">
+                <h3>£@candidate.Rate per hour</h3>
+                <h3>@candidate.Level</h3>
+                <h3>@candidate.Skill</h3>
 
 
             </div>
-            <div class="col-sm">col-sm</div>
-            <div class="col-sm"><h2>4/5</h2></div>
+            @*<div class="col-sm">col-sm</div>*@
+            <div class="col-sm">
+                <h3>More Like This</h3>
+                <div id="output"></div>
+
+
+
+
+            </div>
         </div>
     </div>
 
@@ -26,8 +89,8 @@
 
 
 
-    
-   
+
+
 
 
 

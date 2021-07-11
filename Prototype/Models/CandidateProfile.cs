@@ -13,7 +13,7 @@ namespace Prototype.Models
         public String Level { get; set; }
 
         public String Skill { get; set; }
-
+         public Level LevelEnum { get; set; }
         public double Rating { get; set; }
         public double Rate { get; set; }
     }

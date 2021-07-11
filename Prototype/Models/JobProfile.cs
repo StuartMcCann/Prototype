@@ -9,6 +9,8 @@ namespace Prototype.Models
     {
 
         public int JobID { get; set; }
+        //remove below when normalisation completed 
+        public string Title { get; set; }
         public String JobDescription { get; set; }
         public double UpperRate { get; set; }
         public double LowerRate { get; set; }

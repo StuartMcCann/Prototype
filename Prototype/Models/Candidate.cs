@@ -18,6 +18,7 @@ namespace Prototype.Models
         [Key]
         public int CandidateId { get; set; }
         public String Name { get; set; }
+        //remove level if enum works 
         public String Level { get; set; }
 
         //skill will need one to many 
@@ -26,6 +27,7 @@ namespace Prototype.Models
         public double Rating { get; set; }
         public double Rate { get; set; }
 
+        public Level LevelEnum { get; set;  }
 
         //Forign Key for one to Many with Reviews
         public ICollection<Review> Reviews { get; set; }
@@ -34,5 +36,16 @@ namespace Prototype.Models
         public ICollection<Job> Jobs { get; set; }
         public ICollection<Employer> Employers { get; set; }*/
         public ICollection<Like> Likes { get; set; }
+    }
+
+    public enum Level
+    {
+        [Display(Name = "Entry", Description = "1-2 years Experience" )]
+        Entry,
+        [Display(Name = "Intermediate", Description = "3-7 years Experience") ]
+        Intermedidate,
+
+        [Display(Name = "Expert", Description = "7+ years Experience")]
+        Expert
     }
 }
