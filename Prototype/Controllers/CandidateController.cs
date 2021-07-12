@@ -20,7 +20,7 @@ namespace Prototype.Controllers
         public ActionResult GetCandidatesLikeThis(string skill, int id)
         {
             var canidatesLikethis = (from c in _db.Candidates
-                                where c.Skill == skill && c.CandidateId!=id
+                                where c.Skill == skill && c.CandidateID!=id
                                 select new CandidateProfile
                                 {
                                     Name = c.Name, 
@@ -28,7 +28,7 @@ namespace Prototype.Controllers
                                     Rating = c.Rating, 
                                     Rate = c.Rate, 
                                     Skill = c.Skill, 
-                                    CandidateId = c.CandidateId, 
+                                    CandidateId = c.CandidateID, 
                                     LevelEnum = c.LevelEnum
 
                                 }).ToList();
@@ -52,10 +52,10 @@ namespace Prototype.Controllers
             var candidate = (from c in _db.Candidates
                                  //join r in _db.Reviews on c.CandidateId equals
                                  // r.CandidateRefId
-                            where c.CandidateId == id
+                            where c.CandidateID == id
                              select new CandidateProfile
                              {
-                                 CandidateId = c.CandidateId,
+                                 CandidateId = c.CandidateID,
                                  Name = c.Name,
                                  Level = c.Level,
                                  Skill = c.Skill,

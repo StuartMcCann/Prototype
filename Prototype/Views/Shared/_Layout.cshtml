@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity; 
+@inject SignInManager<ApplicationUser> SignInManager; 
+@inject UserManager<ApplicationUser> UserManager; 
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -37,6 +41,7 @@
             </div>
         </nav>
         -->
+
         <nav class="navbar navbar-expand-lg navbar-custom ">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-controller="Home" asp-action="Index">RecruitAPP</a>
@@ -45,12 +50,17 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" asp-controller="Candidate" asp-action="Index">Browse Candidates</a>
-                        </li>
+                        @if(SignInManager.IsSignedIn(User) && User.IsInRole("Employer"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" asp-controller="Candidate" asp-action="Index">Browse Candidates</a>
+                            </li>
+                        }
+                        @if(SignInManager.IsSignedIn(User) && User.IsInRole("Candidate")){
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" asp-controller="Job" asp-action="Index">Browse Jobs</a>
                         </li>
+                        }
                         <li class="nav-item">
                             <a class="nav-link" href="#">Market Trends</a>
                         </li>
@@ -78,7 +88,7 @@
             &copy; 2021 - RecruitAPP - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    
-    
+
+
 </body>
 </html>

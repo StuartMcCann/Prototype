@@ -1,22 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Prototype.Models
 {
-    public class Candidate : User
+    public class Candidate 
     {
 
-       /* public Candidate()
-        {
-            this.Jobs = new HashSet<Job>();
-            this.Employers = new HashSet<Employer>(); 
-        }*/
+        /* public Candidate()
+         {
+             this.Jobs = new HashSet<Job>();
+             this.Employers = new HashSet<Employer>(); 
+         }*/
 
+        
         [Key]
-        public int CandidateId { get; set; }
+        public int CandidateID{get; set;}
         public String Name { get; set; }
         //remove level if enum works 
         public String Level { get; set; }
@@ -28,6 +30,11 @@ namespace Prototype.Models
         public double Rate { get; set; }
 
         public Level LevelEnum { get; set;  }
+        [Display(Name = "Profile Picture")]
+        public byte[] ProfilePicture { get; set; }
+
+        //foreign Key with Users table
+        public virtual ApplicationUser ApplicationUser { get; set; }
 
         //Forign Key for one to Many with Reviews
         public ICollection<Review> Reviews { get; set; }
