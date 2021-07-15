@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,7 +16,11 @@ namespace Prototype.Models
         }*/
         [Key]
         public int EmployerId { get; set; }
+        [Required]
+        [DisplayName("Company Name")]
         public String CompanyName { get; set; }
+        [DisplayName("Company Overview")]
+        public String CompanyOverview { get; set; }
         public double Rating { get; set; }
         [Display(Name = "Company Logo")]
         public byte[] CompanyLogo { get; set; }
@@ -28,6 +33,6 @@ namespace Prototype.Models
         public ICollection<Like> Likes { get; set; }
 
         //one to many relationship with Application User - one employer can have any users associated with it 
-        public ApplicationUser ApplicationUser { get; set; }
+        //public ApplicationUser ApplicationUser { get; set; }
     }
 }

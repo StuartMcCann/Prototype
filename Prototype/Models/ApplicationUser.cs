@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,10 +12,14 @@ namespace Prototype.Models
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        // add foreign keys here for Candidate and Employer 
-      
-
+        [Display(Name = "Profile Picture")]
+        public byte[] ProfilePicture { get; set; }
+        // add foreign keys here for Employer 
+        public int? EmployerId { get; set; }
+        [ForeignKey("EmployerId")]
+        public Employer Employer { get; set; }
         //foreign key with candidate 
-        
+
+
     }
 }

@@ -23,16 +23,19 @@ a {
   border-color: #1861ac;
 }
 
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link, nav-link {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
 }
 
+.btn  {
+    color: #fff;
+}
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 @media (min-width: 768px) {
   html {
@@ -80,7 +83,7 @@ body {
     background-color: #2b6777;
 }
 
-    .navbar-custom .navbar-brand, .navbar-custom .navbar-text, .navbar-custom a {
+    .navbar-custom .navbar-brand, .navbar-custom .navbar-text, .navbar-custom a, navbar .btn {
         color: white;
     }
 
@@ -123,4 +126,12 @@ a {
 
 .full-width{
     width: 100%; 
+}
+
+img {
+    border-radius: 50%;
+}
+
+.dashboard{
+    min-height: 400px; 
 }
