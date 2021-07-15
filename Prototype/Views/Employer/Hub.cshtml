@@ -1,5 +1,67 @@
-﻿
-<div class=" container text buffer">
+﻿<script type="text/javascript">
+
+    $(document).ready(function () {
+
+
+        $.ajax({
+            url: '/Job/GetJobsByUserID',
+            dataType: "Json",
+            type: "GET",
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+            //this needs changed whe table fully normalised
+           /* data:   ,*/
+            success: function (data) {
+
+               // loops through values returned in json format by above url
+                $.each(data, function (key, val) {
+                   //need to add validation that not empty here
+
+                    //$("#output").append(val.title);
+                    $("#jobsoutput").append(
+                        //string here with out put 
+                        "<div class='card '>" +
+                        "<div class='card-body'>" +
+                        "<a asp-controller='Job'asp-action='JobProfile'><h5 class='card-title'>" + val.title + "</h5></a>" +
+                        "<h5 class='card-text'>Level:" + val.duration + " weeks</h5>" +
+                        "<p class='card-text'>Start Date: "+ val.startDate+"</p>" +
+
+                    // <a href="#" class="btn btn-primary">Go somewhere</a>
+                    "</div>"+
+                       " </div>"
+                    );//end of .append
+                });//end of for loop 
+
+
+
+                console.log(data);
+            }, //end of success function 
+            error: function (xhr) {
+                alert('error');
+            }
+
+        }); //end ajax
+
+    }); //end document.load
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="  text buffer">
     <h1>Your Employer Hub </h1>
 
 
@@ -11,13 +73,21 @@
         <div class="  col-sm">
             <div class="addJob">
                 <h3 class=" heading">Your Live Jobs  </h3>
-                <a asp-controller="Job" asp-action="Create"><button class="addJob">Add Job</button></a>
+                <a asp-controller="Job" asp-action="Create"> <button class=" addJob">Add Job</button></a>
             </div>
 
 
-            <div class=" scrollgrid  border">
-                <!--content here using ajax-->
-                <div id="jobsoutput"></div>
+            <div class=" scrollgrid border ">
+                <div class="container buffer">
+                   
+                    <!--ajax call to get jobs by user id content appened to this div -->
+                    <div id="jobsoutput"></div>
+                </div>
+                
+               
+                
+
+                
             </div>
         </div>
 
@@ -28,6 +98,8 @@
             <h3 class=" heading">Your Likes</h3>
             <div class=" scrollgrid  border">
                 <!--content here using ajax-->
+                <div class=" row"> <p>Test</p></div>
+                <div class=" row"> Test</div>
             </div>
         </div>
     </div><!--End of row-->

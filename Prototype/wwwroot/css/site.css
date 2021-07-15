@@ -138,8 +138,8 @@ img {
 /*adds scroll bar stop grid */
 
 .scrollgrid {
-    OVERFLOW: auto;
-    BORDER-LEFT: #000000 1px;
+   OVERFLOW: auto;
+   /* BORDER-LEFT: #000000 1px;*/
     WIDTH: 100%;
     BORDER-BOTTOM: #000000 1px;
     HEIGHT: 400px;
@@ -151,6 +151,8 @@ img {
     scrollbar-highlight-color: #ffffff;
     scrollbar-shadow-color: 9C3842;
 }
+
+
 
 .addJob h3 {
     display: inline-block;

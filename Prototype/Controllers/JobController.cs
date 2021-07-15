@@ -4,18 +4,23 @@ using Prototype.Data;
 using Prototype.Models;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json; 
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Identity;
 
 namespace Prototype.Controllers
 {
     public class JobController : Controller
     {
-        private readonly ApplicationDbContext _db; 
+        private readonly ApplicationDbContext _db;
+        private readonly UserManager<ApplicationUser> _userManager;
+        
 
-        public JobController(ApplicationDbContext db)
+        public JobController(ApplicationDbContext db, UserManager<ApplicationUser> userManager)
         {
             //creates a db objext for use in controller using dependency injection
-            _db = db;  
+            _db = db;
+            _userManager = userManager;
+            
         }
 
         public IActionResult Index()
@@ -24,6 +29,39 @@ namespace Prototype.Controllers
             //below gets Jobs from db
             IEnumerable<Job> jobList = _db.Jobs;
             return View(jobList);
+        }
+
+        public List<JobProfile> GetJobsByUserID()
+        {
+
+            // getting user id using user manager 
+            var userId = _userManager.GetUserId(User);
+            //query db 
+            var userJobs = (from j in _db.Jobs
+                            join employers in _db.Employers on j.EmployerRefId
+                            equals employers.EmployerId
+                            join u in _db.Users on employers.EmployerId
+                            equals u.EmployerId
+                            join jobTitle in _db.JobTitle on
+                            j.JobTitleRefId equals jobTitle.JobTitleId
+                            where  u.Id == userId
+                            select new JobProfile
+                            {
+                                JobID = j.JobId,
+                                //remove title when normalise properly 
+                                Title = j.JobTitle,
+                                JobDescription = j.JobDescription,
+                                UpperRate = j.UpperRate,
+                                LowerRate = j.LowerRate,
+                                JobTitle = jobTitle.Title,
+                                CompanyName = employers.CompanyName,
+                                Duration = j.Duration,
+                                StartDate = j.StartDate,
+                                Rating = employers.Rating
+
+                            }).ToList();
+
+            return userJobs; 
         }
 
 
@@ -56,6 +94,8 @@ namespace Prototype.Controllers
 
         public ActionResult GetJobsLikeThis(string title)
         {
+            
+
             var jobsLikeThis = (from j in _db.Jobs
                        join employers in _db.Employers on j.EmployerRefId
                        equals employers.EmployerId
@@ -210,6 +250,13 @@ namespace Prototype.Controllers
             _db.SaveChanges();
             return RedirectToAction("Index");
 
+        }
+
+        public ApplicationUser GetUser()
+        {
+            var userId = _userManager.GetUserId(User);
+            ApplicationUser user = _db.Users.Find(userId);
+            return user;
         }
 
 
