@@ -135,3 +135,35 @@ img {
 .dashboard{
     min-height: 400px; 
 }
+/*adds scroll bar stop grid */
+
+.scrollgrid {
+    OVERFLOW: auto;
+    BORDER-LEFT: #000000 1px;
+    WIDTH: 100%;
+    BORDER-BOTTOM: #000000 1px;
+    HEIGHT: 400px;
+    scrollbar-3d-light-color: #999999;
+    scrollbar-arrow-color: #9C3842;
+    scrollbar-base-color: #003366;
+    scrollbar-dark-shadow-color: #9C3842;
+    scrollbar-face-color: #e7e7e7;
+    scrollbar-highlight-color: #ffffff;
+    scrollbar-shadow-color: 9C3842;
+}
+
+.addJob h3 {
+    display: inline-block;
+}
+
+.addJob button {
+    float: right;
+    background-color: #2b6777 !important;
+    border: none; 
+    border-color: #2b6777;
+    color: #fff;
+}
+
+button:focus {
+    outline: 0;
+}
