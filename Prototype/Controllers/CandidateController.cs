@@ -1,19 +1,25 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Prototype.Data;
 using Prototype.Models;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Prototype.Controllers
 {
     public class CandidateController : Controller
     {
-        private readonly ApplicationDbContext _db; 
+        private readonly ApplicationDbContext _db;
+        private readonly UserManager<ApplicationUser> _userManager; 
 
-        public CandidateController(ApplicationDbContext db)
+        public CandidateController(ApplicationDbContext db, UserManager<ApplicationUser> userManager)
         {
             //creates a db objext for use in controller using dependency injection
-            _db = db;  
+            _db = db;
+            _userManager = userManager; 
         }
 
         //can change to have level and skills - pass skills as a List?
@@ -36,6 +42,81 @@ namespace Prototype.Controllers
             return Json(new { data = canidatesLikethis });
 
         }
+
+        //get for edit 
+        public IActionResult Edit()
+        {
+            //get the application user details 
+            var user = GetUser();
+            //update this 
+            var employerId = user.EmployerId;
+            Employer employer = _db.Employers.Find(employerId);
+            if (employer == null)
+            {
+                return RedirectToAction("Create");
+            }
+            else
+            {
+                return View(employer);
+            }
+        }
+
+        //post for edit 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditAsync(Candidate candidate)
+        {
+
+            if (ModelState.IsValid)
+            {
+                
+                _db.Candidates.Update(candidate);
+                _db.SaveChanges();
+                return View(candidate);
+            }
+            else
+            {
+                return View(candidate);
+            }
+
+        }
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(Candidate candidate)
+        {
+            //validation below 
+            if (ModelState.IsValid)
+            {
+
+                //add employer created to DB
+                _db.Candidates.Add(candidate);
+                //save changes exexutes action to DB
+                _db.SaveChanges();
+
+                //add forign keys here?
+                //var user = GetUser();
+                //user.EmployerId = candidate.EmployerId;
+                //_db.SaveChanges();
+                return RedirectToAction("Index");
+
+            }
+            return View(candidate);
+
+        }
+
+
+
+
+
+        //get for create
+        public IActionResult Create()
+        {
+            return View();
+        }
+
 
         public IActionResult Index()
         {
@@ -72,6 +153,20 @@ namespace Prototype.Controllers
                 return NotFound();
             }
             return View(candidate);
+        }
+
+        //get for hub
+        public IActionResult Hub()
+        {
+            return View();
+        }
+
+
+        public ApplicationUser GetUser()
+        {
+            var userId = _userManager.GetUserId(User);
+            ApplicationUser user = _db.Users.Find(userId);
+            return user;
         }
 
 
