@@ -19,9 +19,12 @@ namespace Prototype.Models
         
         [Key]
         public int CandidateID{get; set;}
-        public String Name { get; set; }
         //remove level if enum works 
         public String Level { get; set; }
+
+        public Boolean IsAvailable { get; set; } 
+
+        public DateTime AvailableFrom { get; set;  }
 
         //skill will need one to many 
         public String Skill { get; set; }
@@ -30,11 +33,13 @@ namespace Prototype.Models
         public double Rate { get; set; }
 
         public Level LevelEnum { get; set;  }
-        [Display(Name = "Profile Picture")]
-        public byte[] ProfilePicture { get; set; }
+        
 
         //foreign Key with Users table
-        public virtual ApplicationUser ApplicationUser { get; set; }
+        public string UserId { get; set; }
+        [ForeignKey("UserId")]
+        public ApplicationUser ApplicationUser { get; set; }
+        //public virtual ApplicationUser ApplicationUser { get; set; }
 
         //Forign Key for one to Many with Reviews
         public ICollection<Review> Reviews { get; set; }

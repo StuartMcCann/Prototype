@@ -29,7 +29,7 @@ namespace Prototype.Controllers
                                 where c.Skill == skill && c.CandidateID!=id
                                 select new CandidateProfile
                                 {
-                                    Name = c.Name, 
+                                    
                                     Level = c.Level, 
                                     Rating = c.Rating, 
                                     Rate = c.Rate, 
@@ -48,16 +48,17 @@ namespace Prototype.Controllers
         {
             //get the application user details 
             var user = GetUser();
-            //update this 
-            var employerId = user.EmployerId;
-            Employer employer = _db.Employers.Find(employerId);
-            if (employer == null)
+            //update this
+
+            var userId = user.Id;
+            var candidate = GetCandidateDetailsByUser(userId); 
+            if (candidate.Count() == 0)
             {
                 return RedirectToAction("Create");
             }
             else
             {
-                return View(employer);
+                return View(candidate);
             }
         }
 
@@ -100,7 +101,7 @@ namespace Prototype.Controllers
                 //var user = GetUser();
                 //user.EmployerId = candidate.EmployerId;
                 //_db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Edit");
 
             }
             return View(candidate);
@@ -137,7 +138,6 @@ namespace Prototype.Controllers
                              select new CandidateProfile
                              {
                                  CandidateId = c.CandidateID,
-                                 Name = c.Name,
                                  Level = c.Level,
                                  Skill = c.Skill,
                                  Rating = c.Rating,
@@ -167,6 +167,27 @@ namespace Prototype.Controllers
             var userId = _userManager.GetUserId(User);
             ApplicationUser user = _db.Users.Find(userId);
             return user;
+        }
+
+        public List<Candidate> GetCandidateDetailsByUser(string userId)
+        {
+            var candidate = (from c in _db.Candidates
+                             where c.UserId == userId
+                             select new Candidate
+                             {
+                                 
+                                 Level = c.Level,
+                                 Rating = c.Rating,
+                                 Rate = c.Rate,
+                                 Skill = c.Skill,
+                                 CandidateID = c.CandidateID,
+                                 LevelEnum = c.LevelEnum
+
+                             }).ToList();
+
+            return candidate; 
+
+
         }
 
 

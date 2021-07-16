@@ -22,8 +22,9 @@
                         //string here with out put 
                         "<div class='card '>" +
                         "<div class='card-body'>" +
-                        //try @*@{ var str  = "asp-controller = 'Job'asp-action = 'JobProfile'"}*@
-                        "<a asp-controller='Job'asp-action='JobProfile'><h5 class='card-title'>" + val.title + "</h5></a>" +
+                        @{ var str = "asp-controller = 'Job'asp-action = 'JobProfile'";}
+                        "<a @str><h5 class='card-title'>"
+                        /*"<a asp-controller='Job'asp-action='JobProfile'><h5 class='card-title'>"*/ + val.title + "</h5></a>" +
                         "<h5 class='card-text'>Level:" + val.duration + " weeks</h5>" +
                         "<p class='card-text'>Start Date: "+ val.startDate+"</p>" +
 
