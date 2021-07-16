@@ -64,6 +64,12 @@ namespace Prototype.Controllers
             return userJobs; 
         }
 
+        //Todo : get likes by user id 
+
+        //todo: get messages by user id 
+
+        //to do get contracts by user id 
+
 
         //get for create
         public IActionResult Create()
