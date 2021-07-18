@@ -1,10 +1,54 @@
 ﻿@model Prototype.Models.Employer
+<script type="text/javascript">
 
+     $(document).ready(function () {
+            $('#like').click(function () {
+
+
+                 var like = '@LikeType.CandidateLikesEmployer';
+                
+                var eId = @Model.EmployerId;
+                var data = { likeType : like, employerId : eId };
+
+                $.ajax({
+                    url: '/Like/CreateLikeEmployer/',
+                    type: "POST",
+                    contentType: 'application/x-www-form-urlencoded',
+                    cache: false,
+                    data: data,
+            success: function () {
+                $("#like").html(
+                    '<div id="like">'+
+                       ' <button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button>'+
+                    '</div>'
+                    );
+
+
+            },
+            error: function (jqxhr, status, exception) {
+                alert('Exception:', exception);
+
+            }
+
+
+        }); //end ajax
+        }); //end click
+        }); //end document.load
+
+
+
+</script>
 <div class="container text buffer">
+    <div class=" row">
+        <div class="col-sm">
+            <h1>@Model.CompanyName</h1>
+        </div>
+        <div class="col-sm" id="like">
+            <button type="button" class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button>
+        </div>
 
-    <h1>@Model.CompanyName</h1>
-
-    <div class="row">
+    </div>
+    <div class="row buffer">
 
         <div class="col-sm-6">
             <h3>Overview</h3>
@@ -13,16 +57,16 @@
         </div>
         <div class="col-sm-6">
             <h3>Your Logo</h3>
-            
-                    @if (Model.CompanyLogo != null)
-                    {
-                        <img id="profilePicture" style="width:350px;height:350px; object-fit:cover" src="data:image/*;base64,@(Convert.ToBase64String(Model.CompanyLogo))">
-                    }
-                    else
-                    {
-                        <img id="profilePicture" style="width:350px;height:350px; object-fit:cover" src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png">
-                    }
-                  
+
+            @if (Model.CompanyLogo != null)
+            {
+                <img id="profilePicture" style="width:350px;height:350px; object-fit:cover" src="data:image/*;base64,@(Convert.ToBase64String(Model.CompanyLogo))">
+            }
+            else
+            {
+                <img id="profilePicture" style="width:350px;height:350px; object-fit:cover" src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png">
+            }
+
 
 
         </div>

@@ -1,7 +1,49 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model Prototype.Models.Candidate
 
 <h1> Create</h1>
+
+<h1>Add Your Company Details and Attract Quality Freelancers</h1>
+
+<form asp-action="Create" asp-controller="Candidate" method="post" enctype="multipart/form-data">
+
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Create a new account.</h4>
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="Level"></label>
+                <input asp-for="Level" class="form-control" />
+                <span asp-validation-for="Level" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AvailableFrom"></label>
+                <input asp-for="AvailableFrom" type="date"class="form-control" id="exampleFormControlTextarea1"> 
+                <span asp-validation-for="AvailableFrom" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create Profile</button>
+        </div>
+
+        <div class="col-md-6">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Skill"></label>
+                <input asp-for="Skill" class="form-control" />
+                <span asp-validation-for="Skill" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Rate"></label>
+                <input asp-for="Rate" class="form-control" />
+                <span asp-validation-for="Rate" class="text-danger"></span>
+            </div>
+        </div>
+
+
+    </div>
+
+
+
+
+</form>

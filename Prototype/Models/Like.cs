@@ -8,6 +8,28 @@ namespace Prototype.Models
 {
     public class Like
     {
+
+        public Like()
+        {
+
+        }
+
+        public Like(LikeType likeType,  int employerId, int candidateId )
+        {
+            this.LikeType =likeType;
+            this.EmployerId = employerId;
+            this.CandidateId = candidateId; 
+
+        }
+
+        public Like(LikeType likeType, int employerId, int candidateId , int jobId)
+        {
+            this.LikeType = likeType;
+            this.EmployerId = employerId;
+            this.CandidateId = candidateId;
+            this.JobId = jobId; 
+
+        }
         [Key]
         public int LikeId { get; set; }
         public LikeType LikeType { get; set; }
@@ -23,8 +45,10 @@ namespace Prototype.Models
         //Foreign Keys to Job/Employer/Candidate One to Many Relationships
     }
 
+   
+
     public enum LikeType
     {
-        EmployerLikesCandidate, CandidateLikesJob, CandidateLikeEmployer
+        EmployerLikesCandidate, CandidateLikesJob, CandidateLikesEmployer
     }
 }

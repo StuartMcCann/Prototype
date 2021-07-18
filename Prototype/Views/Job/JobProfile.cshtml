@@ -1,8 +1,7 @@
-﻿@model IEnumerable<Prototype.Models.JobProfile>
+﻿@model Prototype.Models.JobProfile
 
 
-@foreach (var jobProfile in Model)
-{
+
 
 <script type="text/javascript">
 
@@ -16,7 +15,7 @@
             contentType: 'application/json; charset=utf-8',
             cache: false,
             //this needs changed whe table fully normalised
-            data: { title: "@jobProfile.Title"}  ,
+            data: { title: "@Model.Title"}  ,
             success: function (data) {
 
                 //loops through values returned in json format by above url
@@ -30,13 +29,13 @@
                        "<h5 class= 'card-header'>"+val.title+"</h5>"+
                                 "<div class='card-body'>"+
                                     "<h5 class='card-title'>Rate: £"+val.lowerRate+"-"+val.upperRate+"</h5>"+
-                                
+
                                 "<h5 class='card-title'>"+val.companyName+"</h5>"+
                                @*+ "@Html.ActionLink('View more', 'JobProfile', new { id = jobProfile.JobID })"+*@
                             "</div>"+
                             "</div>"+
                         "</div>"
-                    ); 
+                    );
                 });
 
 
@@ -52,30 +51,77 @@
     }); //end document.load
 
 
+
+     $(document).ready(function () {
+            $('#like').click(function () {
+
+
+                 var like = '@LikeType.CandidateLikesJob';
+                var jId = @Model.JobID;
+                var eId = @Model.EmployerId; 
+                var data = { likeType : like, jobId : jId, employerId : eId };
+              
+                $.ajax({
+                    url: '/Like/CreateLikeJob/',
+                    type: "POST",
+                    contentType: 'application/x-www-form-urlencoded',
+                    cache: false,
+                    data: data,
+            success: function () {
+                $("#like").html(
+                    '<div id="like">'+
+                       ' <button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button>'+
+                    '</div>'
+                    );
+
+               
+            },
+            error: function (jqxhr, status, exception) {
+                alert('Exception:', exception);
+                
+            }
+
+
+        }); //end ajax
+        }); //end click
+        }); //end document.load
+
+
 </script>
     <div class="container buffer text">
         <div class="row heading">
             
-            <div class="col-sm-8"><h1>@jobProfile.CompanyName  </h1></div>
-            <div class="col-sm-4"><h1>Employer Rating: @jobProfile.Rating/5</h1></div>
+            <div class="col-sm-8"><a asp-controller="Employer" asp-action="Index" asp-route-id="@Model.EmployerId">
+                <h1>@Model.CompanyName  </h1></a></div>
+            <div class="col-sm-4"><h1>Employer Rating: @Model.Rating/5</h1></div>
         </div>
         <div class="row buffer ">
             <div class="col-sm">
-                <h2>@jobProfile.Title</h2>
+                <h2>@Model.Title</h2>
 
-                <h2>FROM £@jobProfile.LowerRate - @jobProfile.UpperRate</h2>
-                <h2>Duration: @jobProfile.Duration weeks</h2>
+                <h2>FROM £@Model.LowerRate - @Model.UpperRate</h2>
+                <h2>Duration: @Model.Duration weeks</h2>
             </div>
             <div class="col-sm">
             </div>
-            <div class="col-sm"><h1>Employer Rating: @jobProfile.Rating/5</h1></div>
+            <div class="col-sm">
+
+                <div id="like">
+                    <button type="button" class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button>
+                </div>
+
+            </div>
+
+
+
+
         </div>
         <div class="row buffer ">
             <div class="col-sm-9">
                 <h3>Company Profile</h3>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vestibulum eleifend odio, ut egestas urna pellentesque vitae. Cras euismod dolor augue, eu porta arcu rutrum vitae. Mauris lacinia placerat nunc vitae consectetur. Ut viverra ipsum justo, vitae tristique erat tincidunt accumsan. Mauris et sem et augue commodo pretium. Proin aliquet.</p>
                 <h3>Job Desription</h3>
-                <p>@jobProfile.JobDescription</p>
+                <p>@Model.JobDescription</p>
                 <h3>Company Reviews</h3>
                 <!--Ajax call for company reviews if decide to include -->
                 <p>Test</p>
@@ -109,7 +155,7 @@
 
     </div>
 
-}
+
 
 
 

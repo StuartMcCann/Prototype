@@ -31,46 +31,41 @@ namespace Prototype.Controllers
             return View(jobList);
         }
 
-        public List<JobProfile> GetJobsByUserID()
+        public List<Job> GetJobsByUserID()
         {
 
             // getting user id using user manager 
-            var userId = _userManager.GetUserId(User);
-            //query db 
+            // var userId = _userManager.GetUserId(User);
+            var user = GetUser();
+            var employerId = user.EmployerId;
+
             var userJobs = (from j in _db.Jobs
-                            join employers in _db.Employers on j.EmployerRefId
-                            equals employers.EmployerId
-                            join u in _db.Users on employers.EmployerId
-                            equals u.EmployerId
-                            join jobTitle in _db.JobTitle on
-                            j.JobTitleRefId equals jobTitle.JobTitleId
-                            where  u.Id == userId
-                            select new JobProfile
+                            where j.EmployerRefId == employerId
+                            select new Job
                             {
-                                JobID = j.JobId,
-                                //remove title when normalise properly 
-                                Title = j.JobTitle,
-                                JobDescription = j.JobDescription,
+                                JobId = j.JobId,
+                                JobTitle = j.JobTitle,
+                                StartDate = j.StartDate,
                                 UpperRate = j.UpperRate,
                                 LowerRate = j.LowerRate,
-                                JobTitle = jobTitle.Title,
-                                CompanyName = employers.CompanyName,
                                 Duration = j.Duration,
-                                StartDate = j.StartDate,
-                                Rating = employers.Rating
+                                JobDescription = j.JobDescription,
+                                IsFilled = j.IsFilled,
+                                IsLive = j.IsLive,
+                                IsUnderContract = j.IsUnderContract,
+                                EmployerRefId = j.EmployerRefId
 
-                            }).ToList();
 
+
+                            }).ToList();                          
+                                
+                                
+                  
+  
             return userJobs; 
         }
 
-        //Todo : get likes by user id 
-
-        //todo: get messages by user id 
-
-        //to do get contracts by user id 
-
-
+        
         //get for create
         public IActionResult Create()
         {
@@ -83,12 +78,20 @@ namespace Prototype.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Job job)
         {
+
+            var user = GetUser();
+            
+                int employerId = (int)user.EmployerId;
+                job.EmployerRefId = employerId;
+            
+             
             //validation below 
             if (ModelState.IsValid)
             {
                 _db.Jobs.Add(job);
                 //save changes exexutes action to DB
                 _db.SaveChanges();
+                //needs changed to direct to edit 
                 return RedirectToAction("Index");
 
             }
@@ -170,9 +173,10 @@ namespace Prototype.Controllers
                          CompanyName =employers.CompanyName,
                          Duration =  j.Duration,
                          StartDate=  j.StartDate,
-                         Rating=employers.Rating
+                          Rating = employers.Rating,
+                          EmployerId = employers.EmployerId
 
-                      }).ToList(); 
+                      }).FirstOrDefault(); 
 
 
 
@@ -264,6 +268,8 @@ namespace Prototype.Controllers
             ApplicationUser user = _db.Users.Find(userId);
             return user;
         }
+
+        
 
 
     }

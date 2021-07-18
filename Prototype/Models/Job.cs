@@ -31,7 +31,7 @@ namespace Prototype.Models
 
         //Foreign Keys
         //Normalised Job Title
-        public int JobTitleRefId { get; set; }
+        public int? JobTitleRefId { get; set; }
         public JobTitle JobTitleFK { get; set; }
 
         //One to Many with Employer Table 

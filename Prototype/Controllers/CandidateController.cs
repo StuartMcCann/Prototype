@@ -88,6 +88,10 @@ namespace Prototype.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Candidate candidate)
         {
+
+            var user = GetUser();
+            var userId = user.Id;
+            candidate.UserId = userId; 
             //validation below 
             if (ModelState.IsValid)
             {
@@ -131,20 +135,20 @@ namespace Prototype.Controllers
         public IActionResult CandidateProfile(int id)
         {
 
-            var candidate = (from c in _db.Candidates
-                                 //join r in _db.Reviews on c.CandidateId equals
-                                 // r.CandidateRefId
-                            where c.CandidateID == id
-                             select new CandidateProfile
-                             {
-                                 CandidateId = c.CandidateID,
-                                 Level = c.Level,
-                                 Skill = c.Skill,
-                                 Rating = c.Rating,
-                                 Rate = c.Rate
-                                 //for loop here to add to list of reviews or can do ajax call on page t print 
+            var candidate = ((from c in _db.Candidates
+                                  //join r in _db.Reviews on c.CandidateId equals
+                                  // r.CandidateRefId
+                              where c.CandidateID == id
+                              select new CandidateProfile
+                              {
+                                  CandidateId = c.CandidateID,
+                                  Level = c.Level,
+                                  Skill = c.Skill,
+                                  Rating = c.Rating,
+                                  Rate = c.Rate
+                                  //for loop here to add to list of reviews or can do ajax call on page t print 
 
-                             }).ToList();
+                              })).FirstOrDefault();   
 
 
 

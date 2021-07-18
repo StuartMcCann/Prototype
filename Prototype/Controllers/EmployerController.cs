@@ -28,20 +28,31 @@ namespace Prototype.Controllers
 
 
         //if employer profile is created sends to create if not 
-        public IActionResult Index()
+        //public IActionResult Index()
+        //{
+        //    //get the application user details 
+        //    var user = GetUser();
+        //    var employerId = user.EmployerId; 
+        //    Employer employer = _db.Employers.Find(employerId);
+        //    if (employer == null)
+        //    {
+        //        return RedirectToAction("Create");
+        //    }
+        //    else
+        //    {
+        //        return View(employer);
+        //    }
+
+
+        //}
+
+        public IActionResult Index(int id)
         {
-            //get the application user details 
-            var user = GetUser();
-            var employerId = user.EmployerId; 
-            Employer employer = _db.Employers.Find(employerId);
-            if (employer == null)
-            {
-                return RedirectToAction("Create");
-            }
-            else
-            {
+
+            var employer = _db.Employers.Find(id); 
+            
                 return View(employer);
-            }
+            
 
 
         }

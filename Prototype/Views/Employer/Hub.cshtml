@@ -16,21 +16,26 @@
                // loops through values returned in json format by above url
                 $.each(data, function (key, val) {
                    //need to add validation that not empty here
-
+                   //job id is jobId
+                   
+                    var url = '@Url.Action("Edit", "Job", new { id = "replaceToken" })';
+                    url = url.replace("replaceToken", val.jobId); 
                     //$("#output").append(val.title);
                     $("#jobsoutput").append(
                         //string here with out put 
-                        "<div class='card '>" +
-                        "<div class='card-body'>" +
-                        @{ var str = "asp-controller = 'Job'asp-action = 'JobProfile'";}
-                        "<a @str><h5 class='card-title'>"
-                        /*"<a asp-controller='Job'asp-action='JobProfile'><h5 class='card-title'>"*/ + val.title + "</h5></a>" +
-                        "<h5 class='card-text'>Level:" + val.duration + " weeks</h5>" +
-                        "<p class='card-text'>Start Date: "+ val.startDate+"</p>" +
+                        '<div class"card ">' +
+                        '<div class="card-body">' +
+                       
+                        
+                        //change below if needs title normalised 
+                     //'<a asp-controller="Job" asp-action="JobProfile" asp-route-id="1"><h5 class="card-title">' + val.jobTitle + '</h5></a>' +
+                        '<a href="' + url + '"><h5 class="card-title">' + val.jobTitle + '</h5></a>' +
+                        "<h5 class='card-text'>Duration:" + val.duration + ' weeks</h5>' +
+                        '<p class="card-text">Start Date: ' + val.startDate.substring(0, 10)+'</p>'+
 
                     // <a href="#" class="btn btn-primary">Go somewhere</a>
-                    "</div>"+
-                       " </div>"
+                    '</div>'+
+                       ' </div>'
                     );//end of .append
                 });//end of for loop 
 
@@ -39,7 +44,7 @@
                 console.log(data);
             }, //end of success function 
             error: function (xhr) {
-                alert('error');
+                alert( 'error');
             }
 
         }); //end ajax
@@ -100,9 +105,22 @@
             <h3 class=" heading">Your Likes</h3>
             <div class=" scrollgrid  border">
                 <!--content here using ajax-->
-                <<div class="container buffer">
+                <div class="container buffer">
 
     <!--ajax call to get jobs by user id content appened to this div -->
+    <div class="card">
+        <div class="card-body">
+            CandidateName likes your company
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            CandidateName likes your this job
+        </div>
+    </div>
+
+
+
     <div id="likesoutput"></div>
 </div>
             </div>

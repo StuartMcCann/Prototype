@@ -1,9 +1,8 @@
-﻿@model IEnumerable<Prototype.Models.CandidateProfile>
+﻿
+@model Prototype.Models.CandidateProfile
 
-@foreach (var candidate in Model)
-{
 
-    <script type="text/javascript">
+<script type="text/javascript">
 
     $(document).ready(function () {
 
@@ -15,9 +14,9 @@
             contentType: 'application/json; charset=utf-8',
             cache: false,
             //this needs changed whe table fully normalised
-            data: { skill: "@candidate.Skill", id : @candidate.CandidateId}  ,
+            data: { skill: "@Model.Skill", id : @Model.CandidateId}  ,
             success: function (data) {
-                console.log(data); 
+                console.log(data);
                 //loops through values returned in json format by above url
                 $.each(data.data, function (key, val) {
                     //need to add validation that not empty here
@@ -30,11 +29,11 @@
                                 "<div class='card-body'>"+
                         "<h5 class='card-title'>Rate: £" + val.rate + "</h5>" +
                         @*@{ var level = Int32.Parse(  "<%=val.level%>");
-                            var newLevel = (Level)level; 
-                            
+                            var newLevel = (Level)level;
+
                             }*@
                        "<h5 class='card-title'>" +val.level + "</h5>" +
-                        
+
                         "<h5 class='card-title'>" + val.levelEnum + "</h5>" +
                                 "<h5 class='card-title'>"+val.skill+"</h5>"+
                                @*+ "@Html.ActionLink('View more', 'JobProfile', new { id = jobProfile.JobID })"+*@
@@ -57,7 +56,46 @@
     }); //end document.load
 
 
-    </script>
+
+
+        $(document).ready(function () {
+            $('#like').click(function () {
+                 
+                
+                 var like = '@LikeType.EmployerLikesCandidate';
+                var id = @Model.CandidateId;
+                var data = { likeType : like, candId: id }; 
+                console.log(id);
+                $.ajax({
+                    url: '/Like/Create/',
+                    type: "POST",
+                    contentType: 'application/x-www-form-urlencoded',
+                    cache: false,
+                    data: data,
+            success: function () {
+                $("#like").html(
+                    '<div id="like">'+
+                       ' <button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button>'+
+                    '</div>'
+                    );
+                
+                console.log(data);
+            },
+            error: function (jqxhr, status, exception) {
+                alert('Exception:', exception);
+                console.log(candId);
+            }
+
+
+        }); //end ajax
+        }); //end click
+        }); //end document.load
+
+
+
+
+
+</script>
 
 
     <div class="container buffer text">
@@ -65,11 +103,20 @@
             <div class="col-sm-8"><h1 class=" heading">Fix Name here</h1></div>
             <div class="col-sm-4"><h2 class="heading">Candidate Rating: 4/5</h2></div>
         </div>
+        <div class="row">
+            <div class="col-sm-8"></div>
+            <div class="col-sm-4">
+                <div id="like">
+                    <button type="button"  class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button>
+                </div>
+             
+            </div>
+        </div>
         <div class="row buffer">
             <div class="col-sm-9">
-                <h3>£@candidate.Rate per hour</h3>
-                <h3>@candidate.Level</h3>
-                <h3>@candidate.Skill</h3>
+                <h3>£@Model.Rate per hour</h3>
+                <h3>@Model.Level</h3>
+                <h3>@Model.Skill</h3>
 
 
             </div>
@@ -98,4 +145,4 @@
 
 
 
-}
+@*}*@
