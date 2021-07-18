@@ -1,5 +1,5 @@
 ﻿
-@model IEnumerable<Prototype.Models.Candidate> //this adds object from method in controller
+@model IEnumerable<Prototype.Models.CandidateProfile> //this adds object from method in controller
 @{
 
     ViewData["Title"] = "Index";
@@ -68,13 +68,15 @@
 
                                 <div class="card text" style="width: 18rem;">
                                     <div class="card-body">
-                                        <h5 class="card-title">Fix Name</h5>
+                                       
+                                        
+                                        <h5 class="card-title">@candidate.FirstName @candidate.LastName</h5>
                                         <h6 class="card-subtitle mb-2">RecruitAPP Rating @candidate.Rating/5</h6>
                                         <p class="card-text">Level: @candidate.Level</p>
                                         <p class="card-text">Skills: @candidate.Skill</p>
                                         <p class="card-text">Charge Rate: @candidate.Rate per hour </p>
-                                        
-                                        @Html.ActionLink("View more", "CandidateProfile", new { id = candidate.CandidateID })
+
+                                        @Html.ActionLink("View more", "CandidateProfile", new { id = candidate.CandidateId })
 
 
                                     </div>

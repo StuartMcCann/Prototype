@@ -20,6 +20,8 @@ namespace Prototype.Models
         public Employer Employer { get; set; }
         //foreign key with candidate 
 
+        
+
 
     }
 }

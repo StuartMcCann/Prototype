@@ -100,7 +100,19 @@
 
     <div class="container buffer text">
         <div class="row">
-            <div class="col-sm-8"><h1 class=" heading">Fix Name here</h1></div>
+            <div class="col-sm-4">
+                @if (Model.ProfilePicture != null)
+                {
+                    <img style="width:200px;height:200px; object-fit:cover; border-radius:30px" src="data:image/*;base64,@(Convert.ToBase64String(Model.ProfilePicture))">
+                }
+                else
+                {
+                    <img id="profilePicture" style="width:200px;height:200px; object-fit:cover" src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png">
+
+                }
+
+            </div>
+            <div class="col-sm-4"><h1 class=" heading">@Model.FirstName @Model.LastName</h1></div>
             <div class="col-sm-4"><h2 class="heading">Candidate Rating: 4/5</h2></div>
         </div>
         <div class="row">

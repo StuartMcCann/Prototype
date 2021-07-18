@@ -125,27 +125,57 @@ namespace Prototype.Controllers
 
         public IActionResult Index()
         {
-           // List<Candidate> list =  _db.Candidates.Where(s => s.Level == "Entry").OrderByDescending(c=>c.Rating).ToList<Candidate>(); 
+
+            //TODO - select query to create cand profile list where available = true
+
+            IEnumerable<CandidateProfile> candidateList = ((from c in _db.Candidates
+                                                         //join r in _db.Reviews on c.CandidateId equals
+                                                         // r.CandidateRefId
+                                                     join u in _db.Users
+                                                     on c.UserId equals u.Id
+                                                     where c.IsAvailable
+                                                     select new CandidateProfile
+                                                     {
+                                                         CandidateId = c.CandidateID,
+                                                         Level = c.Level,
+                                                         Skill = c.Skill,
+                                                         Rating = c.Rating,
+                                                         Rate = c.Rate,
+                                                         UserId = u.Id,
+                                                         ProfilePicture = u.ProfilePicture,
+                                                         FirstName = u.FirstName,
+                                                         LastName = u.LastName,
+
+                                                         //for loop here to add to list of reviews or can do ajax call on page t print 
+
+                                                     })).ToList(); 
             
-            //below gets candidates from db
-            IEnumerable<Candidate> candidateList = _db.Candidates;
             return View(candidateList);
         }
 
         public IActionResult CandidateProfile(int id)
         {
+            var user = GetUser();
+            var userId = user.Id; 
 
             var candidate = ((from c in _db.Candidates
                                   //join r in _db.Reviews on c.CandidateId equals
                                   // r.CandidateRefId
-                              where c.CandidateID == id
+                            join u in _db.Users
+                            on c.UserId equals u.Id
+                             where c.CandidateID == id
                               select new CandidateProfile
                               {
                                   CandidateId = c.CandidateID,
                                   Level = c.Level,
                                   Skill = c.Skill,
                                   Rating = c.Rating,
-                                  Rate = c.Rate
+                                  Rate = c.Rate, 
+                                  UserId = u.Id, 
+                                  ProfilePicture = u.ProfilePicture, 
+                                  FirstName = u.FirstName, 
+                                  LastName = u.LastName, 
+
                                   //for loop here to add to list of reviews or can do ajax call on page t print 
 
                               })).FirstOrDefault();   
