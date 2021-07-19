@@ -1,8 +1,10 @@
 ﻿<script type="text/javascript">
 
+    //TODO: AJAX for Likes / AJAX for reviews / AJAx for Contracts 
+
     $(document).ready(function () {
 
-
+        // below ajax gets Jobs connected by user Id and displays them on the page 
         $.ajax({
             url: '/Job/GetJobsByUserID',
             dataType: "Json",
@@ -10,25 +12,26 @@
             contentType: 'application/json; charset=utf-8',
             cache: false,
             //this needs changed whe table fully normalised
-           /* data:   ,*/
+           
             success: function (data) {
 
                // loops through values returned in json format by above url
                 $.each(data, function (key, val) {
                    //need to add validation that not empty here
                    //job id is jobId
-                   
+
+                    //action link use to generate url string 
                     var url = '@Url.Action("Edit", "Job", new { id = "replaceToken" })';
                     url = url.replace("replaceToken", val.jobId); 
-                    //$("#output").append(val.title);
+                    //bleow appende content to div with id passed as arg
                     $("#jobsoutput").append(
-                        //string here with out put 
+                        
                         '<div class"card ">' +
                         '<div class="card-body">' +
                        
                         
                         //change below if needs title normalised 
-                     //'<a asp-controller="Job" asp-action="JobProfile" asp-route-id="1"><h5 class="card-title">' + val.jobTitle + '</h5></a>' +
+                     
                         '<a href="' + url + '"><h5 class="card-title">' + val.jobTitle + '</h5></a>' +
                         "<h5 class='card-text'>Duration:" + val.duration + ' weeks</h5>' +
                         '<p class="card-text">Start Date: ' + val.startDate.substring(0, 10)+'</p>'+
@@ -38,10 +41,7 @@
                        ' </div>'
                     );//end of .append
                 });//end of for loop 
-
-
-
-                console.log(data);
+                
             }, //end of success function 
             error: function (xhr) {
                 alert( 'error');

@@ -59,10 +59,21 @@ namespace Prototype.Controllers
 
         public IActionResult Hub()
         {
-            return View(); 
+
+            var user = GetUser();
+            var employer = GetEmployer(user.Id);
+            if (employer != null)
+            {
+                return View(employer);
+            }
+            else
+            {
+                return RedirectToAction("Create"); 
+            }
+            
         }
 
-        public Employer GetEmployer(int userID)
+        public Employer GetEmployer(String userID)
         {
             Employer employer = _db.Employers.Find(userID);
             

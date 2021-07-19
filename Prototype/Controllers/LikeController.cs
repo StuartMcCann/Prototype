@@ -112,6 +112,9 @@ namespace Prototype.Controllers
 
         }
 
+        //TODO: GetLikesByEmployerId/ GetLikesByJobId/ GetLikesByCandidate/UserID
+        
+
 
 
         // GET: LikeController/Edit/5
@@ -155,6 +158,11 @@ namespace Prototype.Controllers
                 return View();
             }
         }
+
+
+
+
+
 
         public ApplicationUser GetUser()
         {
