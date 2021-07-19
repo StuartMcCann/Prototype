@@ -155,8 +155,7 @@ namespace Prototype.Controllers
 
         public IActionResult CandidateProfile(int id)
         {
-            var user = GetUser();
-            var userId = user.Id; 
+            
 
             var candidate = ((from c in _db.Candidates
                                   //join r in _db.Reviews on c.CandidateId equals

@@ -113,7 +113,29 @@ namespace Prototype.Controllers
         }
 
         //TODO: GetLikesByEmployerId/ GetLikesByJobId/ GetLikesByCandidate/UserID
-        
+        public List<EmployerLike> GetLikesByEmployerId(int employerId)
+        {
+
+             List<EmployerLike> likes = (from l in _db.Likes
+                                 join c in _db.Candidates
+                                 on l.CandidateId equals c.CandidateID
+                                 join u in _db.Users
+                                 on c.UserId equals u.Id
+                                 where l.EmployerId == employerId &&
+            (l.LikeType == LikeType.CandidateLikesEmployer || l.LikeType == LikeType.CandidateLikesJob)
+            select new EmployerLike
+            {
+                CandidateId = c.CandidateID, 
+                EmployerId = u.EmployerId, 
+                LikeType = l.LikeType, 
+                FirstName = u.FirstName, 
+                LastName = u.LastName
+
+            }).ToList();
+
+            return likes; 
+
+        }
 
 
 

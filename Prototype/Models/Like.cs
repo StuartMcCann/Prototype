@@ -51,4 +51,22 @@ namespace Prototype.Models
     {
         EmployerLikesCandidate, CandidateLikesJob, CandidateLikesEmployer
     }
+
+    public class EmployerLike
+    {
+
+        public int CandidateId { get; set; }
+        public int? EmployerId { get; set; }
+
+        public LikeType LikeType { get; set; }
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+
+
+
+
+
+
+    }
 }
