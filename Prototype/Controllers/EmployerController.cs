@@ -61,7 +61,7 @@ namespace Prototype.Controllers
         {
 
             var user = GetUser();
-            var employer = GetEmployer(user.Id);
+            var employer = GetEmployer(user.EmployerId);
             if (employer != null)
             {
                 return View(employer);
@@ -73,9 +73,9 @@ namespace Prototype.Controllers
             
         }
 
-        public Employer GetEmployer(String userID)
+        public Employer GetEmployer(int? employerID)
         {
-            Employer employer = _db.Employers.Find(userID);
+            Employer employer = _db.Employers.Find(employerID);
             
             return employer;
             

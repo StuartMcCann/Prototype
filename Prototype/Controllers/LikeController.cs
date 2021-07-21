@@ -122,11 +122,11 @@ namespace Prototype.Controllers
                                  join u in _db.Users
                                  on c.UserId equals u.Id
                                  where l.EmployerId == employerId &&
-            (l.LikeType == LikeType.CandidateLikesEmployer || l.LikeType == LikeType.CandidateLikesJob)
+            (l.LikeType == LikeType.CandidateLikesEmployer || l.LikeType ==  LikeType.CandidateLikesJob)
             select new EmployerLike
             {
                 CandidateId = c.CandidateID, 
-                EmployerId = u.EmployerId, 
+                EmployerId = l.EmployerId, 
                 LikeType = l.LikeType, 
                 FirstName = u.FirstName, 
                 LastName = u.LastName
