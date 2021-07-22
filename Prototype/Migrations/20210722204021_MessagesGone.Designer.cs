@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Prototype.Data;
 
 namespace Prototype.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210722204021_MessagesGone")]
+    partial class MessagesGone
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -267,34 +269,6 @@ namespace Prototype.Migrations
                     b.ToTable("Candidates");
                 });
 
-            modelBuilder.Entity("Prototype.Models.ChatMessage", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FromUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Message")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ToUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FromUserId");
-
-                    b.HasIndex("ToUserId");
-
-                    b.ToTable("ChatMessages");
-                });
-
             modelBuilder.Entity("Prototype.Models.Employer", b =>
                 {
                     b.Property<int>("EmployerId")
@@ -512,21 +486,6 @@ namespace Prototype.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
-            modelBuilder.Entity("Prototype.Models.ChatMessage", b =>
-                {
-                    b.HasOne("Prototype.Models.ApplicationUser", "FromUser")
-                        .WithMany("ChatMessagesFromUsers")
-                        .HasForeignKey("FromUserId");
-
-                    b.HasOne("Prototype.Models.ApplicationUser", "ToUser")
-                        .WithMany("ChatMessagesToUsers")
-                        .HasForeignKey("ToUserId");
-
-                    b.Navigation("FromUser");
-
-                    b.Navigation("ToUser");
-                });
-
             modelBuilder.Entity("Prototype.Models.Job", b =>
                 {
                     b.HasOne("Prototype.Models.Employer", "Employer")
@@ -572,13 +531,6 @@ namespace Prototype.Migrations
                         .HasForeignKey("CandidateID");
 
                     b.Navigation("Candidate");
-                });
-
-            modelBuilder.Entity("Prototype.Models.ApplicationUser", b =>
-                {
-                    b.Navigation("ChatMessagesFromUsers");
-
-                    b.Navigation("ChatMessagesToUsers");
                 });
 
             modelBuilder.Entity("Prototype.Models.Candidate", b =>
