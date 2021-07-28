@@ -169,3 +169,12 @@ img {
 button:focus {
     outline: 0;
 }
+
+.fullHeight{
+  height: 90vh 
+}
+
+.messages{
+   min-height: 90%; 
+}
+
