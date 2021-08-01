@@ -34,7 +34,7 @@ namespace Prototype.Controllers
                                     Rating = c.Rating, 
                                     Rate = c.Rate, 
                                     Skill = c.Skill, 
-                                    CandidateId = c.CandidateID, 
+                                    CandidateID = c.CandidateID, 
                                     LevelEnum = c.LevelEnum
 
                                 }).ToList();
@@ -136,7 +136,7 @@ namespace Prototype.Controllers
                                                      where c.IsAvailable
                                                      select new CandidateProfile
                                                      {
-                                                         CandidateId = c.CandidateID,
+                                                         CandidateID = c.CandidateID,
                                                          Level = c.Level,
                                                          Skill = c.Skill,
                                                          Rating = c.Rating,
@@ -160,12 +160,12 @@ namespace Prototype.Controllers
             var candidate = ((from c in _db.Candidates
                                   //join r in _db.Reviews on c.CandidateId equals
                                   // r.CandidateRefId
-                            join u in _db.Users
-                            on c.UserId equals u.Id
-                             where c.CandidateID == id
+                              join u in _db.Users
+                              on c.UserId equals u.Id
+                              where c.CandidateID == id
                               select new CandidateProfile
                               {
-                                  CandidateId = c.CandidateID,
+                                  CandidateID = c.CandidateID,
                                   Level = c.Level,
                                   Skill = c.Skill,
                                   Rating = c.Rating,
@@ -174,6 +174,7 @@ namespace Prototype.Controllers
                                   ProfilePicture = u.ProfilePicture, 
                                   FirstName = u.FirstName, 
                                   LastName = u.LastName, 
+                                 
 
                                   //for loop here to add to list of reviews or can do ajax call on page t print 
 

@@ -40,6 +40,8 @@ namespace Prototype.Controllers
             var employerId = user.EmployerId;
 
             var userJobs = (from j in _db.Jobs
+                            join u in _db.Users
+                            on j.EmployerRefId equals u.EmployerId
                             where j.EmployerRefId == employerId
                             select new Job
                             {
@@ -113,7 +115,7 @@ namespace Prototype.Controllers
                        where j.JobTitle == title
                        select new JobProfile
                        {
-                           JobID = j.JobId,
+                           JobId = j.JobId,
                            //remove title when normalise properly 
                            Title = j.JobTitle, 
                            JobDescription = j.JobDescription,
@@ -159,22 +161,25 @@ namespace Prototype.Controllers
             var job = (from j in _db.Jobs
                       join employers in _db.Employers on j.EmployerRefId
                       equals employers.EmployerId
-                      join jobTitle in _db.JobTitle on
-                      j.JobTitleRefId equals jobTitle.JobTitleId
+                      join u in _db.Users 
+                      on j.EmployerRefId equals u.EmployerId
+                      //join jobTitle in _db.JobTitle on
+                      //j.JobTitleRefId equals jobTitle.JobTitleId
                       where j.JobId == id
                       select new JobProfile
                       {
-                         JobID= j.JobId,
+                         JobId= j.JobId,
                          Title = j.JobTitle,
                           JobDescription = j.JobDescription,
                          UpperRate = j.UpperRate,
                          LowerRate = j.LowerRate,
-                         JobTitle =jobTitle.Title,
+                         JobTitle =j.JobTitle,
                          CompanyName =employers.CompanyName,
                          Duration =  j.Duration,
                          StartDate=  j.StartDate,
                           Rating = employers.Rating,
-                          EmployerId = employers.EmployerId
+                          EmployerId = employers.EmployerId,
+                          UserId = u.Id
 
                       }).FirstOrDefault(); 
 

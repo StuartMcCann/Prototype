@@ -14,7 +14,7 @@
             contentType: 'application/json; charset=utf-8',
             cache: false,
             //this needs changed whe table fully normalised
-            data: { skill: "@Model.Skill", id : @Model.CandidateId}  ,
+            data: { skill: "@Model.Skill", id : @Model.CandidateID}  ,
             success: function (data) {
                 console.log(data);
                 //loops through values returned in json format by above url
@@ -63,7 +63,7 @@
                  
                 
                  var like = '@LikeType.EmployerLikesCandidate';
-                var id = @Model.CandidateId;
+                var id = @Model.CandidateID;
                 var data = { likeType : like, candId: id }; 
                 console.log(id);
                 $.ajax({
@@ -119,13 +119,14 @@
             <div class="col-sm-8"></div>
             <div class="col-sm-4">
                 <div id="like">
-                    <button type="button"  class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button>
+                    <button type="button" class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button>
                 </div>
-             
-            </div>
+                <a asp-controller="Chat" asp-action="Index" asp-route-userId="@Model.UserId"><button type="button" class="btn btn-primary">Message <i class="fas fa-thumbs-up"></i></button></a>
+</div>
         </div>
         <div class="row buffer">
             <div class="col-sm-9">
+                <h3>@Model.UserId</h3>
                 <h3>£@Model.Rate per hour</h3>
                 <h3>@Model.Level</h3>
                 <h3>@Model.Skill</h3>

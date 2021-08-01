@@ -57,7 +57,7 @@
 
 
                  var like = '@LikeType.CandidateLikesJob';
-                var jId = @Model.JobID;
+                var jId = @Model.JobId;
                 var eId = @Model.EmployerId; 
                 var data = { likeType : like, jobId : jId, employerId : eId };
               
@@ -109,7 +109,11 @@
                 <div id="like">
                     <button type="button" class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button>
                 </div>
-
+                <div>
+                    <a asp-controller="Chat" asp-action="Index" asp-route-userId="@Model.UserId">
+                    <button type="button" class="btn btn-primary">Message <i class="fas fa-thumbs-up"></i>
+                        </button></a>
+                </div>
             </div>
 
 
