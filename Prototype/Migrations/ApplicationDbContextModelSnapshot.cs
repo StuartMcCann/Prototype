@@ -236,20 +236,17 @@ namespace Prototype.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<DateTime>("AvailableFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Level")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("LevelEnum")
                         .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("ProfilePicture")
-                        .HasColumnType("varbinary(max)");
 
                     b.Property<double>("Rate")
                         .HasColumnType("float");
@@ -260,11 +257,42 @@ namespace Prototype.Migrations
                     b.Property<string>("Skill")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("CandidateID");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Candidates");
+                });
+
+            modelBuilder.Entity("Prototype.Models.ChatMessage", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FromUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ToUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FromUserId");
+
+                    b.HasIndex("ToUserId");
+
+                    b.ToTable("ChatMessages");
                 });
 
             modelBuilder.Entity("Prototype.Models.Employer", b =>
@@ -323,7 +351,7 @@ namespace Prototype.Migrations
                     b.Property<string>("JobTitle")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("JobTitleRefId")
+                    b.Property<int?>("JobTitleRefId")
                         .HasColumnType("int");
 
                     b.Property<double>("LowerRate")
@@ -479,9 +507,24 @@ namespace Prototype.Migrations
                 {
                     b.HasOne("Prototype.Models.ApplicationUser", "ApplicationUser")
                         .WithMany()
-                        .HasForeignKey("ApplicationUserId");
+                        .HasForeignKey("UserId");
 
                     b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("Prototype.Models.ChatMessage", b =>
+                {
+                    b.HasOne("Prototype.Models.ApplicationUser", "FromUser")
+                        .WithMany("ChatMessagesFromUsers")
+                        .HasForeignKey("FromUserId");
+
+                    b.HasOne("Prototype.Models.ApplicationUser", "ToUser")
+                        .WithMany("ChatMessagesToUsers")
+                        .HasForeignKey("ToUserId");
+
+                    b.Navigation("FromUser");
+
+                    b.Navigation("ToUser");
                 });
 
             modelBuilder.Entity("Prototype.Models.Job", b =>
@@ -492,9 +535,7 @@ namespace Prototype.Migrations
 
                     b.HasOne("Prototype.Models.JobTitle", "JobTitleFK")
                         .WithMany("Jobs")
-                        .HasForeignKey("JobTitleRefId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("JobTitleRefId");
 
                     b.Navigation("Employer");
 
@@ -531,6 +572,13 @@ namespace Prototype.Migrations
                         .HasForeignKey("CandidateID");
 
                     b.Navigation("Candidate");
+                });
+
+            modelBuilder.Entity("Prototype.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("ChatMessagesFromUsers");
+
+                    b.Navigation("ChatMessagesToUsers");
                 });
 
             modelBuilder.Entity("Prototype.Models.Candidate", b =>

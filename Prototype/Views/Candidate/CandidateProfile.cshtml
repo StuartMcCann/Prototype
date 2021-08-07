@@ -1,9 +1,8 @@
-﻿@model IEnumerable<Prototype.Models.CandidateProfile>
+﻿
+@model Prototype.Models.CandidateProfile
 
-@foreach (var candidate in Model)
-{
 
-    <script type="text/javascript">
+<script type="text/javascript">
 
     $(document).ready(function () {
 
@@ -15,9 +14,9 @@
             contentType: 'application/json; charset=utf-8',
             cache: false,
             //this needs changed whe table fully normalised
-            data: { skill: "@candidate.Skill", id : @candidate.CandidateId}  ,
+            data: { skill: "@Model.Skill", id : @Model.CandidateID}  ,
             success: function (data) {
-                console.log(data); 
+                console.log(data);
                 //loops through values returned in json format by above url
                 $.each(data.data, function (key, val) {
                     //need to add validation that not empty here
@@ -26,15 +25,15 @@
                     $("#output").append(
                         "<div class='buffer'>"+
                             "<div class='card'>"+
-                       "<h5 class= 'card-header'>"+val.name+"</h5>"+
+                       "<h5 class= 'card-header'> Fix Name here</h5>"+
                                 "<div class='card-body'>"+
                         "<h5 class='card-title'>Rate: £" + val.rate + "</h5>" +
                         @*@{ var level = Int32.Parse(  "<%=val.level%>");
-                            var newLevel = (Level)level; 
-                            
+                            var newLevel = (Level)level;
+
                             }*@
                        "<h5 class='card-title'>" +val.level + "</h5>" +
-                        
+
                         "<h5 class='card-title'>" + val.levelEnum + "</h5>" +
                                 "<h5 class='card-title'>"+val.skill+"</h5>"+
                                @*+ "@Html.ActionLink('View more', 'JobProfile', new { id = jobProfile.JobID })"+*@
@@ -46,7 +45,7 @@
 
 
 
-                console.log(data);
+
             },
             error: function (xhr) {
                 alert('error');
@@ -54,22 +53,180 @@
 
         }); //end ajax
 
+        //ajax to check if employer likes candidate and alter like button
+         $.ajax({
+            url: '/Like/AlreadyLiked',
+            dataType: "Json",
+            type: "GET",
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+            //this needs changed whe table fully normalised
+            data: { id : @Model.CandidateID}  ,
+            success: function (data) {
+                console.log(data);
+                //if already liked replace with unlike button
+                if (data == true) {
+                    $("#like").html(
+                        '<div id="like">' +
+                        ' <button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button>' +
+                        '</div>'
+                    );
+                }
+
+
+
+
+            },
+            error: function (xhr) {
+                alert('error');
+            }
+
+        }); //end ajax
+
+        //ajax to check if candidate has mutual like with employer and then allow messaging
+        $.ajax({
+            url: '/Like/HasMutualLike',
+            dataType: "Json",
+            type: "GET",
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+            //this needs changed whe table fully normalised
+            data: { id : @Model.CandidateID}  ,
+            success: function (data) {
+                console.log(data);
+                //if mutual like true replace with message
+                if (data == true) {
+                     var url = '@Url.Action("Index", "Chat", new { userId = @Model.UserId })';
+                    $("#message").html(
+                        '<div id="message">' +
+                        //'<button onclick="location.href="' + url +'" class="btn btn-primary"  type="button"> Message</button>'
+
+                        '<a href="' + url +'"><button class="btn btn-primary">Message</button></a>'
+                        +'</div>'
+                    );
+                }
+
+
+
+
+            },
+            error: function (xhr) {
+                alert('error');
+            }
+
+        }); //end ajax
+
+        $('#like').click(function () {
+
+
+                 var like = '@LikeType.EmployerLikesCandidate';
+                var id = @Model.CandidateID;
+                var data = { likeType : like, candId: id };
+                console.log(id);
+                $.ajax({
+                    url: '/Like/Create/',
+                    type: "POST",
+                    contentType: 'application/x-www-form-urlencoded',
+                    cache: false,
+                    data: data,
+            success: function () {
+                $("#like").html(
+                    '<div id="unlike">'+
+                       ' <button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button>'+
+                    '</div>'
+                    );
+
+                console.log(data);
+            },
+            error: function (jqxhr, status, exception) {
+                alert('Exception:', exception);
+                console.log(candId);
+            }
+
+
+        }); //end ajax
+        }); //end click
+
+
+         $('#unlike').click(function () {
+
+
+                 var like = '@LikeType.EmployerLikesCandidate';
+             var id = @Model.CandidateID;
+             
+                var data = { likeType : like, candidateId: id };
+                console.log(id);
+                $.ajax({
+                    url: '/Like/RemoveLikeCandidate',
+                    type: "POST",
+                    contentType: 'application/x-www-form-urlencoded',
+                    cache: false,
+                    data: data,
+            success: function () {
+                $("#like").html(
+                    '<div id="like">'+
+                       ' <button type="button" class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button>'+
+                    '</div>'
+                    );
+
+                console.log(data);
+            },
+            error: function (jqxhr, status, exception) {
+                alert('Exception:', exception);
+                console.log(candId);
+            }
+
+
+        }); //end ajax
+        }); //end click
+
     }); //end document.load
 
 
-    </script>
+
+
+
+
+
+
+
+</script>
 
 
     <div class="container buffer text">
         <div class="row">
-            <div class="col-sm-8"><h1 class=" heading">@candidate.Name</h1></div>
+            <div class="col-sm-4">
+                @if (Model.ProfilePicture != null)
+                {
+                    <img style="width:200px;height:200px; object-fit:cover; border-radius:30px" src="data:image/*;base64,@(Convert.ToBase64String(Model.ProfilePicture))">
+                }
+                else
+                {
+                    <img id="profilePicture" style="width:200px;height:200px; object-fit:cover" src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png">
+
+                }
+
+            </div>
+            <div class="col-sm-4"><h1 class=" heading">@Model.FirstName @Model.LastName</h1></div>
             <div class="col-sm-4"><h2 class="heading">Candidate Rating: 4/5</h2></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-8"></div>
+            <div class="col-sm-4">
+                <div id="like">
+                    <button type="button" class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button>
+                </div>
+                <div id="message">
+                    @*<a asp-controller="Chat" asp-action="Index" asp-route-userId="@Model.UserId"><button type="button" class="btn btn-primary">Message <i class="fas fa-thumbs-up"></i></button></a>*@
+                </div>
+</div>
         </div>
         <div class="row buffer">
             <div class="col-sm-9">
-                <h3>£@candidate.Rate per hour</h3>
-                <h3>@candidate.Level</h3>
-                <h3>@candidate.Skill</h3>
+                
+                <h3>£@Model.Rate per hour</h3>
+                <h3>@Model.Level</h3>
+                <h3>@Model.Skill</h3>
 
 
             </div>
@@ -98,4 +255,4 @@
 
 
 
-}
+@*}*@

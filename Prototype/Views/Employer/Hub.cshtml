@@ -1,5 +1,167 @@
-﻿
-<div class=" container text buffer">
+﻿@model Prototype.Models.Employer
+  
+<script type="text/javascript">
+
+    //TODO: AJAX for Likes / AJAX for reviews / AJAx for Contracts
+
+    $(document).ready(function () {
+
+        // below ajax gets Jobs connected by user Id and displays them on the page
+        $.ajax({
+            url: '/Job/GetJobsByUserID',
+            dataType: "Json",
+            type: "GET",
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+            //this needs changed whe table fully normalised
+
+            success: function (data) {
+
+               // loops through values returned in json format by above url
+                $.each(data, function (key, val) {
+                   //need to add validation that not empty here
+                   //job id is jobId
+
+                    //action link use to generate url string
+                    var url = '@Url.Action("Edit", "Job", new { id = "replaceToken" })';
+                    url = url.replace("replaceToken", val.jobId);
+                    //bleow appende content to div with id passed as arg
+                    $("#jobsoutput").append(
+
+                        '<div class"card ">' +
+                        '<div class="card-body">' +
+
+
+                        //change below if needs title normalised
+
+                        '<a href="' + url + '"><h5 class="card-title">' + val.jobTitle + ' <i class="far fa-edit"></i></h5></a>' +
+                        "<h5 class='card-text'>Duration:" + val.duration + ' weeks</h5>' +
+                        '<p class="card-text">Start Date: ' + val.startDate.substring(0, 10)+'</p>'+
+
+                    // <a href="#" class="btn btn-primary">Go somewhere</a>
+                    '</div>'+
+                       ' </div>'
+                    );//end of .append
+                });//end of for loop
+
+            }, //end of success function
+            error: function (xhr) {
+                alert( 'error');
+            }
+
+        }); //end ajax
+
+    @*}); //end document.load
+
+
+
+     $(document).ready(function () {
+         var employerId = @Model.EmployerId;*@
+
+        // below ajax gets Jobs connected by user Id and displays them on the page
+        $.ajax({
+            url: '/Like/GetlikesByEmployerID',
+            dataType: "Json",
+            type: "GET",
+            data: { employerId: @Model.EmployerId},
+            contentType: 'application/x-www-form-urlencoded',
+            cache: false,
+            //this needs changed whe table fully normalised
+
+            success: function (data) {
+                  console.log(data)
+               // loops through values returned in json format by above url
+                $.each(data, function (key, val) {
+                   //need to add validation that not empty here
+                   //job id is jobId
+
+                    //action link use to generate url string
+                    var url = '@Url.Action("CandidateProfile", "Candidate", new { id = "replaceToken" })';
+                    url = url.replace("replaceToken", val.candidateId);
+                    //bleow appende content to div with id passed as arg
+                    var type;
+                    if (val.likeType == 1) {
+                         type = ' your job!'
+                    } else if (val.likeType == 2) {
+                         type =  'your company!'
+                    }
+                    $("#likesoutput").append(
+
+                        '<div class= "card">'+
+                       ' <div class="card-body">'+
+                        '<p><a href="'+url+'">' + val.firstName + ' ' + val.lastName + ' </a> likes ' +
+                       type
+                    +'</p>'+
+                         '</div>'+
+                        '</div >'
+
+                    );//end of .append
+                });//end of for loop
+
+            }, //end of success function
+            error: function (xhr) {
+                alert( 'error');
+            }
+
+        }); //end ajax
+
+
+         $.ajax({
+            url: '/Like/GetlikesByEmployerID',
+            dataType: "Json",
+            type: "GET",
+            data: { employerId: @Model.EmployerId},
+            contentType: 'application/x-www-form-urlencoded',
+            cache: false,
+            //this needs changed whe table fully normalised
+
+            success: function (data) {
+                  console.log(data)
+               // loops through values returned in json format by above url
+                $.each(data, function (key, val) {
+                   //need to add validation that not empty here
+                   //job id is jobId
+
+                    //action link use to generate url string
+                    var url = '@Url.Action("CandidateProfile", "Candidate", new { id = "replaceToken" })';
+                    url = url.replace("replaceToken", val.candidateId);
+                    //bleow appende content to div with id passed as arg
+                    var type;
+                    if (val.likeType == 1) {
+                         type = ' your job!'
+                    } else if (val.likeType == 2) {
+                         type =  'your company!'
+                    }
+                    $("#likesoutput").append(
+
+                        '<div class= "card">'+
+                       ' <div class="card-body">'+
+                        '<p><a href="'+url+'">' + val.firstName + ' ' + val.lastName + ' </a> likes ' +
+                       type
+                    +'</p>'+
+                         '</div>'+
+                        '</div >'
+
+                    );//end of .append
+                });//end of for loop
+
+            }, //end of success function
+            error: function (xhr) {
+                alert( 'error');
+            }
+
+        }); //end ajax
+
+    }); //end document.load
+
+
+</script>
+
+
+
+
+
+<div class="  text buffer">
     <h1>Your Employer Hub </h1>
 
 
@@ -10,14 +172,22 @@
 
         <div class="  col-sm">
             <div class="addJob">
-                <h3 class=" heading">Your Live Jobs  </h3>
-                <a asp-controller="Job" asp-action="Create"><button class="addJob">Add Job</button></a>
+                <h3 class=" heading">Your Live Jobs <i class="fas fa-toolbox"></i> </h3>
+                <a asp-controller="Job" asp-action="Create"> <button class=" addJob"><i class="fas fa-plus"></i> Add </button></a>
             </div>
 
 
-            <div class=" scrollgrid  border">
-                <!--content here using ajax-->
-                <div id="jobsoutput"></div>
+            <div class=" scrollgrid border ">
+                <div class="container buffer">
+                   
+                    <!--ajax call to get jobs by user id content appened to this div -->
+                    <div id="jobsoutput"></div>
+                </div>
+                
+               
+                
+
+                
             </div>
         </div>
 
@@ -25,9 +195,27 @@
 
 
         <div class="  col-sm">
-            <h3 class=" heading">Your Likes</h3>
+            <h3 class=" heading">Your Likes <i class="far fa-thumbs-up"></i></h3>
             <div class=" scrollgrid  border">
                 <!--content here using ajax-->
+                <div class="container buffer">
+
+    <!--ajax call to get jobs by user id content appened to this div -->
+    <div class="card">
+        <div class="card-body">
+            CandidateName likes your company
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            CandidateName likes your this job
+        </div>
+    </div>
+
+
+
+    <div id="likesoutput"></div>
+</div>
             </div>
         </div>
     </div><!--End of row-->
@@ -36,9 +224,14 @@
        
 
         <div class="  col-sm">
-            <h3 class=" heading">Your Contracts</h3>
+            <h3 class=" heading">Your Contracts <i class="fas fa-file-signature"></i></h3>
             <div class=" scrollgrid  border">
                 <!--content here using ajax-->
+                <div class="container buffer">
+
+                    <!--ajax call to get jobs by user id content appened to this div -->
+                    <div id="contractsoutput"></div>
+                </div>
             </div>
         </div>
 
@@ -46,9 +239,14 @@
 
 
         <div class="  col-sm">
-            <h3 class=" heading">Your Messages</h3>
+            <h3 class=" heading">Your Messages <i class="far fa-comments"></i></h3>
             <div class=" scrollgrid  border">
                 <!--content here using ajax-->
+                <div class="container buffer">
+
+                    <!--ajax call to get jobs by user id content appened to this div -->
+                    <div id="messagesoutput"></div>
+                </div>
             </div>
         </div>
     </div>

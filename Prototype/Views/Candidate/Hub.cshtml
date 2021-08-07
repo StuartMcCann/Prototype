@@ -1,0 +1,69 @@
+﻿
+<!-- TODO: AJAX call for likes / Messages / Reviews?/ Contracts -->
+
+<div class="  text buffer">
+    <h1>Your Personal Hub </h1>
+
+    <p> Your one stop shop to finding your next contract!</p>
+
+
+    <div class="dashboard row ">
+
+
+        <div class="  col-sm">
+            <div class="addJob">
+                <h3 class=" heading">Your Details  </h3>
+                <a asp-controller="Candidate" asp-action="Edit"> <button class=" addJob">Update</button></a>
+            </div>
+
+
+            <div class=" scrollgrid border ">
+                <div class="container buffer">
+
+                    <!--ajax call to get jobs by user id content appened to this div -->
+                    <div id="detailsoutput"></div>
+                </div>
+
+
+
+
+
+            </div>
+        </div>
+
+
+
+
+        <div class="  col-sm">
+            <h3 class=" heading">Your Likes</h3>
+            <div class=" scrollgrid  border">
+                <!--content here using ajax-->
+                <div class=" row"> <p>Test</p></div>
+                <div class=" row"> Test</div>
+            </div>
+        </div>
+    </div><!--End of row-->
+
+    <div class="dashboard row ">
+
+
+        <div class="  col-sm">
+            <h3 class=" heading">Your Contracts</h3>
+            <div class=" scrollgrid  border">
+                <!--content here using ajax-->
+            </div>
+        </div>
+
+
+
+
+        <div class="  col-sm">
+            <h3 class=" heading">Your Messages</h3>
+            <div class=" scrollgrid  border">
+                <!--content here using ajax-->
+            </div>
+        </div>
+    </div>
+
+
+</div>

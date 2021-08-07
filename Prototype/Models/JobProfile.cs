@@ -5,20 +5,18 @@ using System.Threading.Tasks;
 
 namespace Prototype.Models
 {
-    public class JobProfile
+    public class JobProfile :Job
     {
 
-        public int JobID { get; set; }
+       
         //remove below when normalisation completed 
         public string Title { get; set; }
-        public String JobDescription { get; set; }
-        public double UpperRate { get; set; }
-        public double LowerRate { get; set; }
-        public String JobTitle { get; set; }
+        
+        public  int EmployerId { get; set; }
         public String CompanyName { get; set; }
-        public int Duration { get; set; }
-        public DateTime StartDate { get; set; }
+        public string UserId { get; set; }
 
-        public double Rating { get; set; }
+
+        public double? Rating { get; set; }
     }
 }
