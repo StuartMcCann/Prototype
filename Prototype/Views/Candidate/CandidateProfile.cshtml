@@ -45,7 +45,7 @@
 
 
 
-                console.log(data);
+
             },
             error: function (xhr) {
                 alert('error');
@@ -53,18 +53,75 @@
 
         }); //end ajax
 
-    }); //end document.load
+        //ajax to check if employer likes candidate and alter like button
+         $.ajax({
+            url: '/Like/AlreadyLiked',
+            dataType: "Json",
+            type: "GET",
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+            //this needs changed whe table fully normalised
+            data: { id : @Model.CandidateID}  ,
+            success: function (data) {
+                console.log(data);
+                //if already liked replace with unlike button
+                if (data == true) {
+                    $("#like").html(
+                        '<div id="like">' +
+                        ' <button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button>' +
+                        '</div>'
+                    );
+                }
 
 
 
 
-        $(document).ready(function () {
-            $('#like').click(function () {
-                 
-                
+            },
+            error: function (xhr) {
+                alert('error');
+            }
+
+        }); //end ajax
+
+        //ajax to check if candidate has mutual like with employer and then allow messaging
+        $.ajax({
+            url: '/Like/HasMutualLike',
+            dataType: "Json",
+            type: "GET",
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+            //this needs changed whe table fully normalised
+            data: { id : @Model.CandidateID}  ,
+            success: function (data) {
+                console.log(data);
+                //if mutual like true replace with message
+                if (data == true) {
+                     var url = '@Url.Action("Index", "Chat", new { userId = @Model.UserId })';
+                    $("#message").html(
+                        '<div id="message">' +
+                        //'<button onclick="location.href="' + url +'" class="btn btn-primary"  type="button"> Message</button>'
+
+                        '<a href="' + url +'"><button class="btn btn-primary">Message</button></a>'
+                        +'</div>'
+                    );
+                }
+
+
+
+
+            },
+            error: function (xhr) {
+                alert('error');
+            }
+
+        }); //end ajax
+
+        $('#like').click(function () {
+
+
                  var like = '@LikeType.EmployerLikesCandidate';
                 var id = @Model.CandidateID;
-                var data = { likeType : like, candId: id }; 
+                var data = { likeType : like, candId: id };
                 console.log(id);
                 $.ajax({
                     url: '/Like/Create/',
@@ -74,11 +131,11 @@
                     data: data,
             success: function () {
                 $("#like").html(
-                    '<div id="like">'+
+                    '<div id="unlike">'+
                        ' <button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button>'+
                     '</div>'
                     );
-                
+
                 console.log(data);
             },
             error: function (jqxhr, status, exception) {
@@ -89,7 +146,45 @@
 
         }); //end ajax
         }); //end click
-        }); //end document.load
+
+
+         $('#unlike').click(function () {
+
+
+                 var like = '@LikeType.EmployerLikesCandidate';
+             var id = @Model.CandidateID;
+             
+                var data = { likeType : like, candidateId: id };
+                console.log(id);
+                $.ajax({
+                    url: '/Like/RemoveLikeCandidate',
+                    type: "POST",
+                    contentType: 'application/x-www-form-urlencoded',
+                    cache: false,
+                    data: data,
+            success: function () {
+                $("#like").html(
+                    '<div id="like">'+
+                       ' <button type="button" class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button>'+
+                    '</div>'
+                    );
+
+                console.log(data);
+            },
+            error: function (jqxhr, status, exception) {
+                alert('Exception:', exception);
+                console.log(candId);
+            }
+
+
+        }); //end ajax
+        }); //end click
+
+    }); //end document.load
+
+
+
+
 
 
 
@@ -121,12 +216,14 @@
                 <div id="like">
                     <button type="button" class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button>
                 </div>
-                <a asp-controller="Chat" asp-action="Index" asp-route-userId="@Model.UserId"><button type="button" class="btn btn-primary">Message <i class="fas fa-thumbs-up"></i></button></a>
+                <div id="message">
+                    @*<a asp-controller="Chat" asp-action="Index" asp-route-userId="@Model.UserId"><button type="button" class="btn btn-primary">Message <i class="fas fa-thumbs-up"></i></button></a>*@
+                </div>
 </div>
         </div>
         <div class="row buffer">
             <div class="col-sm-9">
-                <h3>@Model.UserId</h3>
+                
                 <h3>£@Model.Rate per hour</h3>
                 <h3>@Model.Level</h3>
                 <h3>@Model.Skill</h3>

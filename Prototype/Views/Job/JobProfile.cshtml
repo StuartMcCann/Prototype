@@ -48,19 +48,44 @@
 
         }); //end ajax
 
-    }); //end document.load
+         //ajax to check if Candidate already likes employer and alter like button
+         $.ajax({
+            url: '/Like/AlreadyLikedJob',
+            dataType: "Json",
+            type: "GET",
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+            //this needs changed whe table fully normalised
+            data: { jobId : @Model.JobId}  ,
+            success: function (data) {
+                console.log(data);
+                //if already liked replace with unlike button
+                if (data == true) {
+                    $("#like").html(
+                        '<div id="like">' +
+                        ' <button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button>' +
+                        '</div>'
+                    );
+                }
 
 
 
-     $(document).ready(function () {
-            $('#like').click(function () {
+
+            },
+            error: function (xhr) {
+                alert('error');
+            }
+
+         }); //end ajax
+
+        $('#like').click(function () {
 
 
                  var like = '@LikeType.CandidateLikesJob';
                 var jId = @Model.JobId;
-                var eId = @Model.EmployerId; 
+                var eId = @Model.EmployerId;
                 var data = { likeType : like, jobId : jId, employerId : eId };
-              
+
                 $.ajax({
                     url: '/Like/CreateLikeJob/',
                     type: "POST",
@@ -74,17 +99,53 @@
                     '</div>'
                     );
 
-               
+
             },
             error: function (jqxhr, status, exception) {
                 alert('Exception:', exception);
-                
+
             }
 
 
         }); //end ajax
         }); //end click
-        }); //end document.load
+
+
+
+        //ajax to check if candidate has mutual like with employer and then allow messaging
+        $.ajax({
+            url: '/Like/HasMutualLike',
+            dataType: "Json",
+            type: "GET",
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+            //this needs changed whe table fully normalised
+            data: { id : @Model.EmployerId}  ,
+            success: function (data) {
+                console.log(data);
+                //if mutual like true replace with message
+                if (data == true) {
+                     var url = '@Url.Action("Index", "Chat", new { userId = @Model.UserId })';
+                    $("#message").html(
+                        '<div id="message">' +
+                        //'<button onclick="location.href="' + url +'" class="btn btn-primary"  type="button"> Message</button>'
+
+                        '<a href="' + url +'"><button class="btn btn-primary">Message</button></a>'
+                        +'</div>'
+                    );
+                }
+            },
+            error: function (xhr) {
+                alert('error');
+            }
+
+        }); //end ajax
+
+    }); //end document.load
+
+
+
+
 
 
 </script>
@@ -109,10 +170,10 @@
                 <div id="like">
                     <button type="button" class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button>
                 </div>
-                <div>
-                    <a asp-controller="Chat" asp-action="Index" asp-route-userId="@Model.UserId">
-                    <button type="button" class="btn btn-primary">Message <i class="fas fa-thumbs-up"></i>
-                        </button></a>
+                <div id="message">
+                    @*<a asp-controller="Chat" asp-action="Index" asp-route-userId="@Model.UserId">
+                    <button type="button" class="btn btn-primary">Message <i class="far fa-envelope"></i>
+                        </button></a>*@
                 </div>
             </div>
 

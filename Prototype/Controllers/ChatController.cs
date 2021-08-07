@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace Prototype.Controllers
 {
@@ -21,13 +20,7 @@ namespace Prototype.Controllers
             _db = applicationDbContext;
         }
 
-        //public IActionResult Index()
-        //{
-        //    var userId = User.Claims.Where(a => a.Type == ClaimTypes.NameIdentifier).Select(a => a.Value).FirstOrDefault();
-        //    IEnumerable<ApplicationUser> users = _db.Users.Where(user => user.Id != userId).ToList();
 
-        //    return View(users);
-        //}
 
         //[HttpGet("users")]
         public List<ApplicationUser> GetUsers()
@@ -57,7 +50,7 @@ namespace Prototype.Controllers
             }
 
 
-           
+
 
 
         }
@@ -85,7 +78,7 @@ namespace Prototype.Controllers
                                            ProfilePicture = u.ProfilePicture,
                                            Skill = c.Skill,
                                            Rating = c.Rating,
-                                           CandidateId = c.CandidateID, 
+                                           CandidateId = c.CandidateID,
                                            Id = userId,
                                        }).FirstOrDefault();
 
@@ -119,16 +112,22 @@ namespace Prototype.Controllers
             return userProfile;
         }
 
+        public IActionResult EmployerPageRedirect(int employerId)
+        {
+            var userId = _db.Users.Where(u => u.EmployerId == employerId).Select(i => i.Id).First();
 
+            return RedirectToAction("Index", new { userId = userId }); 
+
+        }
 
         [HttpPost]
         public ActionResult SaveMessage(string toUserId, string messageContent)
         {
-            
+
             ChatMessage message = new ChatMessage();
             //separate methods for belwp
             var userId = GetCurrentUserID();
-            var fromUser = GetUserByUserId(userId); 
+            var fromUser = GetUserByUserId(userId);
             var toUser = GetUserByUserId(toUserId);
 
             message.ToUser = toUser;
@@ -145,26 +144,26 @@ namespace Prototype.Controllers
             _db.SaveChanges();
             return RedirectToAction("Index", new { userId = toUserId });
 
-            
-           
+
+
         }
 
         public string GetCurrentUserID()
         {
             var userId = User.Claims.Where(a => a.Type == ClaimTypes.NameIdentifier).Select(a => a.Value).FirstOrDefault();
-            return userId; 
+            return userId;
         }
 
         public ApplicationUser GetUserByUserId(string userId)
         {
-           var user =  _db.Users.Where(user => user.Id == userId).FirstOrDefault();
-            return user; 
+            var user = _db.Users.Where(user => user.Id == userId).FirstOrDefault();
+            return user;
         }
 
         //need to pass id for cand/client here 
         public List<ChatMessage> GetConversation(string toUserId)
         {
-            var userId = GetCurrentUserID(); 
+            var userId = GetCurrentUserID();
             var messages = _db.ChatMessages
                     .Where(h => (h.FromUserId == toUserId && h.ToUserId == userId) || (h.FromUserId == userId && h.ToUserId == toUserId))
                     .OrderBy(a => a.CreatedDate)
@@ -184,6 +183,8 @@ namespace Prototype.Controllers
 
             return messages;
         }
+
+       
 
     }
 }
