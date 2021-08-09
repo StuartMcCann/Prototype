@@ -14,6 +14,22 @@ namespace Prototype.Models
         public DateTime CreatedDate { get; set; }
         public virtual ApplicationUser FromUser { get; set; }
         public virtual ApplicationUser ToUser { get; set; }
+
+        //Default Constructor 
+        public ChatMessage()
+        {
+
+        }
+
+        public ChatMessage(ApplicationUser fromUser, ApplicationUser toUser, string messageContent)
+        {
+            this.FromUser = fromUser;
+            this.FromUserId = fromUser.Id;
+            this.ToUser = toUser;
+            this.ToUserId = toUser.Id;
+            this.Message = messageContent;
+            this.CreatedDate = DateTime.Now; 
+        }
     }
    
 }

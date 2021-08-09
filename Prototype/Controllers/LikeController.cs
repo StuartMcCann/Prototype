@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Prototype.Data;
+using Prototype.Enums;
 using Prototype.Models;
 using System;
 using System.Collections.Generic;
@@ -131,8 +132,10 @@ namespace Prototype.Controllers
                 LikeType = l.LikeType, 
                 FirstName = u.FirstName, 
                 LastName = u.LastName
+               
+               
 
-            }).ToList();
+        }).ToList();
 
             return likes; 
 
@@ -204,7 +207,13 @@ namespace Prototype.Controllers
 
         public int GetCandidateIdByUserID(String userId)
         {
+             
+            
             var candidateId = _db.Candidates.Where(c => c.UserId == userId).Select(i => i.CandidateID).First();
+           
+                
+           
+           
 
             return candidateId;
         }

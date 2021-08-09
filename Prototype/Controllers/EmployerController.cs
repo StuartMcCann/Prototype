@@ -113,6 +113,7 @@ namespace Prototype.Controllers
                
                 var  user = GetUser(); 
                 user.EmployerId = employer.EmployerId;
+                user.Employer = employer; 
                 _db.SaveChanges(); 
                 return RedirectToAction("Index");
 

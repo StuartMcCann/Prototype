@@ -81,10 +81,11 @@ namespace Prototype.Controllers
         public IActionResult Create(Job job)
         {
 
-            var user = GetUser();
-            
-                int employerId = (int)user.EmployerId;
-                job.EmployerRefId = employerId;
+            var user = GetUser();            
+            int employerId = (int)user.EmployerId;
+            Employer employer = _db.Employers.Where(e => e.EmployerId == employerId).First();
+            job.AddEmployer(employer); 
+
             
              
             //validation below 
@@ -94,7 +95,7 @@ namespace Prototype.Controllers
                 //save changes exexutes action to DB
                 _db.SaveChanges();
                 //needs changed to direct to edit 
-                return RedirectToAction("Index");
+                return RedirectToAction("JobProfile", new { id = job.JobId });
 
             }
             return View(job);
@@ -108,8 +109,8 @@ namespace Prototype.Controllers
             
 
             var jobsLikeThis = (from j in _db.Jobs
-                       join employers in _db.Employers on j.EmployerRefId
-                       equals employers.EmployerId
+                       //join employers in _db.Employers on j.EmployerRefId
+                       //equals employers.EmployerId
                        join jobTitle in _db.JobTitle on
                        j.JobTitleRefId equals jobTitle.JobTitleId
                        where j.JobTitle == title
@@ -122,10 +123,11 @@ namespace Prototype.Controllers
                            UpperRate = j.UpperRate,
                            LowerRate = j.LowerRate,
                            JobTitle = jobTitle.Title,
-                           CompanyName = employers.CompanyName,
+                           CompanyName = j.Employer.CompanyName,
                            Duration = j.Duration,
                            StartDate = j.StartDate,
-                           Rating = employers.Rating
+                           Rating = j.Employer.Rating, 
+                           Employer = j.Employer
 
                        }).ToList();
 

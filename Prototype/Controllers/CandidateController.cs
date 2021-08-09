@@ -91,7 +91,9 @@ namespace Prototype.Controllers
 
             var user = GetUser();
             var userId = user.Id;
-            candidate.UserId = userId; 
+           // candidate.UserId = userId;
+            // add user to candidate 
+            candidate = new Candidate(candidate, userId, _db); 
             //validation below 
             if (ModelState.IsValid)
             {

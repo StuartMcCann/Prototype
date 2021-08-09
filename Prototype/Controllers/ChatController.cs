@@ -124,21 +124,14 @@ namespace Prototype.Controllers
         public ActionResult SaveMessage(string toUserId, string messageContent)
         {
 
-            ChatMessage message = new ChatMessage();
+            //ChatMessage message = new ChatMessage();
             //separate methods for belwp
             var userId = GetCurrentUserID();
             var fromUser = GetUserByUserId(userId);
             var toUser = GetUserByUserId(toUserId);
 
-            message.ToUser = toUser;
-            message.FromUser = fromUser;
-
-            message.FromUserId = userId;
-            message.CreatedDate = DateTime.Now;
-
-
-            message.Message = messageContent;
-            message.ToUserId = toUserId;
+            ChatMessage message = new ChatMessage(fromUser, toUser, messageContent); 
+            
 
             _db.ChatMessages.Add(message);
             _db.SaveChanges();

@@ -16,7 +16,7 @@
             //this needs changed whe table fully normalised
             data: { skill: "@Model.Skill", id : @Model.CandidateID}  ,
             success: function (data) {
-                console.log(data);
+                //console.log(data);
                 //loops through values returned in json format by above url
                 $.each(data.data, function (key, val) {
                     //need to add validation that not empty here
@@ -63,7 +63,7 @@
             //this needs changed whe table fully normalised
             data: { id : @Model.CandidateID}  ,
             success: function (data) {
-                console.log(data);
+               // console.log(data);
                 //if already liked replace with unlike button
                 if (data == true) {
                     $("#like").html(
@@ -93,7 +93,7 @@
             //this needs changed whe table fully normalised
             data: { id : @Model.CandidateID}  ,
             success: function (data) {
-                console.log(data);
+                //console.log(data);
                 //if mutual like true replace with message
                 if (data == true) {
                      var url = '@Url.Action("Index", "Chat", new { userId = @Model.UserId })';
@@ -122,7 +122,7 @@
                  var like = '@LikeType.EmployerLikesCandidate';
                 var id = @Model.CandidateID;
                 var data = { likeType : like, candId: id };
-                console.log(id);
+                //console.log(id);
                 $.ajax({
                     url: '/Like/Create/',
                     type: "POST",
@@ -136,7 +136,7 @@
                     '</div>'
                     );
 
-                console.log(data);
+                //console.log(data);
             },
             error: function (jqxhr, status, exception) {
                 alert('Exception:', exception);
