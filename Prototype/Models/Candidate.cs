@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Prototype.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -47,7 +48,24 @@ namespace Prototype.Models
         /*Many to many With Jobs and Employer for Likes
         public ICollection<Job> Jobs { get; set; }
         public ICollection<Employer> Employers { get; set; }*/
+        //foreign key one to many with Likes 
         public ICollection<Like> Likes { get; set; }
+        //foreign key one to many with Contracts
+        public ICollection<Contract> Contracts { get; set; }
+
+        //default constructor 
+        public Candidate()
+        {
+
+        }
+
+        public Candidate(Candidate candidate, string userId, ApplicationDbContext db)
+        {
+            this.UserId = userId;
+            this.ApplicationUser = db.Users.Where(U => U.Id == userId).First(); 
+        }
+
+
     }
 
     public enum Level

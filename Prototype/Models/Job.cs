@@ -41,10 +41,28 @@ namespace Prototype.Models
         /*Many to many With Candidates for Likes
         public ICollection<Candidate> Candidates { get; set; }*/
         public ICollection<Like> Likes { get; set; }
-        
+
+        // one to one with relationship with Contract
+        public virtual Contract Contract { get; set; }
+
+
+
+
+
+
+
+
+        public void AddEmployer(Employer employer)
+        {
+            this.Employer = employer;
+            this.EmployerRefId = employer.EmployerId; 
+        }
+
 
     }
 
+
+  
     
 
 }

@@ -50,6 +50,10 @@ html {
   border-bottom: 1px solid #e5e5e5;
 }
 
+.border {
+    border-radius: 2vh;
+}
+
 .box-shadow {
   box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
 }
@@ -97,6 +101,10 @@ body {
 
 .buffer {
     padding: 20px;
+}
+
+.add-margin{
+    margin: 10px;
 }
 
 .heading, .text {
@@ -237,4 +245,11 @@ button:focus {
 .messageDark {
     background: #2b6777;
     
+}
+
+.thumbnail {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 30px
 }

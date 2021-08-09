@@ -1,0 +1,38 @@
+﻿@model Prototype.Models.Contract 
+
+<div class=" container  text">
+
+    <h1 class=" heading buffer"> Your Contract with @Model.Candidate.ApplicationUser.FirstName</h1>
+
+    <div class="row buffer add-margin">
+
+        <div class="col-sm-6  ">
+
+            <h3>Contract Details</h3>
+
+            <h6>Status: @if (Model.IsUnderContract)
+            { <span>In Progress</span> }
+            else {<span>Completed</span> }</h6>
+            <h6>Colleague: @Model.Candidate.ApplicationUser.FirstName   @Model.Candidate.ApplicationUser.LastName</h6>
+            <h6>Current Rate: @Model.AgreedRate</h6>
+            <h6>Job: @Model.Job.JobTitle</h6>
+            <h6>Start Date: @Model.StartDate.ToShortDateString()</h6>
+            @if (!Model.IsUnderContract)
+            {
+                <h6>End Date: @Model.EndDate</h6>
+            }
+
+        </div>
+
+        <div class="col-sm-5 border">
+
+            <h3>Actions</h3>
+
+        </div>
+
+
+    </div>
+
+
+
+</div>

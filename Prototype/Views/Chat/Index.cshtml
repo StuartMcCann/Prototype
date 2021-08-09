@@ -123,11 +123,29 @@
             </div>
 
             <div class="col-sm-3  scrollgrid  border">
+                @if (User.IsInRole("Employer"))
+                {
+                    <h5 class="heading">Create a Contract <i class="fas fa-file-signature"></i></h5>
+                    <h6>Like how things are going?</h6>
+
+                    <p>If you've confirmed this freelancer has the skills you need then it's time to set up a contract and get working! </p>
+
+                    <a asp-controller="Contract" asp-route-candidateId="@Model.CandidateId" asp-action="Create" class="btn btn-primary mx-2">Create <i class="fas fa-plus"></i></a>
+
+                    <p> <i>Make sure you have agreed a rate before confirming a contract.</i> </p>
+
+                    <p>You need a live job to create a contract, you can create one 
+                <a asp-controller="Job" asp-action="Create">here</a> if you don't have one or would like to create one for this freelancer. </p> 
+
+                  }else if (User.IsInRole("Candidate"))
+                        {
+
+
+                        }
 
 
 
-
-            </div>
+                </div>
 
 
         </div>

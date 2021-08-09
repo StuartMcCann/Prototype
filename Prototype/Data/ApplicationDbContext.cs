@@ -25,6 +25,8 @@ namespace Prototype.Data
 
         public DbSet<ChatMessage> ChatMessages { get; set; }
 
+        public DbSet<Contract> Contracts { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

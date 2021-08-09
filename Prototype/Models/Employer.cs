@@ -10,10 +10,7 @@ namespace Prototype.Models
     public class Employer
     {
 
-       /* public Employer()
-        {
-            this.Candidates = new HashSet<Candidate>();
-        }*/
+       
         [Key]
         public int EmployerId { get; set; }
         [Required]
@@ -31,6 +28,8 @@ namespace Prototype.Models
         /*Many to many With Candidates for Likes
         public ICollection<Candidate> Candidates { get; set; }*/
         public ICollection<Like> Likes { get; set; }
+        //foreign key one to many with Contracts
+        public ICollection<Contract> Contracts { get; set; }
 
         //one to many relationship with Application User - one employer can have any users associated with it 
         //public ApplicationUser ApplicationUser { get; set; }
