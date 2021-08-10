@@ -1,4 +1,6 @@
-﻿using Prototype.Data;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Prototype.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -32,7 +34,7 @@ namespace Prototype.Models
 
         public double Rating { get; set; }
         public double Rate { get; set; }
-
+        
         public Level LevelEnum { get; set;  }
         
 

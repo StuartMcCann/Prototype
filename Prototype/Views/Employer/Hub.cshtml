@@ -51,12 +51,7 @@
 
         }); //end ajax
 
-    @*}); //end document.load
 
-
-
-     $(document).ready(function () {
-         var employerId = @Model.EmployerId;*@
 
         // below ajax gets Jobs connected by user Id and displays them on the page
         $.ajax({
@@ -105,8 +100,42 @@
 
         }); //end ajax
 
+         $.ajax({
+             url: '/Contract/GetContractsEmployerHub',
+            dataType: "Json",
+            type: "GET",
+            data: { employerId: @Model.EmployerId},
+            contentType: 'application/x-www-form-urlencoded',
+            cache: false,
+            //this needs changed whe table fully normalised
 
-       
+            success: function (data) {
+                  console.log(data)
+               // loops through values returned in json format by above url
+                $.each(data, function (key, val) {
+                   //need to add validation that not empty here
+                   //job id is jobId
+
+                    //action link use to generate url string
+                    @*var url = '@Url.Action("CandidateProfile", "Candidate", new { id = "replaceToken" })';
+                    url = url.replace("replaceToken", val.candidateId);*@
+                    //bleow appende content to div with id passed as arg
+                   
+                    $("#contractsoutput").append(
+
+
+                    );//end of .append
+                });//end of for loop
+
+            }, //end of success function
+            error: function (xhr) {
+                alert( 'error');
+            }
+
+        }); //end ajax
+
+
+
 
     }); //end document.load
 
@@ -172,7 +201,7 @@
                 <!--content here using ajax-->
                 <div class="container buffer">
 
-                    <!--ajax call to get jobs by user id content appened to this div -->
+                    <!--ajax call to get contracts  id content appened to this div -->
                     <div id="contractsoutput"></div>
                 </div>
             </div>

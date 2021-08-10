@@ -20,7 +20,7 @@
                 //loops through values returned in json format by above url
                 $.each(data.data, function (key, val) {
                     //need to add validation that not empty here
-
+                   //                    
                     //$("#output").append(val.title);
                     $("#output").append(
                         "<div class='buffer'>"+
@@ -153,7 +153,7 @@
 
                  var like = '@LikeType.EmployerLikesCandidate';
              var id = @Model.CandidateID;
-             
+
                 var data = { likeType : like, candidateId: id };
                 console.log(id);
                 $.ajax({

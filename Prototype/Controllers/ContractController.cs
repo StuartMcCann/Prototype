@@ -71,12 +71,34 @@ namespace Prototype.Controllers
 
         }
 
-
         public void UpdateJobStatus(Contract contract)
         {
             contract.Job.IsLive = false;
             _db.Jobs.Update(contract.Job);
             _db.SaveChanges(); 
+        }
+
+        public List<Contract> GetContractsEmployerHub(int employerId)
+        {
+
+            // var contracts = _db.Contracts.Where(c => c.EmployerId == employerId).ToList();
+            var contracts = (from c in _db.Contracts
+                             where c.EmployerId == employerId
+                             select new Contract
+                             {
+                                 ContractId = c.ContractId,
+                                 AgreedRate = c.AgreedRate,
+                                 StartDate = c.StartDate,
+                                 EndDate = c.EndDate,
+                                 IsUnderContract = c.IsUnderContract,
+                                 Candidate = _db.Candidates.Where(c => c.CandidateID == c.CandidateID).First(),
+                                 Employer = _db.Employers.Where(e => e.EmployerId == c.EmployerId).First(),
+                                 Job = _db.Jobs.Where(j=> j.JobId == c.JobId).First(),
+                                 //Candidate.ApplicationUser = _db.Users.Where(u => u.Id == Candidate.UserId), 
+                                 IsRated = c.IsRated
+
+                             }).ToList(); 
+            return contracts; 
         }
     }
 }
