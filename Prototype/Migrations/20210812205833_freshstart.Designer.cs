@@ -10,8 +10,8 @@ using Prototype.Data;
 namespace Prototype.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210716192829_UpdateFKCandidateUser")]
-    partial class UpdateFKCandidateUser
+    [Migration("20210812205833_freshstart")]
+    partial class freshstart
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,36 @@ namespace Prototype.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.6")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("CandidateSkill", b =>
+                {
+                    b.Property<int>("CandidatesCandidateID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SkillsSkillId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CandidatesCandidateID", "SkillsSkillId");
+
+                    b.HasIndex("SkillsSkillId");
+
+                    b.ToTable("CandidateSkill");
+                });
+
+            modelBuilder.Entity("JobSkill", b =>
+                {
+                    b.Property<int>("JobsJobId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SkillsSkillId")
+                        .HasColumnType("int");
+
+                    b.HasKey("JobsJobId", "SkillsSkillId");
+
+                    b.HasIndex("SkillsSkillId");
+
+                    b.ToTable("JobSkill");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -238,17 +268,17 @@ namespace Prototype.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Level")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("AvailableFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("JobTitle")
+                        .HasColumnType("int");
 
                     b.Property<int>("LevelEnum")
                         .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("ProfilePicture")
-                        .HasColumnType("varbinary(max)");
 
                     b.Property<double>("Rate")
                         .HasColumnType("float");
@@ -267,6 +297,77 @@ namespace Prototype.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Candidates");
+                });
+
+            modelBuilder.Entity("Prototype.Models.ChatMessage", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FromUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ToUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FromUserId");
+
+                    b.HasIndex("ToUserId");
+
+                    b.ToTable("ChatMessages");
+                });
+
+            modelBuilder.Entity("Prototype.Models.Contract", b =>
+                {
+                    b.Property<int>("ContractId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("AgreedRate")
+                        .HasColumnType("float");
+
+                    b.Property<int>("CandidateId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EmployerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRated")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsUnderContract")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("JobId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ContractId");
+
+                    b.HasIndex("CandidateId");
+
+                    b.HasIndex("EmployerId");
+
+                    b.HasIndex("JobId")
+                        .IsUnique();
+
+                    b.ToTable("Contracts");
                 });
 
             modelBuilder.Entity("Prototype.Models.Employer", b =>
@@ -322,10 +423,10 @@ namespace Prototype.Migrations
                     b.Property<string>("JobDescription")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("JobTitle")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("JobTitle")
+                        .HasColumnType("int");
 
-                    b.Property<int>("JobTitleRefId")
+                    b.Property<int>("Level")
                         .HasColumnType("int");
 
                     b.Property<double>("LowerRate")
@@ -341,24 +442,7 @@ namespace Prototype.Migrations
 
                     b.HasIndex("EmployerId");
 
-                    b.HasIndex("JobTitleRefId");
-
                     b.ToTable("Jobs");
-                });
-
-            modelBuilder.Entity("Prototype.Models.JobTitle", b =>
-                {
-                    b.Property<int>("JobTitleId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("JobTitleId");
-
-                    b.ToTable("JobTitle");
                 });
 
             modelBuilder.Entity("Prototype.Models.Like", b =>
@@ -415,6 +499,51 @@ namespace Prototype.Migrations
                     b.HasIndex("CandidateID");
 
                     b.ToTable("Reviews");
+                });
+
+            modelBuilder.Entity("Prototype.Models.Skill", b =>
+                {
+                    b.Property<int>("SkillId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("SkillName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("SkillId");
+
+                    b.ToTable("Skills");
+                });
+
+            modelBuilder.Entity("CandidateSkill", b =>
+                {
+                    b.HasOne("Prototype.Models.Candidate", null)
+                        .WithMany()
+                        .HasForeignKey("CandidatesCandidateID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Prototype.Models.Skill", null)
+                        .WithMany()
+                        .HasForeignKey("SkillsSkillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("JobSkill", b =>
+                {
+                    b.HasOne("Prototype.Models.Job", null)
+                        .WithMany()
+                        .HasForeignKey("JobsJobId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Prototype.Models.Skill", null)
+                        .WithMany()
+                        .HasForeignKey("SkillsSkillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -486,21 +615,55 @@ namespace Prototype.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
+            modelBuilder.Entity("Prototype.Models.ChatMessage", b =>
+                {
+                    b.HasOne("Prototype.Models.ApplicationUser", "FromUser")
+                        .WithMany("ChatMessagesFromUsers")
+                        .HasForeignKey("FromUserId");
+
+                    b.HasOne("Prototype.Models.ApplicationUser", "ToUser")
+                        .WithMany("ChatMessagesToUsers")
+                        .HasForeignKey("ToUserId");
+
+                    b.Navigation("FromUser");
+
+                    b.Navigation("ToUser");
+                });
+
+            modelBuilder.Entity("Prototype.Models.Contract", b =>
+                {
+                    b.HasOne("Prototype.Models.Candidate", "Candidate")
+                        .WithMany("Contracts")
+                        .HasForeignKey("CandidateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Prototype.Models.Employer", "Employer")
+                        .WithMany("Contracts")
+                        .HasForeignKey("EmployerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Prototype.Models.Job", "Job")
+                        .WithOne("Contract")
+                        .HasForeignKey("Prototype.Models.Contract", "JobId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Candidate");
+
+                    b.Navigation("Employer");
+
+                    b.Navigation("Job");
+                });
+
             modelBuilder.Entity("Prototype.Models.Job", b =>
                 {
                     b.HasOne("Prototype.Models.Employer", "Employer")
                         .WithMany("Jobs")
                         .HasForeignKey("EmployerId");
 
-                    b.HasOne("Prototype.Models.JobTitle", "JobTitleFK")
-                        .WithMany("Jobs")
-                        .HasForeignKey("JobTitleRefId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Employer");
-
-                    b.Navigation("JobTitleFK");
                 });
 
             modelBuilder.Entity("Prototype.Models.Like", b =>
@@ -535,8 +698,17 @@ namespace Prototype.Migrations
                     b.Navigation("Candidate");
                 });
 
+            modelBuilder.Entity("Prototype.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("ChatMessagesFromUsers");
+
+                    b.Navigation("ChatMessagesToUsers");
+                });
+
             modelBuilder.Entity("Prototype.Models.Candidate", b =>
                 {
+                    b.Navigation("Contracts");
+
                     b.Navigation("Likes");
 
                     b.Navigation("Reviews");
@@ -544,6 +716,8 @@ namespace Prototype.Migrations
 
             modelBuilder.Entity("Prototype.Models.Employer", b =>
                 {
+                    b.Navigation("Contracts");
+
                     b.Navigation("Jobs");
 
                     b.Navigation("Likes");
@@ -551,12 +725,9 @@ namespace Prototype.Migrations
 
             modelBuilder.Entity("Prototype.Models.Job", b =>
                 {
-                    b.Navigation("Likes");
-                });
+                    b.Navigation("Contract");
 
-            modelBuilder.Entity("Prototype.Models.JobTitle", b =>
-                {
-                    b.Navigation("Jobs");
+                    b.Navigation("Likes");
                 });
 #pragma warning restore 612, 618
         }

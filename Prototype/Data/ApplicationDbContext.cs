@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Prototype.Enums;
 using Prototype.Models;
 using System;
 using System.Collections.Generic;
@@ -21,11 +22,15 @@ namespace Prototype.Data
 
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Like> Likes { get; set; }
-        public DbSet<JobTitle> JobTitle { get; set; }
-
+        
         public DbSet<ChatMessage> ChatMessages { get; set; }
 
         public DbSet<Contract> Contracts { get; set; }
+
+        public DbSet<Skill> Skills { get; set; }
+
+      
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

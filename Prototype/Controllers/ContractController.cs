@@ -54,6 +54,7 @@ namespace Prototype.Controllers
             return View(candidate);            
         }
 
+        //post for create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(int jobId, int candidateId, DateTime startDate, double rate)

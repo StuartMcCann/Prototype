@@ -19,6 +19,36 @@ namespace Prototype.Migrations
                 .HasAnnotation("ProductVersion", "5.0.6")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("CandidateSkill", b =>
+                {
+                    b.Property<int>("CandidatesCandidateID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SkillsSkillId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CandidatesCandidateID", "SkillsSkillId");
+
+                    b.HasIndex("SkillsSkillId");
+
+                    b.ToTable("CandidateSkill");
+                });
+
+            modelBuilder.Entity("JobSkill", b =>
+                {
+                    b.Property<int>("JobsJobId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SkillsSkillId")
+                        .HasColumnType("int");
+
+                    b.HasKey("JobsJobId", "SkillsSkillId");
+
+                    b.HasIndex("SkillsSkillId");
+
+                    b.ToTable("JobSkill");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -242,8 +272,8 @@ namespace Prototype.Migrations
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Level")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("JobTitle")
+                        .HasColumnType("int");
 
                     b.Property<int>("LevelEnum")
                         .HasColumnType("int");
@@ -391,10 +421,10 @@ namespace Prototype.Migrations
                     b.Property<string>("JobDescription")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("JobTitle")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("JobTitle")
+                        .HasColumnType("int");
 
-                    b.Property<int?>("JobTitleRefId")
+                    b.Property<int>("Level")
                         .HasColumnType("int");
 
                     b.Property<double>("LowerRate")
@@ -410,24 +440,7 @@ namespace Prototype.Migrations
 
                     b.HasIndex("EmployerId");
 
-                    b.HasIndex("JobTitleRefId");
-
                     b.ToTable("Jobs");
-                });
-
-            modelBuilder.Entity("Prototype.Models.JobTitle", b =>
-                {
-                    b.Property<int>("JobTitleId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("JobTitleId");
-
-                    b.ToTable("JobTitle");
                 });
 
             modelBuilder.Entity("Prototype.Models.Like", b =>
@@ -484,6 +497,51 @@ namespace Prototype.Migrations
                     b.HasIndex("CandidateID");
 
                     b.ToTable("Reviews");
+                });
+
+            modelBuilder.Entity("Prototype.Models.Skill", b =>
+                {
+                    b.Property<int>("SkillId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("SkillName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("SkillId");
+
+                    b.ToTable("Skills");
+                });
+
+            modelBuilder.Entity("CandidateSkill", b =>
+                {
+                    b.HasOne("Prototype.Models.Candidate", null)
+                        .WithMany()
+                        .HasForeignKey("CandidatesCandidateID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Prototype.Models.Skill", null)
+                        .WithMany()
+                        .HasForeignKey("SkillsSkillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("JobSkill", b =>
+                {
+                    b.HasOne("Prototype.Models.Job", null)
+                        .WithMany()
+                        .HasForeignKey("JobsJobId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Prototype.Models.Skill", null)
+                        .WithMany()
+                        .HasForeignKey("SkillsSkillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -603,13 +661,7 @@ namespace Prototype.Migrations
                         .WithMany("Jobs")
                         .HasForeignKey("EmployerId");
 
-                    b.HasOne("Prototype.Models.JobTitle", "JobTitleFK")
-                        .WithMany("Jobs")
-                        .HasForeignKey("JobTitleRefId");
-
                     b.Navigation("Employer");
-
-                    b.Navigation("JobTitleFK");
                 });
 
             modelBuilder.Entity("Prototype.Models.Like", b =>
@@ -674,11 +726,6 @@ namespace Prototype.Migrations
                     b.Navigation("Contract");
 
                     b.Navigation("Likes");
-                });
-
-            modelBuilder.Entity("Prototype.Models.JobTitle", b =>
-                {
-                    b.Navigation("Jobs");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Prototype.Data;
 using Prototype.Models;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
-using Microsoft.AspNetCore.Identity;
 
 namespace Prototype.Controllers
 {
@@ -13,19 +11,19 @@ namespace Prototype.Controllers
     {
         private readonly ApplicationDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
-        
+
 
         public JobController(ApplicationDbContext db, UserManager<ApplicationUser> userManager)
         {
             //creates a db objext for use in controller using dependency injection
             _db = db;
             _userManager = userManager;
-            
+
         }
 
         public IActionResult Index()
         {
-           
+
             //below gets Jobs from db
             IEnumerable<Job> jobList = _db.Jobs;
             return View(jobList);
@@ -59,15 +57,15 @@ namespace Prototype.Controllers
 
 
 
-                            }).ToList();                          
-                                
-                                
-                  
-  
-            return userJobs; 
+                            }).ToList();
+
+
+
+
+            return userJobs;
         }
 
-        
+
         //get for create
         public IActionResult Create()
         {
@@ -81,13 +79,13 @@ namespace Prototype.Controllers
         public IActionResult Create(Job job)
         {
 
-            var user = GetUser();            
+            var user = GetUser();
             int employerId = (int)user.EmployerId;
             Employer employer = _db.Employers.Where(e => e.EmployerId == employerId).First();
-            job.AddEmployer(employer); 
+            job.AddEmployer(employer);
 
-            
-             
+
+
             //validation below 
             if (ModelState.IsValid)
             {
@@ -99,58 +97,56 @@ namespace Prototype.Controllers
 
             }
             return View(job);
-           
+
 
 
         }
 
         public ActionResult GetJobsLikeThis(string title)
         {
-            
+
 
             var jobsLikeThis = (from j in _db.Jobs
-                       //join employers in _db.Employers on j.EmployerRefId
-                       //equals employers.EmployerId
-                       join jobTitle in _db.JobTitle on
-                       j.JobTitleRefId equals jobTitle.JobTitleId
-                       where j.JobTitle == title
-                       select new JobProfile
-                       {
-                           JobId = j.JobId,
-                           //remove title when normalise properly 
-                           Title = j.JobTitle, 
-                           JobDescription = j.JobDescription,
-                           UpperRate = j.UpperRate,
-                           LowerRate = j.LowerRate,
-                           JobTitle = jobTitle.Title,
-                           CompanyName = j.Employer.CompanyName,
-                           Duration = j.Duration,
-                           StartDate = j.StartDate,
-                           Rating = j.Employer.Rating, 
-                           Employer = j.Employer
+                                    //join employers in _db.Employers on j.EmployerRefId
+                                    //equals employers.EmployerId
 
-                       }).ToList();
+                                where j.JobTitle.ToString() == title
+                                select new JobProfile
+                                {
+                                    JobId = j.JobId,
+
+                                    JobDescription = j.JobDescription,
+                                    UpperRate = j.UpperRate,
+                                    LowerRate = j.LowerRate,
+                                    JobTitle = j.JobTitle,
+                                    CompanyName = j.Employer.CompanyName,
+                                    Duration = j.Duration,
+                                    StartDate = j.StartDate,
+                                    Rating = j.Employer.Rating,
+                                    Employer = j.Employer
+
+                                }).ToList();
 
             return Json(new { data = jobsLikeThis });
 
         }
 
 
-        public ActionResult GetJobTitles()
-        {
-            List<JobTitle> jobTitles = _db.JobTitle.ToList();
+        //public ActionResult GetJobTitles()
+        //{
+        //    List<JobTitle> jobTitles = _db.Jobs.JobTitleEnum.ToList();
 
-            return Json(new { data = jobTitles }); 
+        //    return Json(new { data = jobTitles }); 
 
-        }
+        //}
 
-        public ActionResult GetJobSkills()
-        {
-            List<JobTitle> jobTitles = _db.JobTitle.ToList();
+        //public ActionResult GetJobSkills()
+        //{
+        //    List<JobTitle> jobTitles = _db.JobTitle.ToList();
 
-            return Json(new { data = jobTitles });
+        //    return Json(new { data = jobTitles });
 
-        }
+        //}
 
 
 
@@ -161,33 +157,32 @@ namespace Prototype.Controllers
 
             // var job = _db.Jobs.Find(id);
             var job = (from j in _db.Jobs
-                      join employers in _db.Employers on j.EmployerRefId
-                      equals employers.EmployerId
-                      join u in _db.Users 
-                      on j.EmployerRefId equals u.EmployerId
-                      //join jobTitle in _db.JobTitle on
-                      //j.JobTitleRefId equals jobTitle.JobTitleId
-                      where j.JobId == id
-                      select new JobProfile
-                      {
-                         JobId= j.JobId,
-                         Title = j.JobTitle,
-                          JobDescription = j.JobDescription,
-                         UpperRate = j.UpperRate,
-                         LowerRate = j.LowerRate,
-                         JobTitle =j.JobTitle,
-                         CompanyName =employers.CompanyName,
-                         Duration =  j.Duration,
-                         StartDate=  j.StartDate,
-                          Rating = employers.Rating,
-                          EmployerId = employers.EmployerId,
-                          UserId = u.Id
+                       join employers in _db.Employers on j.EmployerRefId
+                       equals employers.EmployerId
+                       join u in _db.Users
+                       on j.EmployerRefId equals u.EmployerId
+                       //join jobTitle in _db.JobTitle on
+                       //j.JobTitleRefId equals jobTitle.JobTitleId
+                       where j.JobId == id
+                       select new JobProfile
+                       {
+                           JobId = j.JobId,
+                           JobDescription = j.JobDescription,
+                           UpperRate = j.UpperRate,
+                           LowerRate = j.LowerRate,
+                           JobTitle = j.JobTitle,
+                           CompanyName = employers.CompanyName,
+                           Duration = j.Duration,
+                           StartDate = j.StartDate,
+                           Rating = employers.Rating,
+                           EmployerId = employers.EmployerId,
+                           UserId = u.Id
 
-                      }).FirstOrDefault(); 
-
+                       }).FirstOrDefault();
 
 
-             if (job == null)
+
+            if (job == null)
             {
                 return NotFound();
             }
@@ -195,7 +190,7 @@ namespace Prototype.Controllers
 
         }
 
-        
+
 
         //GET for Edit
         public IActionResult Edit(int? id)
@@ -276,7 +271,7 @@ namespace Prototype.Controllers
             return user;
         }
 
-        
+
 
 
     }

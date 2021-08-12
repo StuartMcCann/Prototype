@@ -87,7 +87,7 @@ namespace Prototype.Controllers
         {
             return View();
         }
-
+        //post for create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Employer employer)
@@ -115,7 +115,7 @@ namespace Prototype.Controllers
                 user.EmployerId = employer.EmployerId;
                 user.Employer = employer; 
                 _db.SaveChanges(); 
-                return RedirectToAction("Index");
+                return RedirectToAction("Hub");
 
             }
             return View(employer);

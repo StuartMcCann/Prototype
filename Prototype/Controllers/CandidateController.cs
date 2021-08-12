@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Prototype.Data;
+using Prototype.Enums;
+using Prototype.Helpers;
 using Prototype.Models;
 using System.Collections.Generic;
 using System.IO;
@@ -25,17 +27,20 @@ namespace Prototype.Controllers
         //can change to have level and skills - pass skills as a List?
         public ActionResult GetCandidatesLikeThis(string skill, int id)
         {
+
+            // change to job title??
             var canidatesLikethis = (from c in _db.Candidates
-                                where c.Skill == skill && c.CandidateID!=id
+                                where c.Skill==skill && c.CandidateID!=id
+                                
                                 select new CandidateProfile
                                 {
                                     
-                                    Level = c.Level, 
+                                    LevelEnum = c.LevelEnum, 
                                     Rating = c.Rating, 
                                     Rate = c.Rate, 
                                     Skill = c.Skill, 
                                     CandidateID = c.CandidateID, 
-                                    LevelEnum = c.LevelEnum
+                                    
 
                                 }).ToList();
 
@@ -91,9 +96,11 @@ namespace Prototype.Controllers
 
             var user = GetUser();
             var userId = user.Id;
+            candidate.ApplicationUser = user;
+            candidate.UserId = userId; 
            // candidate.UserId = userId;
             // add user to candidate 
-            candidate = new Candidate(candidate, userId, _db); 
+            //candidate = new Candidate(candidate, userId, _db); 
             //validation below 
             if (ModelState.IsValid)
             {
@@ -103,10 +110,7 @@ namespace Prototype.Controllers
                 //save changes exexutes action to DB
                 _db.SaveChanges();
 
-                //add forign keys here?
-                //var user = GetUser();
-                //user.EmployerId = candidate.EmployerId;
-                //_db.SaveChanges();
+                
                 return RedirectToAction("Edit");
 
             }
@@ -139,7 +143,7 @@ namespace Prototype.Controllers
                                                      select new CandidateProfile
                                                      {
                                                          CandidateID = c.CandidateID,
-                                                         Level = c.Level,
+                                                         LevelEnum = c.LevelEnum,
                                                          Skill = c.Skill,
                                                          Rating = c.Rating,
                                                          Rate = c.Rate,
@@ -168,7 +172,7 @@ namespace Prototype.Controllers
                               select new CandidateProfile
                               {
                                   CandidateID = c.CandidateID,
-                                  Level = c.Level,
+                                  LevelEnum = c.LevelEnum,
                                   Skill = c.Skill,
                                   Rating = c.Rating,
                                   Rate = c.Rate, 
@@ -212,12 +216,12 @@ namespace Prototype.Controllers
                              select new Candidate
                              {
                                  
-                                 Level = c.Level,
+                                 LevelEnum = c.LevelEnum,
                                  Rating = c.Rating,
                                  Rate = c.Rate,
                                  Skill = c.Skill,
                                  CandidateID = c.CandidateID,
-                                 LevelEnum = c.LevelEnum
+                                 
 
                              }).ToList();
 
@@ -225,7 +229,7 @@ namespace Prototype.Controllers
 
 
         }
-
+        
 
     }
 

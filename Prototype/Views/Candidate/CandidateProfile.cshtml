@@ -16,7 +16,7 @@
             //this needs changed whe table fully normalised
             data: { skill: "@Model.Skill", id : @Model.CandidateID}  ,
             success: function (data) {
-                //console.log(data);
+                console.log(data);
                 //loops through values returned in json format by above url
                 $.each(data.data, function (key, val) {
                     //need to add validation that not empty here
@@ -28,13 +28,10 @@
                        "<h5 class= 'card-header'> Fix Name here</h5>"+
                                 "<div class='card-body'>"+
                         "<h5 class='card-title'>Rate: £" + val.rate + "</h5>" +
-                        @*@{ var level = Int32.Parse(  "<%=val.level%>");
-                            var newLevel = (Level)level;
+                       
+                      //add job title
 
-                            }*@
-                       "<h5 class='card-title'>" +val.level + "</h5>" +
-
-                        "<h5 class='card-title'>" + val.levelEnum + "</h5>" +
+                        "<h5 class='card-title'>" + val.levelEnum.levelName + "</h5>" +
                                 "<h5 class='card-title'>"+val.skill+"</h5>"+
                                @*+ "@Html.ActionLink('View more', 'JobProfile', new { id = jobProfile.JobID })"+*@
                             "</div>"+
@@ -225,7 +222,7 @@
             <div class="col-sm-9">
                 
                 <h3>£@Model.Rate per hour</h3>
-                <h3>@Model.Level</h3>
+                <h3>@Model.LevelEnum.ToString()</h3>
                 <h3>@Model.Skill</h3>
 
 
