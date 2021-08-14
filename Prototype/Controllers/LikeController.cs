@@ -251,13 +251,36 @@ namespace Prototype.Controllers
                              CandidateId = l.CandidateId
 
 
-                         }).ToList(); 
+                         }).ToList();
             //could do for loop here to check result has right like types 
-            if(likes.Count() > 1)
+            if (likes != null)
             {
-                mutualLike = true; 
+                mutualLike = LikeTypeCount(likes);
             }
+           
             return mutualLike; 
+        }
+
+        public bool LikeTypeCount(List<Like> likes)
+        {
+            var mutual = false;
+            var employerCount = 0;
+            var candidateCount = 0; 
+            //loop through to check like types 
+            foreach(Like like in likes)
+            {
+                employerCount = like.LikeType == LikeType.EmployerLikesCandidate ? ++employerCount : employerCount;
+                candidateCount = like.LikeType == LikeType.CandidateLikesEmployer || like.LikeType == LikeType.CandidateLikesJob ?
+                    ++candidateCount : candidateCount;
+                if (employerCount > 0 && candidateCount > 0)
+                {
+                    mutual = true;
+                    return mutual; 
+                }
+
+            }
+
+            return mutual; 
         }
 
         public bool AlreadyLiked(int id)

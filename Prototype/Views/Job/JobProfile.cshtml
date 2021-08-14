@@ -16,7 +16,7 @@
             contentType: 'application/json; charset=utf-8',
             cache: false,
             //this needs changed whe table fully normalised
-            data: { title: "@Model.Title"}  ,
+            data: { title: "@Model.JobTitle"}  ,
             success: function (data) {
 
                 //loops through values returned in json format by above url
@@ -159,7 +159,7 @@
         </div>
         <div class="row buffer ">
             <div class="col-sm">
-                <h2>@Model.Title</h2>
+                <h2>@Model.JobTitleEnum.GetDisplayName()</h2>
 
                 <h2>FROM £@Model.LowerRate - @Model.UpperRate</h2>
                 <h2>Duration: @Model.Duration weeks</h2>

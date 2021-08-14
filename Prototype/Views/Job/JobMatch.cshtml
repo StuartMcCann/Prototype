@@ -1,0 +1,111 @@
+﻿
+
+@model IEnumerable<Prototype.Models.CandidateProfile> //this adds object from method in controller
+
+
+<h1 class="heading">Available Candidates</h1>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-3 buffer">
+
+
+            <div class="dropdown buffer">
+                <!--Trigger-->
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1-1"
+                        data-toggle="dropdown">
+                    Filter By Level
+                </button>
+
+                <!--Menu-->
+                <div class="dropdown-menu dropdown-primary" id="your-custom-id">
+                    <input class="form-control" type="text" placeholder="Search" aria-label="Search">
+                    <a class="dropdown-item mdb-dropdownLink-1" href="#">Expert</a>
+                    <a class="dropdown-item mdb-dropdownLink-1" href="#">Intermediate</a>
+                    <a class="dropdown-item mdb-dropdownLink-1" href="#">Entry</a>
+
+                </div>
+            </div>
+
+            <div class="dropdown buffer">
+                <!--Trigger-->
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1-1"
+                        data-toggle="dropdown">
+                    Filter By Skill
+                </button>
+
+                <!--Menu-->
+                <div class="dropdown-menu dropdown-primary" id="your-custom-id">
+                    <input class="form-control" type="text" placeholder="Search" aria-label="Search">
+                    <a class="dropdown-item mdb-dropdownLink-1" href="#">Java</a>
+                    <a class="dropdown-item mdb-dropdownLink-1" href="#">Javascript</a>
+                    <a class="dropdown-item mdb-dropdownLink-1" href="#">SQL</a>
+                    <a class="dropdown-item mdb-dropdownLink-1" href="#">C</a>
+                    <a class="dropdown-item mdb-dropdownLink-1" href="#">PHP</a>
+                    <a class="dropdown-item mdb-dropdownLink-1" href="#">Python</a>
+
+                </div>
+            </div>
+
+
+
+
+        </div><!--End of filter column-->
+        <div class="col-sm-9">
+
+            @if (Model.Count() > 0)
+            {
+                <div class="container">
+
+
+                    <div class="row ">
+                        @foreach (var candidate in Model)
+                        {
+                            <div class="col-sm"></div>
+                            <div class="col-sm col-md-3 buffer ">
+
+                                <div class="card text" style="width: 18rem;">
+                                    <div class="card-body">
+
+
+                                        <h5 class="card-title">@candidate.FirstName @candidate.LastName</h5>
+                                        <h6 class="card-subtitle mb-2">RecruitAPP Rating @candidate.Rating/5</h6>
+                                        <h6 class="card-subtitle mb-2"> @candidate.JobTitleEnum.GetDisplayName()</h6>
+                                        <p class="card-text">Level: @candidate.LevelEnum</p>
+                                        <p class="card-text">Skills: @candidate.Skill</p>
+                                        <p class="card-text">Charge Rate: @candidate.Rate per hour </p>
+
+                                        @Html.ActionLink("View more", "CandidateProfile", new { id = candidate.CandidateID })
+
+
+                                    </div>
+                                </div>
+
+
+
+
+
+
+
+
+                            </div>
+                            <div class="col-sm"></div>
+
+                        }
+                    </div>
+
+                </div>
+            }
+            else
+            {
+                <p>No Candidates Available</p>
+            }
+
+
+
+
+
+        </div>
+    </div>
+
+</div>

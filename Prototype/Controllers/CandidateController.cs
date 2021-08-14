@@ -27,24 +27,31 @@ namespace Prototype.Controllers
         //can change to have level and skills - pass skills as a List?
         public ActionResult GetCandidatesLikeThis(string skill, int id)
         {
+            
 
             // change to job title??
-            var canidatesLikethis = (from c in _db.Candidates
-                                where c.Skill==skill && c.CandidateID!=id
-                                
-                                select new CandidateProfile
-                                {
-                                    
-                                    LevelEnum = c.LevelEnum, 
-                                    Rating = c.Rating, 
-                                    Rate = c.Rate, 
-                                    Skill = c.Skill, 
-                                    CandidateID = c.CandidateID, 
-                                    
+            var candidatesLikeThis = (from c in _db.Candidates
+                                      join u in _db.Users on
+                                      c.UserId equals u.Id
+                                      where c.Skill == skill && c.CandidateID != id
+                                      && c.IsAvailable == true
+                                      select new CandidateProfile
+                                      {
+                                         
+                                          FirstName = u.FirstName, 
+                                          LastName = u.LastName,
+                                          LevelEnum = c.LevelEnum,
+                                          Rating = c.Rating,
+                                          Rate = c.Rate,
+                                          Skill = c.Skill,
+                                          CandidateID = c.CandidateID,
+                                          Level = c.LevelEnum.GetDisplayName()
 
-                                }).ToList();
 
-            return Json(new { data = canidatesLikethis });
+
+                                      }).ToList();
+            //return candidatesLikeThis; 
+            return Json(new { data = candidatesLikeThis });
 
         }
 
@@ -228,6 +235,36 @@ namespace Prototype.Controllers
             return candidate; 
 
 
+        }
+
+        public List<CandidateProfile> GetAvailableCandidates()
+        {
+
+            
+            var availableCandidates = (from c in _db.Candidates
+                                       join u in _db.Users on
+                                       c.UserId equals u.Id
+                                       where c.IsAvailable == true
+                                       select new CandidateProfile
+                                       {
+                                           FullName = u.FirstName+" "+u.LastName, 
+                                           FirstName = u.FirstName,
+                                           LastName = u.LastName,
+                                           LevelEnum = c.LevelEnum,
+                                           Rating = c.Rating,
+                                           Rate = c.Rate,
+                                           Skill = c.Skill,
+                                           CandidateID = c.CandidateID,
+                                           Level = c.LevelEnum.GetDisplayName(), 
+                                           JobTitle = c.JobTitleEnum.GetDisplayName(), 
+                                           AvailableFrom = c.AvailableFrom
+
+
+                                       }).ToList();
+
+
+            return availableCandidates; 
+          
         }
         
 

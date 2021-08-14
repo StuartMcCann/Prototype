@@ -20,18 +20,19 @@
                 //loops through values returned in json format by above url
                 $.each(data.data, function (key, val) {
                     //need to add validation that not empty here
-                   //                    
+                    var url = '@Url.Action("CandidateProfile", "Candidate", new { id = "replaceToken" })';
+                    url = url.replace("replaceToken", val.candidateID);
                     //$("#output").append(val.title);
-                    $("#output").append(
-                        "<div class='buffer'>"+
-                            "<div class='card'>"+
-                       "<h5 class= 'card-header'> Fix Name here</h5>"+
-                                "<div class='card-body'>"+
-                        "<h5 class='card-title'>Rate: £" + val.rate + "</h5>" +
-                       
+                    $("#output").html(
+                        '<div class="buffer">' +
+                        '<div class="card">' +
+                        '<a href="' + url + '"><h5 class="card-header">' + val.firstName+' '+val.lastName+ '</h5></a>'+
+                                '<div class="card-body">'+
+                        '<h5 class="card-title">Rate: £' + val.rate + "</h5>" +
+
                       //add job title
 
-                        "<h5 class='card-title'>" + val.levelEnum.levelName + "</h5>" +
+                        "<h5 class='card-title'>" +val.levelString + "</h5>" +
                                 "<h5 class='card-title'>"+val.skill+"</h5>"+
                                @*+ "@Html.ActionLink('View more', 'JobProfile', new { id = jobProfile.JobID })"+*@
                             "</div>"+

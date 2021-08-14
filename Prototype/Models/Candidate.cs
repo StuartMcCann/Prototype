@@ -33,7 +33,7 @@ namespace Prototype.Models
         public Level LevelEnum { get; set;  }
         //normalised JobTitle
        
-        public JobTitle JobTitle { get; set; }
+        public JobTitle JobTitleEnum { get; set; }
         
        
 

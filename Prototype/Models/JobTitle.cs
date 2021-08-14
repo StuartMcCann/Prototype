@@ -24,7 +24,7 @@ namespace Prototype.Models
         ProjectManager,
         [Display(Name = "Software Tester")]
         SoftwareTester,
-        [Display(Name = "Full Stack Developer")]
+        [Display(Name = "Full Stack Developer", Description = "Full Stack Developer")]
         FullStackDeveloper,
         [Display(Name = "Front End Engineer")]
         FrontEndEngineer,

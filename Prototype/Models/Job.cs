@@ -12,7 +12,7 @@ namespace Prototype.Models
         [Key]
         public int JobId { get; set; }
 
-        public JobTitle JobTitle { get; set; }
+        public JobTitle JobTitleEnum { get; set; }
         public DateTime StartDate { get; set; }
         public double UpperRate { get; set; }
         public double LowerRate { get; set; }
@@ -28,7 +28,7 @@ namespace Prototype.Models
         
         //normalised level 
        
-        public Level Level { get; set; }
+        public Level LevelEnum { get; set; }
 
         //One to Many with Employer Table 
         public int EmployerRefId { get; set; }
@@ -59,6 +59,7 @@ namespace Prototype.Models
         {
             this.Employer = employer;
             this.EmployerRefId = employer.EmployerId;
+            
         }
 
 

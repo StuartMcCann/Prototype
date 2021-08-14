@@ -10,10 +10,10 @@
 <form method="post" asp-action="Create">
     <div asp-validation-summary="All" class="text-danger"></div>
 
-    <  <div class="mb-3">
-        <label asp-for="JobTitle">Job Title</label>
-        <select asp-for="JobTitle" asp-items="Html.GetEnumSelectList<JobTitle>()" class="form-control"></select>
-        <span asp-validation-for="JobTitle" class="text-danger"></span>
+      <div class="mb-3">
+        <label asp-for="JobTitleEnum">Job Title</label>
+        <select asp-for="JobTitleEnum" asp-items="Html.GetEnumSelectList<JobTitle>()" class="form-control"></select>
+        <span asp-validation-for="JobTitleEnum" class="text-danger"></span>
     </div>
     <div class="mb-3">
         <label asp-for="StartDate" class="form-label">Start Date</label>
@@ -41,9 +41,9 @@
         <textarea asp-for="JobDescription" type="Text" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
     </div>
     <div class="form-group">
-        <label asp-for="JobTitle">Job Title</label>
-        <select asp-for="Level" asp-items="Html.GetEnumSelectList<Level>()" class="form-control"></select>
-        <span asp-validation-for="Level" class="text-danger"></span>
+        <label asp-for="LevelEnum">Level Required</label>
+        <select asp-for="LevelEnum" asp-items="Html.GetEnumSelectList<Level>()" class="form-control"></select>
+        <span asp-validation-for="LevelEnum" class="text-danger"></span>
 
     </div>
 

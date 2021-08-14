@@ -16,9 +16,12 @@
             //this needs changed whe table fully normalised
 
             success: function (data) {
-
+                console.log(data)
                // loops through values returned in json format by above url
-                $.each(data, function (key, val) {
+                if (data != null) {
+
+                
+                $.each(data.data, function (key, val) {
                    //need to add validation that not empty here
                    //job id is jobId
 
@@ -27,7 +30,7 @@
                     url = url.replace("replaceToken", val.jobId);
                     //bleow appende content to div with id passed as arg
                     $("#jobsoutput").append(
-
+                        
                         '<div class"card ">' +
                         '<div class="card-body">' +
 
@@ -43,7 +46,7 @@
                        ' </div>'
                     );//end of .append
                 });//end of for loop
-
+                }
             }, //end of success function
             error: function (xhr) {
                 alert( 'error');
@@ -64,7 +67,7 @@
             //this needs changed whe table fully normalised
 
             success: function (data) {
-                  console.log(data)
+                 // console.log(data)
                // loops through values returned in json format by above url
                 $.each(data, function (key, val) {
                    //need to add validation that not empty here
@@ -110,7 +113,10 @@
             //this needs changed whe table fully normalised
 
             success: function (data) {
-                  console.log(data)
+                 // console.log(data)
+                if (data != null) {
+
+               
                // loops through values returned in json format by above url
                 $.each(data, function (key, val) {
                    //need to add validation that not empty here
@@ -126,7 +132,7 @@
 
                     );//end of .append
                 });//end of for loop
-
+                }//end of if
             }, //end of success function
             error: function (xhr) {
                 alert( 'error');

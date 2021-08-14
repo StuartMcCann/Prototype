@@ -29,7 +29,7 @@ namespace Prototype.Controllers
             return View(jobList);
         }
 
-        public List<Job> GetJobsByUserID()
+        public ActionResult GetJobsByUserID()
         {
 
             // getting user id using user manager 
@@ -41,10 +41,11 @@ namespace Prototype.Controllers
                             join u in _db.Users
                             on j.EmployerRefId equals u.EmployerId
                             where j.EmployerRefId == employerId
-                            select new Job
+                            && j.IsLive == true
+                            select new JobProfile
                             {
                                 JobId = j.JobId,
-                                JobTitle = j.JobTitle,
+                                JobTitleEnum = j.JobTitleEnum,
                                 StartDate = j.StartDate,
                                 UpperRate = j.UpperRate,
                                 LowerRate = j.LowerRate,
@@ -53,16 +54,14 @@ namespace Prototype.Controllers
                                 IsFilled = j.IsFilled,
                                 IsLive = j.IsLive,
                                 IsUnderContract = j.IsUnderContract,
-                                EmployerRefId = j.EmployerRefId
-
+                                EmployerRefId = j.EmployerRefId,
+                                JobTitle = j.JobTitleEnum.GetDisplayName(), 
+                                Level = j.LevelEnum.GetDisplayName()
 
 
                             }).ToList();
 
-
-
-
-            return userJobs;
+            return Json(new { data = userJobs });
         }
 
 
@@ -93,7 +92,7 @@ namespace Prototype.Controllers
                 //save changes exexutes action to DB
                 _db.SaveChanges();
                 //needs changed to direct to edit 
-                return RedirectToAction("JobProfile", new { id = job.JobId });
+                return RedirectToAction("JobMatch", new { job = job });
 
             }
             return View(job);
@@ -102,7 +101,29 @@ namespace Prototype.Controllers
 
         }
 
-        public ActionResult GetJobsLikeThis(string title)
+        public IActionResult JobMatch(Job job)
+        {
+            //change to jobprofile? and add more complex logic 
+            var matchedCandidates = (from c in _db.Candidates
+                                     where c.IsAvailable == true
+                                    select new CandidateProfile
+                                    {
+                                        CandidateID = c.CandidateID, 
+                                        ApplicationUser = c.ApplicationUser, 
+                                        LevelEnum = c.LevelEnum,
+                                        Rating = c.Rating, 
+                                        JobTitleEnum = c.JobTitleEnum, 
+                                        Rate = c.Rate, 
+                                        AvailableFrom = c.AvailableFrom, 
+                                        //Skill - c.Skill
+
+                                    }).ToList();
+
+            return View(matchedCandidates);
+
+        }
+
+        public ActionResult GetJobsLikeThis(JobTitle jobTitle)
         {
 
 
@@ -110,7 +131,8 @@ namespace Prototype.Controllers
                                     //join employers in _db.Employers on j.EmployerRefId
                                     //equals employers.EmployerId
 
-                                where j.JobTitle.ToString() == title
+                                where j.JobTitleEnum == jobTitle
+                                && j.IsLive == true
                                 select new JobProfile
                                 {
                                     JobId = j.JobId,
@@ -118,12 +140,14 @@ namespace Prototype.Controllers
                                     JobDescription = j.JobDescription,
                                     UpperRate = j.UpperRate,
                                     LowerRate = j.LowerRate,
-                                    JobTitle = j.JobTitle,
+                                    JobTitleEnum = j.JobTitleEnum,
                                     CompanyName = j.Employer.CompanyName,
                                     Duration = j.Duration,
                                     StartDate = j.StartDate,
                                     Rating = j.Employer.Rating,
-                                    Employer = j.Employer
+                                    Employer = j.Employer,
+                                    JobTitle = j.JobTitleEnum.GetDisplayName(), 
+                                    Level = j.LevelEnum.GetDisplayName()
 
                                 }).ToList();
 
@@ -132,21 +156,7 @@ namespace Prototype.Controllers
         }
 
 
-        //public ActionResult GetJobTitles()
-        //{
-        //    List<JobTitle> jobTitles = _db.Jobs.JobTitleEnum.ToList();
-
-        //    return Json(new { data = jobTitles }); 
-
-        //}
-
-        //public ActionResult GetJobSkills()
-        //{
-        //    List<JobTitle> jobTitles = _db.JobTitle.ToList();
-
-        //    return Json(new { data = jobTitles });
-
-        //}
+      
 
 
 
@@ -170,7 +180,7 @@ namespace Prototype.Controllers
                            JobDescription = j.JobDescription,
                            UpperRate = j.UpperRate,
                            LowerRate = j.LowerRate,
-                           JobTitle = j.JobTitle,
+                           JobTitleEnum = j.JobTitleEnum,
                            CompanyName = employers.CompanyName,
                            Duration = j.Duration,
                            StartDate = j.StartDate,
@@ -271,7 +281,34 @@ namespace Prototype.Controllers
             return user;
         }
 
+        public List<JobProfile> GetAllLiveJobs()
+        {
 
+
+            var availableJobs = (from j in _db.Jobs
+                                 join e in _db.Employers on 
+                                j.EmployerRefId equals e.EmployerId
+                                 where j.IsLive == true
+                                 select new JobProfile
+                                 {
+                                     JobId = j.JobId, 
+                                     JobTitle = j.JobTitleEnum.GetDisplayName(),
+                                     LowerRate = j.LowerRate,
+                                     UpperRate = j.UpperRate,
+                                     Duration = j.Duration,
+                                     JobDescription = j.JobDescription,
+                                     Level = j.LevelEnum.GetDisplayName(),
+                                     EmployerId = j.EmployerRefId,
+                                     //add skills required                                       
+                                     CompanyName = e.CompanyName, 
+                                     Rating = e.Rating
+
+                                 }).ToList();
+
+
+            return availableJobs;
+
+        }
 
 
     }

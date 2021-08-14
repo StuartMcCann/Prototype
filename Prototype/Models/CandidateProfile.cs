@@ -12,7 +12,12 @@ namespace Prototype.Models
         public String FirstName { get; set; }
 
         public String LastName { get; set; }
+        public string FullName { get; set; }
 
         public Byte[] ProfilePicture { get; set; }
+
+        public string Level { get; set; }
+
+        public string JobTitle { get; set; }
     }
 }

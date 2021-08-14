@@ -15,7 +15,7 @@
             else {<span>Completed</span> }</h6>
             <h6>Colleague: @Model.Candidate.ApplicationUser.FirstName   @Model.Candidate.ApplicationUser.LastName</h6>
             <h6>Current Rate: @Model.AgreedRate</h6>
-            <h6>Job: @Model.Job.JobTitle</h6>
+            <h6>Job: @Model.Job.JobTitleEnum</h6>
             <h6>Start Date: @Model.StartDate.ToShortDateString()</h6>
             @if (!Model.IsUnderContract)
             {
