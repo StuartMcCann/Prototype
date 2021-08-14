@@ -253,3 +253,19 @@ button:focus {
     object-fit: cover;
     border-radius: 30px
 }
+
+.centreDiv {
+    margin: auto;
+    width: 60%;
+    border: 5px solid #FFFF00;
+    padding: 10px;
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+    
+  
+}
+
+.marginTop{
+    margin-top: 15%; 
+}

@@ -61,6 +61,7 @@ namespace Prototype.Controllers
         {
 
             var user = GetUser();
+         
             var employer = GetEmployer(user.EmployerId);
             if (employer != null)
             {

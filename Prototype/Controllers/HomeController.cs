@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Prototype.Models;
 using System;
@@ -12,14 +13,29 @@ namespace Prototype.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager; 
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             _logger = logger;
+            _userManager = userManager;
+            _signInManager = signInManager; 
+
         }
 
         public IActionResult Index()
         {
+            if (_signInManager.IsSignedIn(User)&& User.IsInRole("Candidate"))
+            {
+                return RedirectToAction("Hub", "Candidate"); 
+            }else if(_signInManager.IsSignedIn(User) && User.IsInRole("Employer"))
+            {
+                return RedirectToAction("Hub", "Employer");
+            }
+                
+                
+                
             return View();
         }
 
