@@ -16,11 +16,11 @@
             //this needs changed whe table fully normalised
 
             success: function (data) {
-                console.log(data)
+                //console.log(data)
                // loops through values returned in json format by above url
                 if (data != null) {
 
-                
+
                 $.each(data.data, function (key, val) {
                    //need to add validation that not empty here
                    //job id is jobId
@@ -30,7 +30,7 @@
                     url = url.replace("replaceToken", val.jobId);
                     //bleow appende content to div with id passed as arg
                     $("#jobsoutput").append(
-                        
+
                         '<div class"card ">' +
                         '<div class="card-body">' +
 
@@ -105,41 +105,65 @@
 
          $.ajax({
              url: '/Contract/GetContractsEmployerHub',
-            dataType: "Json",
+            dataType: "json",
             type: "GET",
             data: { employerId: @Model.EmployerId},
             contentType: 'application/x-www-form-urlencoded',
             cache: false,
-            //this needs changed whe table fully normalised
 
             success: function (data) {
-                 // console.log(data)
-                if (data != null) {
+                console.log(data)
 
-               
-               // loops through values returned in json format by above url
-                $.each(data, function (key, val) {
+                $.each(data.data, function (key, val) {
                    //need to add validation that not empty here
-                   //job id is jobId
+
 
                     //action link use to generate url string
-                    @*var url = '@Url.Action("CandidateProfile", "Candidate", new { id = "replaceToken" })';
-                    url = url.replace("replaceToken", val.candidateId);*@
-                    //bleow appende content to div with id passed as arg
-                   
+                    var url = '@Url.Action("EmployerHubRedirect", "Contract", new { contractId = "replaceToken" })';
+                    url = url.replace("replaceToken", val.contractId);
+
                     $("#contractsoutput").append(
 
+                        '<div class= "card">'+
+                       ' <div class="card-body">'+
+                        '<h5><a href="' + url + '">' + val.fullName + ' <i class="far fa-edit"></i> </a>'
+                        + '</h5>' +
+                        '<h5>' + val.jobTitle + '</h5>' +
+                        '<p> Start Date: ' + val.startDate.substring(0, 10)+'</p>'+
+                         '</div>'+
+                        '</div >'
 
                     );//end of .append
                 });//end of for loop
-                }//end of if
+
+            }, //end of success function
+            error: function (xhr) {
+                console.log(xhr);
+            }
+
+        }); //end ajax
+
+
+
+
+
+         $.ajax({
+            url: '/Chat/GetConversations',
+            dataType: "Json",
+            type: "GET",
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+           
+
+            success: function (data) {
+                console.log(data)
+               
             }, //end of success function
             error: function (xhr) {
                 alert( 'error');
             }
 
         }); //end ajax
-
 
 
 

@@ -5,7 +5,6 @@ using Prototype.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Prototype.Controllers
 {
@@ -49,9 +48,9 @@ namespace Prototype.Controllers
                                  Rate = c.Rate,
                                  AvailableFrom = c.AvailableFrom,
                                  ProfilePicture = u.ProfilePicture
-                             }).FirstOrDefault(); 
+                             }).FirstOrDefault();
 
-            return View(candidate);            
+            return View(candidate);
         }
 
         //post for create
@@ -64,42 +63,124 @@ namespace Prototype.Controllers
             {
                 _db.Contracts.Add(contract);
                 _db.SaveChanges();
-                UpdateJobStatus(contract); 
-                return RedirectToAction("Index",  contract  ); 
+                UpdateJobStatus(contract);
+                //set cand isavailable?
+                return RedirectToAction("Index", contract);
             }
 
-            return View(candidateId); 
+            return View(candidateId);
 
         }
 
+        //change to in job model?
         public void UpdateJobStatus(Contract contract)
         {
             contract.Job.IsLive = false;
+            contract.Job.IsUnderContract = true;
             _db.Jobs.Update(contract.Job);
-            _db.SaveChanges(); 
+            _db.SaveChanges();
         }
 
-        public List<Contract> GetContractsEmployerHub(int employerId)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CompleteContract(int contractId, int? rating, DateTime endDate)
+        {
+            var contract = _db.Contracts.Where(c => c.ContractId == contractId).First();
+            //set to false as completed
+            contract.IsUnderContract = false;
+            //set end date from params 
+            contract.EndDate = endDate;
+            //set rating         
+
+            if (rating != 0)
+            {
+                contract.IsRatedByEmployer = true;
+                contract.ContractRatingByEmployer = rating;
+            }
+            _db.Contracts.Update(contract);
+            _db.SaveChanges();
+            //update average rating for candidate 
+            AddContractRatingCandidate(contract.CandidateId);
+
+            return RedirectToAction("Index", contract); 
+
+        }
+
+        public void AddContractRatingCandidate(int candidateId)
+        {
+            //get all rated contracts for candidate and count 
+            var allRatedContracts = _db.Contracts.Where(c => c.CandidateId == candidateId && c.IsRatedByEmployer == true).Select(c => c.ContractRatingByEmployer).ToList();
+            //get average 
+            var averageCandidateRating = allRatedContracts.Average();
+            //update candidate in DB
+            var candidate = _db.Candidates.Where(c => c.CandidateID == candidateId).First();
+            candidate.Rating = (double)averageCandidateRating;
+            _db.Candidates.Update(candidate);
+            _db.SaveChanges();
+
+
+
+        }
+
+
+
+
+        //post for create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult UpdateRate(double rate, int contractId)
+        {
+            var contract = _db.Contracts.Where(c => c.ContractId == contractId).First();
+
+            contract.AgreedRate = rate;
+            _db.Contracts.Update(contract);
+            _db.SaveChanges();
+
+            return RedirectToAction("Index", contract);
+
+        }
+
+        public ActionResult GetContractsEmployerHub(int employerId)
         {
 
             // var contracts = _db.Contracts.Where(c => c.EmployerId == employerId).ToList();
             var contracts = (from c in _db.Contracts
                              where c.EmployerId == employerId
-                             select new Contract
+                             //add isundercontract here if adding history
+                             select new ContractProfile
                              {
                                  ContractId = c.ContractId,
                                  AgreedRate = c.AgreedRate,
                                  StartDate = c.StartDate,
-                                 EndDate = c.EndDate,
+                                 //EndDate = c.EndDate,
                                  IsUnderContract = c.IsUnderContract,
-                                 Candidate = _db.Candidates.Where(c => c.CandidateID == c.CandidateID).First(),
-                                 Employer = _db.Employers.Where(e => e.EmployerId == c.EmployerId).First(),
-                                 Job = _db.Jobs.Where(j=> j.JobId == c.JobId).First(),
-                                 //Candidate.ApplicationUser = _db.Users.Where(u => u.Id == Candidate.UserId), 
-                                 IsRated = c.IsRated
+                                 FullName = GetFullName(c.CandidateId, _db),
 
-                             }).ToList(); 
-            return contracts; 
+                                 JobTitle = _db.Jobs.Where(j => j.JobId == c.JobId).First().JobTitleEnum.GetDisplayName(),
+                                 IsRatedByEmployer = c.IsRatedByEmployer
+
+                             }).ToList();
+            //return contracts; 
+            return Json(new { data = contracts });
+        }
+
+        public static string GetFullName(int candidateId, ApplicationDbContext db)
+        {
+            Candidate candidate = db.Candidates.Where(c => c.CandidateID == c.CandidateID).First();
+            var user = db.Users.Where(u => u.Id == candidate.UserId).First();
+            var fullName = user.FirstName + " " + user.LastName;
+            return fullName;
+
+
+        }
+
+
+
+
+        public IActionResult EmployerHubRedirect(int contractId)
+        {
+            var contract1 = _db.Contracts.Where(c => c.ContractId == contractId).First();
+            return RedirectToAction("Index", contract1);
         }
     }
 }

@@ -60,6 +60,7 @@ namespace Prototype.Models
         public Candidate()
         {
             this.Skills = new HashSet<Skill>(); 
+            
            
         }
 

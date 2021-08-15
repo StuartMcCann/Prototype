@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Prototype.Data;
 using Prototype.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -177,7 +178,17 @@ namespace Prototype.Controllers
             return messages;
         }
 
-       
+       //public ActionResult GetConversations()
+       // {
+       //     //var userId = GetCurrentUserID();
+       //     //var messages = _db.ChatMessages.Where(m => m.ToUserId == userId || m.FromUserId == userId)
+                 
+
+
+       //                    //select g.OrderByDescending(m => m.CreatedDate).ToList(); 
+
+       //     //return Json( messages); 
+       // }
 
     }
 }

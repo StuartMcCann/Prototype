@@ -127,12 +127,15 @@
                     contentType: 'application/x-www-form-urlencoded',
                     cache: false,
                     data: data,
-            success: function () {
+                    success: function () {
+                //potential to take this out in refactoring 
                 $("#like").html(
                     '<div id="unlike">'+
                        ' <button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button>'+
                     '</div>'
-                    );
+                );
+
+                location.reload(); 
 
                 //console.log(data);
             },

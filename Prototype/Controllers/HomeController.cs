@@ -26,13 +26,13 @@ namespace Prototype.Controllers
 
         public IActionResult Index()
         {
-            if (_signInManager.IsSignedIn(User)&& User.IsInRole("Candidate"))
-            {
-                return RedirectToAction("Hub", "Candidate"); 
-            }else if(_signInManager.IsSignedIn(User) && User.IsInRole("Employer"))
-            {
-                return RedirectToAction("Hub", "Employer");
-            }
+            //if (_signInManager.IsSignedIn(User)&& User.IsInRole("Candidate"))
+            //{
+            //    return RedirectToAction("Hub", "Candidate"); 
+            //}else if(_signInManager.IsSignedIn(User) && User.IsInRole("Employer"))
+            //{
+            //    return RedirectToAction("Hub", "Employer");
+            //}
                 
                 
                 

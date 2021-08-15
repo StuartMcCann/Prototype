@@ -29,11 +29,11 @@ namespace Prototype.Controllers
 
         
 
-        // POST: LikeController/Create
+        // POST: LikeController/Create for employer likes candidate
         [AllowAnonymous]
         [IgnoreAntiforgeryToken]
         [HttpPost]
-        public void Create(LikeType likeType,  int candId )
+        public IActionResult Create(LikeType likeType,  int candId )
         {
 
             
@@ -49,17 +49,22 @@ namespace Prototype.Controllers
             {
                 _db.Likes.Add(like);
                 _db.SaveChanges();
+                return RedirectToAction("CandidateProfile", "Candidate", new { id = like.CandidateId });
                
+
             }
 
-           
+            return NotFound(); 
+
+
+
 
         }
 
         [AllowAnonymous]
         [IgnoreAntiforgeryToken]
         [HttpPost]
-        public void CreateLikeJob(LikeType likeType, int employerId, int jobId)
+        public IActionResult CreateLikeJob(LikeType likeType, int employerId, int jobId)
         {
 
 
@@ -79,8 +84,11 @@ namespace Prototype.Controllers
             {
                 _db.Likes.Add(like);
                 _db.SaveChanges();
+                return RedirectToAction("JobProfile", "Job", new { id = like.JobId });
 
             }
+
+            return NotFound(); 
 
 
 
@@ -91,7 +99,7 @@ namespace Prototype.Controllers
         [AllowAnonymous]
         [IgnoreAntiforgeryToken]
         [HttpPost]
-        public void CreateLikeEmployer(LikeType likeType, int employerId)
+        public IActionResult CreateLikeEmployer(LikeType likeType, int employerId)
         {
 
             // ad validation here that not already liked?
@@ -107,10 +115,13 @@ namespace Prototype.Controllers
             {
                 _db.Likes.Add(like);
                 _db.SaveChanges();
+                //page refresg
+                return RedirectToAction("Index", "Employer", new { id = like.EmployerId });
+               
 
             }
 
-
+            return NotFound();
 
         }
 
@@ -252,7 +263,7 @@ namespace Prototype.Controllers
 
 
                          }).ToList();
-            //could do for loop here to check result has right like types 
+            //loop here to check result has right like types 
             if (likes != null)
             {
                 mutualLike = LikeTypeCount(likes);

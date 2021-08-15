@@ -13,8 +13,9 @@ namespace Prototype.Models
         public int ContractId { get; set; }
         public double AgreedRate { get; set; }
         public DateTime StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
-        public bool IsRated { get; set; }
+        public DateTime EndDate { get; set; }
+        public bool IsRatedByEmployer { get; set; }
+        public bool IsRatedByCandidate { get; set; }
         public bool IsUnderContract { get; set; }
         //foreign key one to many with Candidate - one candidate has many contracts 
         //[ForeignKey("Candidate")]
@@ -29,6 +30,9 @@ namespace Prototype.Models
         public int JobId { get; set; }
         public virtual Job Job { get; set; }
 
+        public int? ContractRatingByCandidate { get; set; }
+
+        public int? ContractRatingByEmployer { get; set; }
         //add foreign keys for reviews?
 
 
@@ -46,7 +50,7 @@ namespace Prototype.Models
             this.StartDate = startDate;
             this.AgreedRate = rate;
             this.IsUnderContract = true;
-            this.IsRated = false;
+            this.IsRatedByEmployer = false;
             this.Candidate = db.Candidates.Where(c => c.CandidateID == candidateId).First();
             this.Job = db.Jobs.Where(j => j.JobId == jobId).First();
             this.EmployerId = this.Job.EmployerRefId;
@@ -69,4 +73,17 @@ namespace Prototype.Models
 
 
     }
+
+    public class ContractProfile : Contract
+    {
+        public string JobTitle  { get; set; }
+        public string FullName { get; set; }
+
+
+
+
+    }
+
+
+
 }

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Prototype.Data;
 
 namespace Prototype.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210815161803_addemployerRatingToContract")]
+    partial class addemployerRatingToContract
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -338,22 +340,19 @@ namespace Prototype.Migrations
                     b.Property<int>("CandidateId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ContractRatingByCandidate")
+                    b.Property<int?>("ContractRatingCandidate")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ContractRatingByEmployer")
+                    b.Property<int?>("ContractRatingEmployer")
                         .HasColumnType("int");
 
                     b.Property<int>("EmployerId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("EndDate")
+                    b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsRatedByCandidate")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsRatedByEmployer")
+                    b.Property<bool>("IsRated")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsUnderContract")

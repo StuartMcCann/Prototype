@@ -21,7 +21,7 @@
 
                 //loops through values returned in json format by above url
                 var disabledOption = '<option selected value="" >Please Select A Job</option>'; 
-                $.each(data, function (key, val) {
+                $.each(data.data, function (key, val) {
                     disabledOption += '<option value="' + val.jobId + '">' + val.jobTitle +
                         ', (£'+val.lowerRate+'-'+val.upperRate+
 
@@ -79,7 +79,7 @@
                 </div>
                 <label class="form-label">Agreed Rate</label>
                 <div class=" input-group">
-                    <input required name="rate" type="number" min="8.91" />
+                    <input required name="rate" type="number"  />
                 </div>
 
                 <button type ="submit" class=" add-margin btn btn-primary float-right"> Confirm</button>
