@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Prototype.Data;
 using Prototype.Models;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -117,7 +115,7 @@ namespace Prototype.Controllers
         {
             var userId = _db.Users.Where(u => u.EmployerId == employerId).Select(i => i.Id).First();
 
-            return RedirectToAction("Index", new { userId = userId }); 
+            return RedirectToAction("Index", new { userId = userId });
 
         }
 
@@ -131,8 +129,8 @@ namespace Prototype.Controllers
             var fromUser = GetUserByUserId(userId);
             var toUser = GetUserByUserId(toUserId);
 
-            ChatMessage message = new ChatMessage(fromUser, toUser, messageContent); 
-            
+            ChatMessage message = new ChatMessage(fromUser, toUser, messageContent);
+
 
             _db.ChatMessages.Add(message);
             _db.SaveChanges();
@@ -155,7 +153,7 @@ namespace Prototype.Controllers
         }
 
         //need to pass id for cand/client here 
-        public List<ChatMessage> GetConversation(string toUserId)
+        public List<ChatMessage> GetChatHistory(string toUserId)
         {
             var userId = GetCurrentUserID();
             var messages = _db.ChatMessages
@@ -178,17 +176,24 @@ namespace Prototype.Controllers
             return messages;
         }
 
-       //public ActionResult GetConversations()
-       // {
-       //     //var userId = GetCurrentUserID();
-       //     //var messages = _db.ChatMessages.Where(m => m.ToUserId == userId || m.FromUserId == userId)
-                 
+        public ActionResult GetConversations()
+        {
+
+            var userId = GetCurrentUserID();
+            //this works
+            
+            var messages = _db.ChatMessages.Where(m => m.ToUserId == userId || m.FromUserId == userId)
+                .Select(c => new DisplayMessage
+                {
+                    FullName = (c.ToUserId == userId) ? c.FromUser.FirstName + " "+ c.FromUser.LastName : c.ToUser.FirstName+" "+c.ToUser.LastName, 
+                    DisplayId = (c.ToUserId == userId) ? c.FromUser.Id : c.ToUser.Id
+                }).Distinct().ToList(); 
 
 
-       //                    //select g.OrderByDescending(m => m.CreatedDate).ToList(); 
+            return Json(new { data = messages });
 
-       //     //return Json( messages); 
-       // }
+
+        }
 
     }
 }

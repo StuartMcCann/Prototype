@@ -31,5 +31,7 @@ namespace Prototype.Models
             this.CreatedDate = DateTime.Now; 
         }
     }
+
+    
    
 }

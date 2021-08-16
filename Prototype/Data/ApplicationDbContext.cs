@@ -20,7 +20,7 @@ namespace Prototype.Data
         public DbSet<Employer> Employers { get; set; }
         public DbSet<Job> Jobs { get; set; }
 
-        public DbSet<Review> Reviews { get; set; }
+      
         public DbSet<Like> Likes { get; set; }
         
         public DbSet<ChatMessage> ChatMessages { get; set; }

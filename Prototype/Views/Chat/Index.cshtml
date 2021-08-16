@@ -15,7 +15,7 @@
 
         // below ajax gets messages connected to the candidate on page and the logged in user
         $.ajax({
-            url: '/Chat/GetConversation',
+            url: '/Chat/GetChatHistory',
             dataType: "Json",
             type: "GET",
             data: { toUserId: '@Model.Id'},
