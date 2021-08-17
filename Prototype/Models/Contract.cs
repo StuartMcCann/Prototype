@@ -79,6 +79,8 @@ namespace Prototype.Models
         public string JobTitle  { get; set; }
         public string FullName { get; set; }
 
+        public string CompanyName { get; set; }
+
 
 
 

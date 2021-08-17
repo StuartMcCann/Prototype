@@ -205,7 +205,17 @@ namespace Prototype.Controllers
         //get for hub
         public IActionResult Hub()
         {
-            return View();
+            var user = GetUser();
+
+            var candidate = _db.Candidates.Where(c => c.UserId == user.Id).First(); 
+            if (candidate != null)
+            {
+                return View(candidate);
+            }
+            else
+            {
+                return RedirectToAction("Create");
+            }
         }
 
 

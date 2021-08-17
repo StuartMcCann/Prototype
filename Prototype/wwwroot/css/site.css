@@ -269,3 +269,7 @@ button:focus {
 .marginTop{
     margin-top: 15%; 
 }
+
+.completed {
+    color: #808080; 
+}

@@ -19,10 +19,11 @@ namespace Prototype.Models
         public Employer Employer { get; set; }
         public int CandidateId { get; set; }
         public Candidate Candidate { get; set; }
+        public DateTime DateLiked { get; set; }
 
         public Like()
         {
-
+            
         }
 
         public Like(LikeType likeType,  int employerId, int candidateId, ApplicationDbContext db)
@@ -32,6 +33,7 @@ namespace Prototype.Models
             this.CandidateId = candidateId;
             this.Employer = db.Employers.Where(e => e.EmployerId == employerId).First();
             this.Candidate = db.Candidates.Where(c => c.CandidateID == candidateId).First();
+            this.DateLiked = DateTime.UtcNow;
 
         }
 
@@ -43,7 +45,8 @@ namespace Prototype.Models
             this.JobId = jobId;
             this.Employer = db.Employers.Where(e => e.EmployerId == employerId).First();
             this.Candidate = db.Candidates.Where(c => c.CandidateID == candidateId).First();
-            this.Job = db.Jobs.Where(j => j.JobId == jobId).First(); 
+            this.Job = db.Jobs.Where(j => j.JobId == jobId).First();
+            this.DateLiked = DateTime.UtcNow;
 
         }
         

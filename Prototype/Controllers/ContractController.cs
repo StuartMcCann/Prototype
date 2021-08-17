@@ -164,6 +164,33 @@ namespace Prototype.Controllers
             return Json(new { data = contracts });
         }
 
+        public ActionResult GetContractsCandidateHub(int candidateId)
+        {
+
+            // var contracts = _db.Contracts.Where(c => c.EmployerId == employerId).ToList();
+            var contracts = (from c in _db.Contracts
+                             where c.CandidateId == candidateId
+                             //add isundercontract here if adding history
+                             select new ContractProfile
+                             {
+                                 ContractId = c.ContractId,
+                                 AgreedRate = c.AgreedRate,
+                                 StartDate = c.StartDate,
+                                 //EndDate = c.EndDate,
+                                 IsUnderContract = c.IsUnderContract,
+                                 FullName = GetFullName(c.CandidateId, _db),
+                                 JobTitle = _db.Jobs.Where(j => j.JobId == c.JobId).First().JobTitleEnum.GetDisplayName(),
+                                 IsRatedByEmployer = c.IsRatedByEmployer, 
+                                 CompanyName = c.Employer.CompanyName, 
+                                 EmployerId = c.Employer.EmployerId
+                             }).ToList();
+            //return contracts; 
+            return Json(new { data = contracts });
+        }
+
+
+
+
         public static string GetFullName(int candidateId, ApplicationDbContext db)
         {
             Candidate candidate = db.Candidates.Where(c => c.CandidateID == c.CandidateID).First();
