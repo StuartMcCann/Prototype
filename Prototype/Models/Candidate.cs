@@ -42,19 +42,16 @@ namespace Prototype.Models
         [ForeignKey("UserId")]
         public ApplicationUser ApplicationUser { get; set; }
        
-
-        //Forign Key for one to Many with Reviews
-        public ICollection<Review> Reviews { get; set; }
-
-        
+                
         //foreign key one to many with Likes 
         public ICollection<Like> Likes { get; set; }
         //foreign key one to many with Contracts
         public ICollection<Contract> Contracts { get; set; }
         //many to many with Skills
         public virtual ICollection<Skill> Skills { get; set; }
+        [NotMapped]
+        public IEnumerable<int> SkillIds { get; set; }
 
-       
 
         //default constructor 
         public Candidate()

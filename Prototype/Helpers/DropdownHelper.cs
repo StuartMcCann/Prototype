@@ -1,24 +1,27 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Prototype.Data;
-using Prototype.Enums;
+﻿using Prototype.Data;
 using Prototype.Models;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Prototype.Helpers
 {
-    public class DropdownHelper
+    public static class DropdownHelper
     {
+        
 
-       
-        private readonly ApplicationDbContext _db;
-        public DropdownHelper( ApplicationDbContext applicationDbContext)
+        public static string DisplaySkills(List<Skill> skills)
         {
-           
-            _db = applicationDbContext;
+            var output = "<h5>";
+
+            foreach (var skill in skills)
+            {
+                output += "< span class='badge skill'>" + skill.SkillName + "</span>";
+            }
+
+
+            return output+"</h5>";
         }
 
-        
+
 
 
     }

@@ -191,29 +191,21 @@
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vestibulum eleifend odio, ut egestas urna pellentesque vitae. Cras euismod dolor augue, eu porta arcu rutrum vitae. Mauris lacinia placerat nunc vitae consectetur. Ut viverra ipsum justo, vitae tristique erat tincidunt accumsan. Mauris et sem et augue commodo pretium. Proin aliquet.</p>
                 <h3>Job Desription</h3>
                 <p>@Model.JobDescription</p>
-                <h3>Company Reviews</h3>
-                <!--Ajax call for company reviews if decide to include -->
-                <p>Test</p>
+                <h3>Skills Required</h3>
+                <h5>
+                    @foreach (var skill in Model.Skills)
+                    {
+                        <span class="badge skill">@skill.SkillName</span>
+
+                    }
+                </h5>
+
             </div>
             <div class="col-sm-3 buffer">
                 <h3>More Like This</h3>
 
                 <div id="output"></div>
-                @*Ajax call for more like this all dynamic items need changed with id from ajax*@
-                @*@for (int loop = 0; loop < 2; loop++)
-                {
-                    <div class="buffer">
-                        <div class="card ">
-                            <h5 class="card-header">Job Title</h5>
-                            <div class="card-body">
-                                <h5 class="card-title">Rate: £@jobProfile.LowerRate-@jobProfile.UpperRate</h5>
-                               
-                                <h5 class="card-title">@jobProfile.CompanyName</h5>
-                                @Html.ActionLink("View more", "JobProfile", new { id = jobProfile.JobID })
-                            </div>
-                        </div>
-                    </div>
-                }*@
+            
 
             </div>
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Prototype.Data;
 using Prototype.Models;
 using System.Collections.Generic;
@@ -56,7 +57,8 @@ namespace Prototype.Controllers
                                 IsUnderContract = j.IsUnderContract,
                                 EmployerRefId = j.EmployerRefId,
                                 JobTitle = j.JobTitleEnum.GetDisplayName(), 
-                                Level = j.LevelEnum.GetDisplayName()
+                                Level = j.LevelEnum.GetDisplayName(), 
+                                Skills = j.Skills
 
 
                             }).ToList();
@@ -68,6 +70,7 @@ namespace Prototype.Controllers
         //get for create
         public IActionResult Create()
         {
+            ViewBag.Skills = new SelectList(_db.Skills, "SkillId", "SkillName"); 
 
             return View();
         }
@@ -77,7 +80,11 @@ namespace Prototype.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Job job)
         {
-
+            //get all skills 
+            foreach(int skillId in job.SkillIds)
+            {
+                job.Skills.Add(_db.Skills.Where(s => s.SkillId == skillId).First()); 
+            }
             var user = GetUser();
             int employerId = (int)user.EmployerId;
             Employer employer = _db.Employers.Where(e => e.EmployerId == employerId).First();
@@ -115,7 +122,7 @@ namespace Prototype.Controllers
                                         JobTitleEnum = c.JobTitleEnum, 
                                         Rate = c.Rate, 
                                         AvailableFrom = c.AvailableFrom, 
-                                        //Skill - c.Skill
+                                        Skills = job.Skills
 
                                     }).ToList();
 
@@ -147,7 +154,8 @@ namespace Prototype.Controllers
                                     Rating = j.Employer.Rating,
                                     Employer = j.Employer,
                                     JobTitle = j.JobTitleEnum.GetDisplayName(), 
-                                    Level = j.LevelEnum.GetDisplayName()
+                                    Level = j.LevelEnum.GetDisplayName(), 
+                                    Skills = j.Skills
 
                                 }).ToList();
 
@@ -186,7 +194,8 @@ namespace Prototype.Controllers
                            StartDate = j.StartDate,
                            Rating = employers.Rating,
                            EmployerId = employers.EmployerId,
-                           UserId = u.Id
+                           UserId = u.Id, 
+                           Skills = j.Skills
 
                        }).FirstOrDefault();
 
@@ -301,7 +310,8 @@ namespace Prototype.Controllers
                                      EmployerId = j.EmployerRefId,
                                      //add skills required                                       
                                      CompanyName = e.CompanyName, 
-                                     Rating = e.Rating
+                                     Rating = e.Rating, 
+                                     Skills = j.Skills
 
                                  }).ToList();
 

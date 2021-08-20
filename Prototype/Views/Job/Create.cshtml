@@ -10,7 +10,7 @@
 <form method="post" asp-action="Create">
     <div asp-validation-summary="All" class="text-danger"></div>
 
-      <div class="mb-3">
+    <div class="mb-3">
         <label asp-for="JobTitleEnum">Job Title</label>
         <select asp-for="JobTitleEnum" asp-items="Html.GetEnumSelectList<JobTitle>()" class="form-control"></select>
         <span asp-validation-for="JobTitleEnum" class="text-danger"></span>
@@ -19,6 +19,13 @@
         <label asp-for="StartDate" class="form-label">Start Date</label>
         <input asp-for="StartDate" type="date" class="form-control">
         <span asp-validation-for="StartDate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Skills">Skills</label>
+       @*@Html.DropDownListFor(m => m.Skills,  (SelectList)ViewBag.Skills , htmlAttributes: new { @class = "form-control" })*@
+        
+      @Html.ListBoxFor(m=>m.SkillIds, (SelectList)ViewBag.Skills, htmlAttributes: new { @class = "form-control" })
+        <span asp-validation-for="Skills" class="text-danger"></span>
     </div>
     <div class="mb-3">
         <label asp-for="LowerRate" class="form-label">Rate From £:</label>
@@ -48,12 +55,12 @@
     </div>
 
     @*<div class="form-group">
-        <input asp-for="IsLive" data-val="true" value="True" type="hidden" class="control-label" />
-        <input asp-for="IsFilled" data-val="true" value="false" valuetype="hidden" class="control-label" />
-        <input asp-for="IsUnderContract" data-val="true" value="false" type="hidden" class="control-label" />
+            <input asp-for="IsLive" data-val="true" value="True" type="hidden" class="control-label" />
+            <input asp-for="IsFilled" data-val="true" value="false" valuetype="hidden" class="control-label" />
+            <input asp-for="IsUnderContract" data-val="true" value="false" type="hidden" class="control-label" />
 
 
-    </div>*@
+        </div>*@
 
 
     <button type="submit" class="btn btn-primary">Create</button>

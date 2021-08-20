@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Prototype.Data;
 using Prototype.Enums;
 using Prototype.Helpers;
@@ -33,7 +34,7 @@ namespace Prototype.Controllers
             var candidatesLikeThis = (from c in _db.Candidates
                                       join u in _db.Users on
                                       c.UserId equals u.Id
-                                      where c.Skill == skill && c.CandidateID != id
+                                      where c.Skill== skill && c.CandidateID != id
                                       && c.IsAvailable == true
                                       select new CandidateProfile
                                       {
@@ -45,8 +46,8 @@ namespace Prototype.Controllers
                                           Rate = c.Rate,
                                           Skill = c.Skill,
                                           CandidateID = c.CandidateID,
-                                          Level = c.LevelEnum.GetDisplayName()
-
+                                          Level = c.LevelEnum.GetDisplayName(), 
+                                          Skills = c.Skills
 
 
                                       }).ToList();
@@ -60,16 +61,17 @@ namespace Prototype.Controllers
         {
             //get the application user details 
             var user = GetUser();
-            //update this
-
-            var userId = user.Id;
+             var userId = user.Id;
             var candidate = GetCandidateDetailsByUser(userId); 
-            if (candidate.Count() == 0)
+            //making sure a user has a candidate profile created 
+            if (candidate == null)
             {
                 return RedirectToAction("Create");
             }
             else
             {
+                //view bag for skills dropdowns 
+                ViewBag.Skills = new SelectList(_db.Skills, "SkillId", "SkillName");
                 return View(candidate);
             }
         }
@@ -104,10 +106,12 @@ namespace Prototype.Controllers
             var user = GetUser();
             var userId = user.Id;
             candidate.ApplicationUser = user;
-            candidate.UserId = userId; 
-           // candidate.UserId = userId;
-            // add user to candidate 
-            //candidate = new Candidate(candidate, userId, _db); 
+            candidate.UserId = userId;
+            foreach (int skillId in candidate.SkillIds)
+            {
+                candidate.Skills.Add(_db.Skills.Where(s => s.SkillId == skillId).First());
+            }
+
             //validation below 
             if (ModelState.IsValid)
             {
@@ -132,6 +136,8 @@ namespace Prototype.Controllers
         //get for create
         public IActionResult Create()
         {
+            //view bag for skills dropdowns 
+            ViewBag.Skills = new SelectList(_db.Skills, "SkillId", "SkillName");
             return View();
         }
 
@@ -141,29 +147,31 @@ namespace Prototype.Controllers
 
             //TODO - select query to create cand profile list where available = true
 
-            IEnumerable<CandidateProfile> candidateList = ((from c in _db.Candidates
-                                                         //join r in _db.Reviews on c.CandidateId equals
-                                                         // r.CandidateRefId
-                                                     join u in _db.Users
-                                                     on c.UserId equals u.Id
-                                                     where c.IsAvailable
-                                                     select new CandidateProfile
-                                                     {
-                                                         CandidateID = c.CandidateID,
-                                                         LevelEnum = c.LevelEnum,
-                                                         Skill = c.Skill,
-                                                         Rating = c.Rating,
-                                                         Rate = c.Rate,
-                                                         UserId = u.Id,
-                                                         ProfilePicture = u.ProfilePicture,
-                                                         FirstName = u.FirstName,
-                                                         LastName = u.LastName,
+            //IEnumerable<CandidateProfile> candidateList = ((from c in _db.Candidates
+            //                                             //join r in _db.Reviews on c.CandidateId equals
+            //                                             // r.CandidateRefId
+            //                                         join u in _db.Users
+            //                                         on c.UserId equals u.Id
+            //                                         where c.IsAvailable
+            //                                         select new CandidateProfile
+            //                                         {
+            //                                             CandidateID = c.CandidateID,
+            //                                             LevelEnum = c.LevelEnum,
+            //                                             Skill = c.Skill,
+            //                                             Rating = c.Rating,
+            //                                             Rate = c.Rate,
+            //                                             UserId = u.Id,
+            //                                             ProfilePicture = u.ProfilePicture,
+            //                                             FirstName = u.FirstName,
+            //                                             LastName = u.LastName,
+            //                                             Skills = c.Skills
 
-                                                         //for loop here to add to list of reviews or can do ajax call on page t print 
 
-                                                     })).ToList(); 
-            
-            return View(candidateList);
+
+            //                                         })).ToList(); 
+
+            // return View(candidateList);
+            return View();
         }
 
         public IActionResult CandidateProfile(int id)
@@ -187,7 +195,9 @@ namespace Prototype.Controllers
                                   ProfilePicture = u.ProfilePicture, 
                                   FirstName = u.FirstName, 
                                   LastName = u.LastName, 
-                                 
+                                 Skills = c.Skills, 
+                                 Likes = c.Likes, 
+                                 Contracts = c.Contracts
 
                                   //for loop here to add to list of reviews or can do ajax call on page t print 
 
@@ -226,23 +236,56 @@ namespace Prototype.Controllers
             return user;
         }
 
-        public List<Candidate> GetCandidateDetailsByUser(string userId)
+        public CandidateProfile GetCandidateDetailsByUser(string userId)
         {
             var candidate = (from c in _db.Candidates
                              where c.UserId == userId
-                             select new Candidate
+                             select new CandidateProfile
                              {
-                                 
+
                                  LevelEnum = c.LevelEnum,
                                  Rating = c.Rating,
                                  Rate = c.Rate,
-                                 Skill = c.Skill,
                                  CandidateID = c.CandidateID,
-                                 
+                                 Skills = c.Skills,
+                                 Level = c.LevelEnum.GetDisplayName(),
+                                 JobTitle = c.JobTitleEnum.GetDisplayName(),
+                                 Likes = c.Likes,
+                                 IsAvailable = c.IsAvailable,
+                                 AvailableFrom = c.AvailableFrom
 
-                             }).ToList();
+
+
+
+
+                             }).First();
+
+           
 
             return candidate; 
+
+
+        }
+
+        public ActionResult UpdateCandidateSkill(List<int> skillsIds)
+        {
+            var user = GetUser();
+            var candidate = GetCandidateDetailsByUser(user.Id); 
+            foreach(int skillId in skillsIds)
+            {
+                Skill skill = _db.Skills.Where(s => s.SkillId == skillId).First();
+
+                //check if skill exits so there is no duplication 
+                if (!candidate.Skills.Contains(skill))
+                {
+                    candidate.Skills.Add(skill);
+                    _db.Candidates.Update(candidate);
+                    _db.SaveChanges(); 
+                }
+
+            }
+
+            return RedirectToAction("Edit"); 
 
 
         }
@@ -267,7 +310,8 @@ namespace Prototype.Controllers
                                            CandidateID = c.CandidateID,
                                            Level = c.LevelEnum.GetDisplayName(), 
                                            JobTitle = c.JobTitleEnum.GetDisplayName(), 
-                                           AvailableFrom = c.AvailableFrom
+                                           AvailableFrom = c.AvailableFrom, 
+                                           Skills = c.Skills
 
 
                                        }).ToList();

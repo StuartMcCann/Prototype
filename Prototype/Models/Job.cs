@@ -1,7 +1,9 @@
-﻿using Prototype.Enums;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Prototype.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Prototype.Models
 {
@@ -41,8 +43,12 @@ namespace Prototype.Models
         // one to one with relationship with Contract
         public virtual Contract Contract { get; set; }
 
+        
         //many to many relationship with skills
         public virtual ICollection<Skill> Skills { get; set; }
+        [NotMapped]
+        public IEnumerable<int> SkillIds { get; set; }
+      
 
         public Job()
         {

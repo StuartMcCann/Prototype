@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace Prototype.Models
 {
@@ -16,6 +18,7 @@ namespace Prototype.Models
         public virtual ICollection<Job> Jobs { get; set; }
         //Many to Many with Candidates 
         public virtual ICollection<Candidate> Candidates { get; set; }
+       
 
         public Skill()
         {

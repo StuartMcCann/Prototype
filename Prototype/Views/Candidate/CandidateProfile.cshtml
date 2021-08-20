@@ -22,19 +22,23 @@
                     //need to add validation that not empty here
                     var url = '@Url.Action("CandidateProfile", "Candidate", new { id = "replaceToken" })';
                     url = url.replace("replaceToken", val.candidateID);
-                    //$("#output").append(val.title);
+                    var skillscontent = "";
+                    //loop to get multiple skills from data returned 
+                    for (var loop = 0; loop < val.skills.length; loop++) {
+                        skillscontent = skillscontent += '<h5>' + val.skills[loop].skillName + '</h5>'; 
+                    }
                     $("#output").html(
                         '<div class="buffer">' +
                         '<div class="card">' +
-                        '<a href="' + url + '"><h5 class="card-header">' + val.firstName+' '+val.lastName+ '</h5></a>'+
-                                '<div class="card-body">'+
+                        '<a href="' + url + '"><h5 class="card-header">' + val.firstName + ' ' + val.lastName + '</h5></a>' +
+                        '<div class="card-body">' +
                         '<h5 class="card-title">Rate: £' + val.rate + "</h5>" +
 
-                      //add job title
+                        //add job title
 
-                        "<h5 class='card-title'>" +val.level + "</h5>" +
-                                "<h5 class='card-title'>"+val.skill+"</h5>"+
-                               @*+ "@Html.ActionLink('View more', 'JobProfile', new { id = jobProfile.JobID })"+*@
+                        "<h5 class='card-title'>" + val.level + "</h5>" +
+                           skillscontent+
+                          
                             "</div>"+
                             "</div>"+
                         "</div>"
@@ -210,7 +214,20 @@
 
             </div>
             <div class="col-sm-4"><h1 class=" heading">@Model.FirstName @Model.LastName</h1></div>
-            <div class="col-sm-4"><h2 class="heading">Candidate Rating: 4/5</h2></div>
+            @if (Model.Rating != 0)
+            {
+
+
+                <div class="col-sm-4">
+                    <h2 class="heading">Candidate Rating: @Model.Rating/5</h2>
+            <p>@Model.Contracts.Count contracts completed</p>
+                   </div>
+            }
+            else
+            {
+                <div class="col-sm-4"><h2 class="heading">No Ratings Yet</h2></div>
+            }
+
         </div>
         <div class="row">
             <div class="col-sm-8"></div>
@@ -225,13 +242,19 @@
         </div>
         <div class="row buffer">
             <div class="col-sm-9">
-                
+
                 <h3>£@Model.Rate per hour</h3>
                 <h3>@Model.LevelEnum.ToString()</h3>
-                <h3>@Model.Skill</h3>
+                <h3>Skills</h3>
+            <h5>
+                @foreach (var skill in Model.Skills)
+                {
+                    <span class="badge skill">@skill.SkillName</span>
 
+                }
+            </h5>
 
-            </div>
+                </div>
             @*<div class="col-sm">col-sm</div>*@
             <div class="col-sm">
                 <h3>More Like This</h3>

@@ -273,3 +273,8 @@ button:focus {
 .completed {
     color: #808080; 
 }
+
+.skill {
+    background-color: #52ab98; 
+    color: white; 
+}
