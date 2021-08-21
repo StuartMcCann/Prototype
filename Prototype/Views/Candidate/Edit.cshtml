@@ -1,25 +1,71 @@
 ﻿@model Prototype.Models.CandidateProfile
 
+    <script type="text/javascript">
+
+
+        $(document).ready(function () {
+
+
+        // below ajax gets jobs connected to the  the logged in user
+        $.ajax({
+            url: '/Candidate/GetSkillsForCandidateUpdate',
+            dataType: "Json",
+            type: "GET",
+            data: "" ,
+            contentType: 'application/x-www-form-urlencoded',
+            cache: false,
+            //this needs changed whe table fully normalised
+
+            success: function (data) {
+                console.log(data)
+
+
+                //loops through values returned in json format by above url
+                var disabledOption = '<option selected value="" >Select Skills</option>';
+                $.each(data, function (key, val) {
+
+                    disabledOption += '<option  value="' + val.skillId + '">' + val.skillName +
+                        '</option>';
+
+                });//end of for loop
+
+                $("#skillsDropdown").html(
+                    disabledOption
+
+
+                );//end of html
+
+            }, //end of success function
+            error: function (xhr) {
+                alert( 'error');
+            }
+
+        }); //end ajax
+
+    }); //end document.load
+
+    </script>
+
 <div class="container text">
 
     <h1 class="heading">Keep You Details Updated Here</h1>
 
     <div class="row">
 
-        <div class="col-sm">
+        <div class="col-sm add-margin">
             <h3>Your Current Details</h3>
 
-            <h5>Job Title: @Model.JobTitle</h5>
-            <h5>Requested Rate: @Model.Rate</h5>
+            <h5 class="buffer">Job Title: @Model.JobTitle</h5>
+            <h5 class="buffer">Requested Rate: @Model.Rate per hour</h5>
             <!--ADD LOGIC HERE FOR RATE ADVISE-->
-            <h5>Current Availablity: @if (Model.IsAvailable)
-            {<span>Available For Contracts</span>}
+            <h5 class="buffer">Current Availablity: @if (Model.IsAvailable)
+            {<span>Available For Contracts <button type="button" onclick="location.href='@Url.Action("ToggleCandidateAvailability", "Candidate") '" class="btn btn-primary"><i class="fas fa-toggle-on"></i></button></span>}
             else
-            {<span>Not AvailableFor Contracts</span>}</h5>
-            <h5>Available Date: @Model.AvailableFrom.ToShortDateString()</h5>
-            <h5>Current Level: @Model.Level</h5>
-            <h5>Skills</h5>
-            <h5>
+            {<span>Not AvailableFor Contracts <button type="button" onclick="location.href='@Url.Action("ToggleCandidateAvailability", "Candidate") '" class="btn btn-primary"><i class="fas fa-toggle-off"></i></button></span>} </h5>
+            <h5 class="buffer">Available Date: @Model.AvailableFrom.ToShortDateString()</h5>
+            <h5 class="buffer">Current Level: @Model.Level</h5>
+            <h5 class=" buffer">Skills: 
+            
                 @foreach (var skill in Model.Skills)
                 {
                     <span class="badge skill">@skill.SkillName</span>
@@ -32,21 +78,74 @@
 
         </div>
         <div class="col-sm">
-        <h3>Actions</h3>
+            <h3>Actions</h3>
 
-        <form asp-action="UpdateCandidateSkill" asp-controller="Candidate" method="post" enctype="multipart/form-data">
-            @*<div class="mb-3">
-            <label >Skills</label>
-            @Html.ListBoxFor(m => m.SkillIds, (SelectList)ViewBag.Skills, htmlAttributes: new { @class = "form-control" })
-            <span asp-validation-for="Skills" class="text-danger"></span>
-        </div>*@
-            @Html.DropDownList("skillIds", new SelectList(ViewBag.Accounts, "SkillId", "SkillName"),  new { @class = "form-control" }))
+            <form asp-action="UpdateCandidateSkill" asp-controller="Candidate" method="post" enctype="multipart/form-data">
+              
+                <div class="input-group">
 
-            <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Add</button>
-        </form>
-        
-        
-        
+                    <select class="form-control" id="skillsDropdown" name="skillsIds" multiple required>
+                        <!--This dropdown is populated by ajax-->
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Add</button>
+            </form>
+
+            <form asp-action="UpdateCandidateJobTitle" asp-controller="Candidate" method="post" enctype="multipart/form-data">
+
+                <div class="input-group">
+                    <div class="form-group">
+                        <label asp-for="JobTitleEnum">Job Title</label>
+                        <select name="jobTitle" asp-items="Html.GetEnumSelectList<JobTitle>()" class="form-control"></select>
+                        <span asp-validation-for="JobTitleEnum" class="text-danger"></span>
+                    </div>
+
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Update</button>
+            </form>
+
+            <form asp-action="UpdateCandidateLevel" asp-controller="Candidate" method="post" enctype="multipart/form-data">
+
+                <div class="input-group">
+                    <div class="form-group">
+                        <label asp-for="LevelEnum">Update Your Level</label>
+                        <select name="level" asp-items="Html.GetEnumSelectList<Level>()" class="form-control"></select>
+                        <span asp-validation-for="LevelEnum" class="text-danger"></span>
+                    </div>
+
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Update</button>
+            </form>
+
+            <form asp-action="UpdateCandidateRate" asp-controller="Candidate" method="post" enctype="multipart/form-data">
+
+                <div class="input-group">
+                    <div class="form-group">
+                        <label asp-for="Rate">Update Your Required Rate</label>
+                        <input asp-for="Rate" class="form-control" />
+                        <span asp-validation-for="Rate" class="text-danger"></span>
+                    </div>
+
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-pound-sign"></i></button>
+            </form>
+
+            <form asp-action="UpdateCandidateAvailableDate" asp-controller="Candidate" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    
+                    <label asp-for="AvailableFrom"></label>
+                    <input name="availableDate" type="date" class="form-control" id="exampleFormControlTextarea1">
+                    <span asp-validation-for="AvailableFrom" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary"><i class="far fa-calendar-alt"></i></button>
+            </form>
+
+
+           
+
+
+
         </div>
 
 

@@ -94,19 +94,19 @@ namespace Prototype.Controllers
 
             if (rating != 0)
             {
-                contract.IsRatedByEmployer = true;
+                // contract.IsRatedByEmployer = true;
                 contract.ContractRatingByEmployer = rating;
             }
             _db.Contracts.Update(contract);
             _db.SaveChanges();
             //update average rating for candidate 
-            AddContractRatingCandidate(contract.CandidateId);
+            AddContractRatingForCandidate(contract.CandidateId);
 
-            return RedirectToAction("Index", contract); 
+            return RedirectToAction("Index", contract);
 
         }
 
-        public void AddContractRatingCandidate(int candidateId)
+        public void AddContractRatingForCandidate(int candidateId)
         {
             //get all rated contracts for candidate and count 
             var allRatedContracts = _db.Contracts.Where(c => c.CandidateId == candidateId && c.IsRatedByEmployer == true).Select(c => c.ContractRatingByEmployer).ToList();
@@ -115,10 +115,42 @@ namespace Prototype.Controllers
             //update candidate in DB
             var candidate = _db.Candidates.Where(c => c.CandidateID == candidateId).First();
             candidate.Rating = (double)averageCandidateRating;
+            //clear skills to avoid conflict
+            candidate.Skills.Clear();
             _db.Candidates.Update(candidate);
             _db.SaveChanges();
 
 
+
+        }
+
+        [HttpPost]
+        
+        public ActionResult RateContractByCandidate(int contractId, int rating)
+        {
+            var contract = _db.Contracts.Where(c => c.ContractId == contractId).First();
+            contract.ContractRatingByCandidate = rating;
+            _db.Contracts.Update(contract);
+            _db.SaveChanges();
+            AddContractRatingForEmployer(contract.EmployerId);
+
+            return RedirectToAction("Index", contract);
+
+
+        }
+
+        public void AddContractRatingForEmployer(int employerId)
+        {
+            //get all rated contracts for candidate and count 
+            var allRatedContracts = _db.Contracts.Where(c => c.EmployerId == employerId && c.IsRatedByCandidate == true).Select(c => c.ContractRatingByCandidate).ToList();
+            //get average 
+            var averageEmployerRating = allRatedContracts.Average();
+            //update candidate in DB
+            var employer = _db.Employers.Where(e => e.EmployerId == employerId).First();
+            employer.Rating = (double)averageEmployerRating;
+
+            _db.Employers.Update(employer);
+            _db.SaveChanges();
 
         }
 
@@ -180,8 +212,8 @@ namespace Prototype.Controllers
                                  IsUnderContract = c.IsUnderContract,
                                  FullName = GetFullName(c.CandidateId, _db),
                                  JobTitle = _db.Jobs.Where(j => j.JobId == c.JobId).First().JobTitleEnum.GetDisplayName(),
-                                 IsRatedByEmployer = c.IsRatedByEmployer, 
-                                 CompanyName = c.Employer.CompanyName, 
+                                 IsRatedByEmployer = c.IsRatedByEmployer,
+                                 CompanyName = c.Employer.CompanyName,
                                  EmployerId = c.Employer.EmployerId
                              }).ToList();
             //return contracts; 
@@ -199,6 +231,37 @@ namespace Prototype.Controllers
             return fullName;
 
 
+        }
+
+
+        public ActionResult GetContractsToRate(int id)
+        {
+            var contracts = new List<ContractProfile>();
+            if (User.IsInRole("Candidate"))
+            {
+                contracts = (from c in _db.Contracts
+                             where c.CandidateId == id && c.IsRatedByCandidate == false
+                             select new ContractProfile
+
+                             {
+                                 ContractId = c.ContractId, 
+                                 JobId = c.JobId, 
+                                 JobTitle = _db.Jobs.Where(j =>j.JobId == c.JobId).First().JobTitleEnum.GetDisplayName(), 
+                                 EmployerId = c.EmployerId, 
+                                 CompanyName = _db.Employers.Where(e=>e.EmployerId == c.EmployerId).First().CompanyName, 
+                                 EndDateDisplay = c.EndDate.ToShortDateString(), 
+                                 AgreedRate = c.AgreedRate 
+
+                             }).ToList();
+
+            }
+            else if (User.IsInRole("Employer"))
+            {
+                //contracts = _db.Contracts.Where(c => c.EmployerId == id && !c.IsRatedByEmployer).ToList();
+
+            }
+
+            return Json(contracts);
         }
 
 

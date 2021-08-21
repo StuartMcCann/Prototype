@@ -1,6 +1,7 @@
 ﻿using Prototype.Data;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
 namespace Prototype.Models
@@ -30,10 +31,29 @@ namespace Prototype.Models
         public int JobId { get; set; }
         public virtual Job Job { get; set; }
 
-        public int? ContractRatingByCandidate { get; set; }
-
-        public int? ContractRatingByEmployer { get; set; }
-        //add foreign keys for reviews?
+        // public int? ContractRatingByCandidate { get; set; }
+        [NotMapped]
+        private int _ContractRatingByCandidate;
+        public int? ContractRatingByCandidate
+        {
+            get { return _ContractRatingByCandidate; }
+            set
+            { 
+                if(value>0 && value != null) { this.IsRatedByCandidate = true; }                
+                _ContractRatingByCandidate = (int)value;
+            }
+        }
+        [NotMapped]
+        private int _ContractRatingByEmployer;
+        public int? ContractRatingByEmployer
+        {
+            get { return _ContractRatingByEmployer; }
+            set
+            {
+                if (value > 0 && value != null) { this.IsRatedByEmployer = true; }
+                _ContractRatingByEmployer = (int)value;
+            }
+        }
 
 
         //Default constructor 
@@ -45,8 +65,8 @@ namespace Prototype.Models
         //ontructor with args 
         public Contract(int jobId, int candidateId, DateTime startDate, double rate, ApplicationDbContext db)
         {
-            this.JobId = jobId;            
-            this.CandidateId = candidateId;         
+            this.JobId = jobId;
+            this.CandidateId = candidateId;
             this.StartDate = startDate;
             this.AgreedRate = rate;
             this.IsUnderContract = true;
@@ -69,19 +89,19 @@ namespace Prototype.Models
             //this.EndDate = DateTime.UtcNow; 
         }
 
-        
+
 
 
     }
 
     public class ContractProfile : Contract
     {
-        public string JobTitle  { get; set; }
+        public string JobTitle { get; set; }
         public string FullName { get; set; }
 
         public string CompanyName { get; set; }
 
-
+        public string EndDateDisplay { get; set; }
 
 
     }

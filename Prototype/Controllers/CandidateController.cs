@@ -6,6 +6,7 @@ using Prototype.Data;
 using Prototype.Enums;
 using Prototype.Helpers;
 using Prototype.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -145,32 +146,6 @@ namespace Prototype.Controllers
         public IActionResult Index()
         {
 
-            //TODO - select query to create cand profile list where available = true
-
-            //IEnumerable<CandidateProfile> candidateList = ((from c in _db.Candidates
-            //                                             //join r in _db.Reviews on c.CandidateId equals
-            //                                             // r.CandidateRefId
-            //                                         join u in _db.Users
-            //                                         on c.UserId equals u.Id
-            //                                         where c.IsAvailable
-            //                                         select new CandidateProfile
-            //                                         {
-            //                                             CandidateID = c.CandidateID,
-            //                                             LevelEnum = c.LevelEnum,
-            //                                             Skill = c.Skill,
-            //                                             Rating = c.Rating,
-            //                                             Rate = c.Rate,
-            //                                             UserId = u.Id,
-            //                                             ProfilePicture = u.ProfilePicture,
-            //                                             FirstName = u.FirstName,
-            //                                             LastName = u.LastName,
-            //                                             Skills = c.Skills
-
-
-
-            //                                         })).ToList(); 
-
-            // return View(candidateList);
             return View();
         }
 
@@ -252,12 +227,12 @@ namespace Prototype.Controllers
                                  JobTitle = c.JobTitleEnum.GetDisplayName(),
                                  Likes = c.Likes,
                                  IsAvailable = c.IsAvailable,
-                                 AvailableFrom = c.AvailableFrom
-
-
-
-
-
+                                 AvailableFrom = c.AvailableFrom,
+                                 UserId = userId,
+                                 ApplicationUser = _db.Users.Where(u => u.Id == userId).First(), 
+                                 JobTitleEnum = c.JobTitleEnum, 
+                                 Contracts = c.Contracts
+                               
                              }).First();
 
            
@@ -270,25 +245,130 @@ namespace Prototype.Controllers
         public ActionResult UpdateCandidateSkill(List<int> skillsIds)
         {
             var user = GetUser();
-            var candidate = GetCandidateDetailsByUser(user.Id); 
+            var candidate = GetCandidateDetailsByUser(user.Id);
+            var skillsToBeAdded = new List<Skill>(); 
+
+           
             foreach(int skillId in skillsIds)
             {
                 Skill skill = _db.Skills.Where(s => s.SkillId == skillId).First();
+                //check if duplicate skill
+                if (!candidate.Skills.Contains(skill)){
+                    skillsToBeAdded.Add(skill); 
+                }              
+                 
+               
+           }
+            //clear candidate skills to avoid duplicate insert error 
+            candidate.Skills.Clear();
+            candidate.Skills = skillsToBeAdded; 
 
-                //check if skill exits so there is no duplication 
-                if (!candidate.Skills.Contains(skill))
-                {
-                    candidate.Skills.Add(skill);
-                    _db.Candidates.Update(candidate);
-                    _db.SaveChanges(); 
-                }
-
-            }
+            _db.Candidates.Update(candidate);
+            _db.SaveChanges(); 
 
             return RedirectToAction("Edit"); 
 
 
         }
+
+        public List<Skill> GetSkillsForCandidateUpdate()
+        {
+            return _db.Skills.ToList(); 
+        }
+
+       public ActionResult UpdateCandidateJobTitle(JobTitle jobtitle)
+        {
+            var user = GetUser();
+            var candidate = GetCandidateDetailsByUser(user.Id);
+            //set jobtitleenum
+            candidate.JobTitleEnum = jobtitle;
+            //need to clear skills so no conlfict 
+            candidate.Skills.Clear(); 
+            //update and save changes 
+
+            _db.Candidates.Update(candidate);
+            _db.SaveChanges(); 
+
+
+            return RedirectToAction("Edit"); 
+        }
+
+
+        public ActionResult UpdateCandidateLevel(Level level)
+        {
+            var user = GetUser();
+            var candidate = GetCandidateDetailsByUser(user.Id);
+            //set jobtitleenum
+        
+            candidate.LevelEnum = level;
+            //need to clear skills so no conlfict 
+            candidate.Skills.Clear();
+            //update and save changes 
+
+            _db.Candidates.Update(candidate);
+            _db.SaveChanges();
+
+
+            return RedirectToAction("Edit");
+        }
+
+        public ActionResult UpdateCandidateRate(double rate)
+        {
+            var user = GetUser();
+            var candidate = GetCandidateDetailsByUser(user.Id);
+            //set jobtitleenum
+
+            candidate.Rate = rate;
+            //need to clear skills so no conlfict 
+            candidate.Skills.Clear();
+            //update and save changes 
+
+            _db.Candidates.Update(candidate);
+            _db.SaveChanges();
+
+
+            return RedirectToAction("Edit");
+        }
+
+        public ActionResult UpdateCandidateAvailableDate(DateTime availableDate)
+        {
+            var user = GetUser();
+            var candidate = GetCandidateDetailsByUser(user.Id);
+            //set jobtitleenum
+
+            candidate.AvailableFrom = availableDate;
+            
+            //need to clear skills so no conlfict 
+            candidate.Skills.Clear();
+            //update and save changes 
+
+            _db.Candidates.Update(candidate);
+            _db.SaveChanges();
+
+
+            return RedirectToAction("Edit");
+        }
+
+        public ActionResult ToggleCandidateAvailability()
+        {
+            var user = GetUser();
+            var candidate = GetCandidateDetailsByUser(user.Id);
+            if (candidate.IsAvailable)
+            {
+                candidate.IsAvailable = false;
+            }
+            else
+            {
+                candidate.IsAvailable = true; 
+            }
+            candidate.Skills.Clear();
+            //update and save changes 
+
+            _db.Candidates.Update(candidate);
+            _db.SaveChanges();
+            return RedirectToAction("Edit");
+        }
+
 
         public List<CandidateProfile> GetAvailableCandidates()
         {

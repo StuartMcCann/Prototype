@@ -59,7 +59,7 @@
             cache: false,
 
             success: function (data) {
-                console.log(data)
+
 
                 $.each(data.data, function (key, val) {
                    //need to add validation that not empty here
@@ -156,6 +156,75 @@
                 alert( 'error');
             }
 
+         }); //end ajax
+
+
+
+        $.ajax({
+            url: '/Contract/GetContractsToRate',
+            dataType: "Json",
+            type: "Get",
+             data: { id: @Model.CandidateID},
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+
+
+            success: function (data) {
+                console.log(data);
+                if (data != null) {
+
+
+                    $.each(data, function (key, val) {
+                        //need to add validation that not empty here
+
+
+                        //action link use to generate url string
+                    var url = '@Url.Action("EmployerHubRedirect", "Contract", new { @contractId = "replaceToken" })';
+                        url = url.replace("replaceToken", val.contractId);
+                        
+                        console.log(url);
+                       
+
+                        $("#toBeRatedOutput").html(
+
+                            '<h5> Rate your contract with ' + val.companyName + '</h5>'
+                            +'<p>Details: '+val.jobTitle+', £'+val.agreedRate+' per hour<p>'
+                           + '<a class="btn btn-primary" href="' + url + '">Rate Contract</a>'+
+                          // +'<form asp-action="RateContractByCandidate" asp-controller="Contract" method="post">'
+                
+                    
+                   // +'<div>'
+                   //   + ' <label class=" form-label">Rate Between 1 and 5</label>'+
+                   //     '<div class="  form-group " >'+
+                   //        //' <input type="hidden" id="contractId" name="contractID" value="'+val.contractId+'">'+
+                   //         '<input class="border form-control" required name="rating" type="number" min="1" max="5" placeholder="Max Rating: 5" />'
+                   //    +' </div>'+
+
+                   //' </div>'+
+
+
+                           //' <button type="button" id="submit" = class=" add-margin btn btn-primary float-right"> Rate Contract</button>'+
+
+                            //
+
+               ' </div>'
+           //+' </form>'
+
+                        );//end of .append
+                    });//end of for loop
+                } else {
+                    $("#toBeRatedOutput").append(
+
+                        "<h3>When you have a completed contract to rate you'll find it here</h3>"
+
+                    );
+                }
+
+            }, //end of success function
+            error: function (xhr) {
+                alert( 'error');
+            }
+
         }); //end ajax
 
 
@@ -176,7 +245,7 @@
 
         <div class="  col-sm">
             <div class="addJob">
-                <h3 class=" heading">Your Live Jobs <i class="fas fa-toolbox"></i> </h3>
+                <h3 class=" heading">Your Candidate Area <i class="fas fa-toolbox"></i> </h3>
                 <a asp-controller="Candidate" asp-action="Edit"> <button class=" addJob"><i class="fas fa-plus"></i> Update Your Details </button></a>
             </div>
 
@@ -185,7 +254,11 @@
                 <div class="container buffer">
 
                     <!--ajax call to get jobs by user id content appened to this div -->
-                    <div id="jobsoutput"></div>
+                    <form asp-action="RateContractByCandidate" asp-controller="Contract" method="post">
+                        
+                        <div id="toBeRatedOutput"></div>
+
+                    </form>
                 </div>
 
 

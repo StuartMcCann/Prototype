@@ -60,66 +60,96 @@
         <div class="col-sm-5 border">
 
             <h3>Actions</h3>
-            
-
-            @if (Model.IsUnderContract)
+            @if (User.IsInRole("Employer"))
             {
-        <div class="container-fluid">
-            <form asp-action="UpdateRate" asp-controller="Contract" method="post">
-                <div class="row border buffer add-margin ">
+
+                @if (Model.IsUnderContract)
+                {
+                    <div class="container-fluid">
+                        <form asp-action="UpdateRate" asp-controller="Contract" method="post">
+                            <div class="row border buffer add-margin ">
 
 
-                    <label class=" form-label">Ammend Rate</label>
-                    <div class="  form-group " style="width: 100%">
+                                <label class=" form-label">Ammend Rate</label>
+                                <div class="  form-group " style="width: 100%">
 
-                        <input class="border form-control" required name="rate" type="number" placeholder="@Model.EndDate" />
+                                    <input class="border form-control" required name="rate" type="number" placeholder="@Model.EndDate" />
+                                </div>
+                                <div class=" form-group">
+                                    <input asp-for="ContractId" data-val="true" value="@Model.ContractId" type="hidden" />
+                                </div>
+
+                                <button id="update" type="submit" class=" add-margin btn btn-primary float-right"> Update</button>
+
+                            </div>
+                        </form>
+
+                        <!--End contract -->
+                        <form asp-action="CompleteContract" asp-controller="Contract" method="post">
+                            <div class="row border buffer add-margin">
+                                <label class="form-label">End Date</label>
+                                <div class=" input-group">
+
+
+                                    <input required name="endDate" type="date" class="form-control" />
+                                </div>
+                                <div>
+                                    <label class=" form-label">Please Rate This Contractor</label>
+                                    <div class="  form-group " style="width: 100%">
+                                        @Html.Hidden("contractId", Model.ContractId)
+                                        <input class="border form-control" required name="rating" type="number" min="1" max="5" placeholder="Max Rating: 5" />
+                                    </div>
+
+                                </div>
+
+
+                                <button id="update" type="submit" class=" add-margin btn btn-primary float-right"> End Contract</button>
+
+
+
+                            </div>
+                        </form>
+
                     </div>
-                    <div class=" form-group">
-                        <input asp-for="ContractId" data-val="true" value="@Model.ContractId" type="hidden" />
-                    </div>
+                }
+                else if (!Model.IsUnderContract && !Model.IsRatedByEmployer)
+                {
+                    //rate candidate
+                }
+                else if (Model.IsRatedByEmployer && !Model.IsUnderContract)
+                {
+                    //contract completed and rated so link to candidate contact details
+                    <h5>This contract is completed!</h5>
+                    <h6>You Rated this contract @Model.ContractRatingByEmployer/5 </h6>
 
-                    <button id="update" type="submit" class=" add-margin btn btn-primary float-right"> Update</button>
-
-                </div>
-            </form>
-
-            <!--End contract -->
-            <form asp-action="CompleteContract" asp-controller="Contract" method="post">
-                <div class="row border buffer add-margin">
-                    <label class="form-label">End Date</label>
-                    <div class=" input-group">
-
-
-                        <input required name="endDate" type="date" class="form-control" />
-                    </div>
-                    <div>
-                        <label class=" form-label">Please Rate This Contractor</label>
-                        <div class="  form-group " style="width: 100%">
-                            @Html.Hidden("contractId", Model.ContractId)
-                            <input class="border form-control" required name="rating" type="number" min="1" max="5" placeholder="Max Rating: 5" />
-                        </div>
-
-                    </div>
-
-
-                    <button id="update" type="submit" class=" add-margin btn btn-primary float-right"> End Contract</button>
-
-
-
-                </div>
-            </form>
-           
-        </div>
-            }else if(!Model.IsUnderContract && !Model.IsRatedByEmployer)
-            {
-                //rate candidate 
+                    <h6>Vist @Model.Candidate.ApplicationUser.FirstName   @Model.Candidate.ApplicationUser.LastName's profile 
+            @Html.ActionLink("here", "CandidateProfile", "Candidate", new { id = Model.CandidateId })      to get back in touch </h6>
+                }
             }
-            else if (Model.IsRatedByEmployer && !Model.IsUnderContract)
+            else if (User.IsInRole("Candidate"))
             {
-                //contract completed and rated so link to candidate contact details 
-                <h5>This contract is completed!</h5>
+                if (!Model.IsRatedByCandidate)
+                {
+                    <h6>Great work completing this contract, you still need to give it a rating to finish the job!</h6>
+                    <form asp-action="RateContractByCandidate" asp-controller="Contract" method="post">
+                        <div>
+                            <label class=" form-label">Please Rate This Contract Between 1 and 5</label>
+                            <div class="  form-group " style="width: 100%">
+                                @Html.Hidden("contractId", Model.ContractId)
+                                <input class="border form-control" required name="rating" type="number" min="1" max="5" placeholder="Max Rating: 5" />
+                            </div>
 
-                <h5>If you need to get in touch again you can message here! </h5>
+                        </div>
+                        <button id="update" type="submit" class=" add-margin btn btn-primary float-right"> Rate Contract</button>
+                    </form>
+                }
+                else if (Model.IsRatedByCandidate)
+                {
+                    <h5>This contract is completed!</h5>
+                    <h6>You Rated this contract @Model.ContractRatingByCandidate/5 </h6>
+
+                    <h6>Vist the @Model.Employer.CompanyName profile      @Html.ActionLink("here", "Index", "Employer", new { id = Model.EmployerId }) to get back in touch </h6>
+                }
             }
 
         </div>
