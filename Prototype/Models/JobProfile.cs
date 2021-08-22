@@ -20,5 +20,6 @@ namespace Prototype.Models
         public string Level { get; set; }
 
         public double? Rating { get; set; }
+        public string DisplayStartDate { get; set; }
     }
 }

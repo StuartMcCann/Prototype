@@ -231,6 +231,28 @@ namespace Prototype.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public void RemoveLikeForJob( int jobId)
+        {
+            try
+            {
+                var user = GetUser();
+                var candidateId = GetCandidateIdByUserID(user.Id);
+                var employerId = _db.Jobs.Where(j => j.JobId == jobId).First().EmployerRefId; 
+                var LikeToRemove = new Like(LikeType.CandidateLikesJob, employerId, candidateId,jobId, _db);
+
+                _db.Likes.Remove(LikeToRemove);
+
+                _db.SaveChanges();
+
+
+            }
+            catch
+            {
+
+            }
+        }
 
 
 

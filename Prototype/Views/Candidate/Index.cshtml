@@ -5,6 +5,41 @@
 <div id="myGrid" class="ag-theme-alpine" style="height: 600px; width:900px;"></div>
 
 <script type="text/javascript" charset="utf-8">
+
+    var skillValueGetter = function (params) {
+        var cellData = '';
+        if (params.data.skills.length != 0) {
+            // console.log(params.data.skills);
+            for (var loop = 0; loop < params.data.skills.length; loop++) {
+
+                var skill = params.data.skills[loop].skillName;
+                cellData += ' ' + skill;
+                if (loop != params.data.skills.length-1) {
+                    cellData += ', '; 
+                }
+            }
+        }
+
+
+        return cellData;
+    }
+
+    var ratingValueGetter = function (params) {
+        console.log(params.value);
+        var cellData = '';
+        if (params.value == 0) {
+            cellData += 'No Ratings Yet'; 
+        }
+        for (var loop = 0; loop < params.value; loop++) {
+           
+            cellData += ' <i class= " heading fas fa-star" ></i>';
+
+        }
+        return cellData;
+    }
+
+
+
         // specify the columns
         const columnDefs = [
             {
@@ -16,8 +51,32 @@
                 }
             },
             { field: "jobTitle", sortable: true, filter: true },
-            { field: "rating", sortable: true, filter: true },
-            { field: "skill", sortable: true, filter: true },
+            {
+                field: "rating", sortable: true, filter: true,
+
+                cellRenderer: function (params) {
+                    console.log(params.value);
+                    var cellData = "<span>";
+                    if (params.value == 0) {
+                        cellData += 'Not Rated Yet'; 
+                    } else {
+                        for (var loop = 0; loop < params.value; loop++) {
+                            cellData += ' <i class= " heading fas fa-star" ></i>';
+
+                        }
+                    }
+                    
+                    return cellData += '</span>';
+
+                }
+
+
+
+            },
+            {
+                field: "skills", sortable: true, filter: true, valueGetter: skillValueGetter
+            }
+            ,
 
             { field: "level", sortable: true, filter: true },
 

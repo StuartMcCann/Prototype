@@ -6,6 +6,22 @@
 </div>
 <script type="text/javascript" charset="utf-8">
         // specify the columns
+
+    var skillValueGetter = function (params) {
+        var cellData = '';
+                    if (params.data.skills.length != 0) {
+                       // console.log(params.data.skills);
+                        for (var loop = 0; loop < params.data.skills.length; loop++) {
+
+                            var skill = params.data.skills[loop].skillName;
+
+                           cellData += ' ' + skill + ' ';
+                        }
+                    }
+
+
+                    return cellData ;
+    }
         const columnDefs = [
             {
                 field: "jobTitle", sortable: true, filter: true,
@@ -15,6 +31,11 @@
                     return '<a href="'+url+'">' + params.value + '</a>'
                 }
             },
+            {
+                field: "skills", sortable: true, filter: true, valueGetter: skillValueGetter
+               
+            }
+                ,
             {
                 field: "companyName", sortable: true, filter: true,
 
@@ -26,7 +47,23 @@
 
 
             },
-            { field: "rating", sortable: true, filter: true },
+            {
+                field: "rating", sortable: true, filter: true, 
+
+                cellRenderer: function (params) {
+                    console.log(params.value); 
+                    var cellData = "<span>"; 
+                    for (var loop = 0; loop < params.value; loop++) {
+                        cellData += ' <i class= " heading fas fa-star" ></i>'; 
+                                              
+                    }
+                    return cellData+='</span>'; 
+                   
+                }
+                   
+
+
+            },
             { field: "lowerRate", sortable: true, filter: true },
 
             { field: "upperRate", sortable: true, filter: true },
@@ -66,10 +103,10 @@
             data: "",
             contentType: 'application/x-www-form-urlencoded',
             cache: false,
-            //this needs changed whe table fully normalised
+
 
             success: function (data) {
-                  console.log(data)
+                  //console.log(data)
 
 
             }, //end of success function

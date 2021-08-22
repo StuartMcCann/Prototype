@@ -386,7 +386,7 @@ namespace Prototype.Controllers
                                            LevelEnum = c.LevelEnum,
                                            Rating = c.Rating,
                                            Rate = c.Rate,
-                                           Skill = c.Skill,
+                                           //Skill = c.Skill,
                                            CandidateID = c.CandidateID,
                                            Level = c.LevelEnum.GetDisplayName(), 
                                            JobTitle = c.JobTitleEnum.GetDisplayName(), 

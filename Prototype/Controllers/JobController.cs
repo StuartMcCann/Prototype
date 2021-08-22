@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Prototype.Data;
 using Prototype.Models;
+using Prototype.Service;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -99,7 +100,7 @@ namespace Prototype.Controllers
                 //save changes exexutes action to DB
                 _db.SaveChanges();
                 //needs changed to direct to edit 
-                return RedirectToAction("JobMatch", new { job = job });
+                return RedirectToAction("JobMatch", job);
 
             }
             return View(job);
@@ -111,35 +112,22 @@ namespace Prototype.Controllers
         public IActionResult JobMatch(Job job)
         {
             //change to jobprofile? and add more complex logic 
-            var matchedCandidates = (from c in _db.Candidates
-                                     where c.IsAvailable == true
-                                    select new CandidateProfile
-                                    {
-                                        CandidateID = c.CandidateID, 
-                                        ApplicationUser = c.ApplicationUser, 
-                                        LevelEnum = c.LevelEnum,
-                                        Rating = c.Rating, 
-                                        JobTitleEnum = c.JobTitleEnum, 
-                                        Rate = c.Rate, 
-                                        AvailableFrom = c.AvailableFrom, 
-                                        Skills = job.Skills
-
-                                    }).ToList();
+            var matchedCandidates = JobMatchHelper.JobMatchWithCandidates(_db, job); 
 
             return View(matchedCandidates);
 
         }
 
-        public ActionResult GetJobsLikeThis(JobTitle jobTitle)
+        public ActionResult GetJobsLikeThis(JobTitle jobTitle, int jobId)
         {
 
+            var numberOfJobs = 3; 
 
             var jobsLikeThis = (from j in _db.Jobs
-                                    //join employers in _db.Employers on j.EmployerRefId
-                                    //equals employers.EmployerId
-
                                 where j.JobTitleEnum == jobTitle
                                 && j.IsLive == true
+                                && j.JobId != jobId
+                                orderby  j.StartDate
                                 select new JobProfile
                                 {
                                     JobId = j.JobId,
@@ -155,13 +143,15 @@ namespace Prototype.Controllers
                                     Employer = j.Employer,
                                     JobTitle = j.JobTitleEnum.GetDisplayName(), 
                                     Level = j.LevelEnum.GetDisplayName(), 
-                                    Skills = j.Skills
+                                    Skills = j.Skills, 
+                                    DisplayStartDate = j.StartDate.ToShortDateString()
 
-                                }).ToList();
+                                }).Take(numberOfJobs).ToList();
 
             return Json(new { data = jobsLikeThis });
 
         }
+
 
 
       
@@ -214,6 +204,8 @@ namespace Prototype.Controllers
         //GET for Edit
         public IActionResult Edit(int? id)
         {
+
+            ViewBag.Skills = new SelectList(_db.Skills, "SkillId", "SkillName");
             if (id == null || id == 0)
             {
                 return NotFound();
@@ -235,16 +227,45 @@ namespace Prototype.Controllers
             //validation below 
             if (ModelState.IsValid)
             {
+                var user = GetUser();
+                job.EmployerRefId = (int)user.EmployerId;
+                if (job.SkillIds != null)
+                {
+                    job.Skills.Clear(); 
+                    job.Skills = UpdateJobSkills(job); 
+                }
                 //update needs primary key to update
                 _db.Jobs.Update(job);
                 //save changes exexutes action to DB
                 _db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Hub", "Employer");
 
             }
             return View(job);
 
 
+        }
+
+
+
+
+        public List<Skill> UpdateJobSkills(Job job)
+        {
+            var skillsToBeAdded = new List<Skill>();
+
+
+            foreach (int skillId in job.SkillIds)
+            {
+                Skill skill = _db.Skills.Where(s => s.SkillId == skillId).First();
+                //check if duplicate skill
+                if (!job.Skills.Contains(skill))
+                {
+                    skillsToBeAdded.Add(skill);
+                }
+
+            }
+
+            return skillsToBeAdded;
         }
 
         //GET for Delete 
@@ -317,6 +338,18 @@ namespace Prototype.Controllers
 
 
             return availableJobs;
+
+        }
+
+
+        public List<JobProfile> GetJobsStartingSoon(JobTitle jobTitle)
+        {
+
+
+            var jobsClosingSoon = JobMatchHelper.GetJobsStartingSoon(jobTitle, _db); 
+
+
+            return jobsClosingSoon;
 
         }
 
