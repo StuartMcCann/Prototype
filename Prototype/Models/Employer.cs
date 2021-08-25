@@ -17,6 +17,8 @@ namespace Prototype.Models
         [DisplayName("Company Name")]
         public String CompanyName { get; set; }
         [DisplayName("Company Overview")]
+        [Required]
+        [StringLength(maximumLength: 1000, MinimumLength = 100, ErrorMessage = "Company overview must be between 100 - 1000 characters")]
         public String CompanyOverview { get; set; }
         public double Rating { get; set; }
         [Display(Name = "Company Logo")]

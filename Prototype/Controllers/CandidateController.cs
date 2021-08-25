@@ -192,7 +192,7 @@ namespace Prototype.Controllers
         {
             var user = GetUser();
 
-            var candidate = _db.Candidates.Where(c => c.UserId == user.Id).First(); 
+            var candidate = _db.Candidates.Where(c => c.UserId == user.Id).FirstOrDefault(); 
             if (candidate != null)
             {
                 return View(candidate);
@@ -229,11 +229,11 @@ namespace Prototype.Controllers
                                  IsAvailable = c.IsAvailable,
                                  AvailableFrom = c.AvailableFrom,
                                  UserId = userId,
-                                 ApplicationUser = _db.Users.Where(u => u.Id == userId).First(), 
+                                 ApplicationUser = _db.Users.Where(u => u.Id == userId).FirstOrDefault(), 
                                  JobTitleEnum = c.JobTitleEnum, 
                                  Contracts = c.Contracts
                                
-                             }).First();
+                             }).FirstOrDefault();
 
            
 

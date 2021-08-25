@@ -17,11 +17,26 @@
                 console.log(data);
                 //if already liked replace with unlike button
                 if (data == true) {
+                    var url = '@Url.Action("RemoveLikeForEmployer", "Like", new { employerId = Model.EmployerId } )';
+
                     $("#like").html(
                         '<div id="like">' +
-                        ' <button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button>' +
+                        '<a href="' + url + '"><button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button></a>'+
+                     /*   ' <button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button>' +*/
                         '</div>'
                     );
+                }else {
+
+                     var url = '@Url.Action("CreateLikeEmployer", "Like", new { employerId = Model.EmployerId } )';
+
+
+                    $("#like").html(
+                        '<div id="like">' +
+
+                        '<a href="' + url + '"><button type="button" class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button></a>' +
+                        '</div>'
+                    );
+
                 }
 
 
@@ -73,7 +88,7 @@
 
 
 
-            $('#like').click(function () {
+            @*$('#like').click(function () {
 
 
                  var like = '@LikeType.CandidateLikesEmployer';
@@ -93,8 +108,8 @@
                        ' <button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button>'+
                     '</div>'
                 );
-                //reload to show messaging 
-                location.reload(); 
+                //reload to show messaging
+                location.reload();
 
 
             },
@@ -105,7 +120,7 @@
 
 
         }); //end ajax
-        }); //end click
+        }); //end click*@
         }); //end document.load
 
 
@@ -117,7 +132,7 @@
             <h1>@Model.CompanyName</h1>
         </div>
         <div class="col-sm" id="like">
-            <button type="button" class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button>
+            @*<button type="button" class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button>*@
         </div>
        
 

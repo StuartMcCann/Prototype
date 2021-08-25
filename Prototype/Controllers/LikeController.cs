@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Prototype.Data;
 using Prototype.Models;
+using Prototype.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,22 +24,15 @@ namespace Prototype.Controllers
         }
 
 
-
-
-
-        // POST: LikeController/Create for employer likes candidate
-        [AllowAnonymous]
-        [IgnoreAntiforgeryToken]
-        [HttpPost]
-        public IActionResult Create(LikeType likeType, int candId)
+        public IActionResult Create( int candidateId)
         {
-
+            var likeType = LikeType.EmployerLikesCandidate; 
 
             var user = GetUser();
             int employerId = (int)user.EmployerId;
 
 
-            Like like = new Like(likeType, employerId, candId, _db);
+            Like like = new Like(likeType, employerId, candidateId, _db);
 
 
 
@@ -58,13 +52,11 @@ namespace Prototype.Controllers
 
         }
 
-        [AllowAnonymous]
-        [IgnoreAntiforgeryToken]
-        [HttpPost]
-        public IActionResult CreateLikeJob(LikeType likeType, int employerId, int jobId)
+        
+        public IActionResult CreateLikeJob( int employerId, int jobId)
         {
 
-
+            var likeType = LikeType.CandidateLikesJob; 
             var user = GetUser();
             String userId = user.Id;
             var candId = GetCandidateIdByUserID(userId);
@@ -93,14 +85,12 @@ namespace Prototype.Controllers
 
 
 
-        [AllowAnonymous]
-        [IgnoreAntiforgeryToken]
-        [HttpPost]
-        public IActionResult CreateLikeEmployer(LikeType likeType, int employerId)
+       
+        public IActionResult CreateLikeEmployer( int employerId)
         {
 
             // ad validation here that not already liked?
-
+            var likeType = LikeType.CandidateLikesEmployer; 
             var user = GetUser();
             String userId = user.Id;
             var candId = GetCandidateIdByUserID(userId);
@@ -181,77 +171,60 @@ namespace Prototype.Controllers
         }
 
 
-        // GET: LikeController/Edit/5
-        public ActionResult Edit(int id)
+        
+        public IActionResult RemoveLikeCandidate( int candidateId)
         {
-            return View();
-        }
-
-        // POST: LikeController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
+            var likeType = LikeType.EmployerLikesCandidate;
+            var user = GetUser();
+            
+            var likeToRemove = _db.Likes.Where(l => l.LikeType == likeType && l.CandidateId == candidateId && l.EmployerId == user.EmployerId).First();
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: LikeController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: LikeController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public void RemoveLikeCandidate(LikeType likeType, int candidateId)
-        {
-            try
-            {
-                var user = GetUser();
-                var employerId = (int)user.EmployerId;
-                var LikeToRemove = new Like(likeType, employerId, candidateId, _db);
-
-                _db.Likes.Remove(LikeToRemove);
-
+                _db.Likes.Remove(likeToRemove);
                 _db.SaveChanges();
-
-
             }
-            catch
-            {
 
-            }
+
+
+            return RedirectToAction("CandidateProfile", "Candidate", new { id = candidateId });
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public void RemoveLikeForJob( int jobId)
+        public IActionResult RemoveLikeForEmployer(int employerId)
         {
-            try
+            var likeType = LikeType.CandidateLikesEmployer;
+            var user = GetUser();
+            var candidateId = GetCandidateIdByUserID(user.Id);
+            var likeToRemove = _db.Likes.Where(l => l.LikeType == likeType && l.CandidateId == candidateId && l.EmployerId == employerId).First();
+            if (ModelState.IsValid)
             {
+                _db.Likes.Remove(likeToRemove);
+                _db.SaveChanges();
+            }
+
+
+
+            return RedirectToAction("Index", "Employer", new { id = employerId }); 
+        }
+       
+
+      
+        public ActionResult RemoveLikeForJob( int jobId)
+        {
+            
                 var user = GetUser();
                 var candidateId = GetCandidateIdByUserID(user.Id);
-                var employerId = _db.Jobs.Where(j => j.JobId == jobId).First().EmployerRefId; 
-                var LikeToRemove = new Like(LikeType.CandidateLikesJob, employerId, candidateId,jobId, _db);
-
-                _db.Likes.Remove(LikeToRemove);
+                var employerId = _db.Jobs.Where(j => j.JobId == jobId).First().EmployerRefId;
+            var likeType = LikeType.CandidateLikesJob;
+            //= new Like(likeType, employerId, candidateId,jobId, _db);
+            var likeToRemove = _db.Likes.Where(l => l.LikeType == likeType && l.CandidateId == candidateId && l.JobId == jobId).First();
+            if (ModelState.IsValid)
+            {
+                _db.Likes.Remove(likeToRemove);
 
                 _db.SaveChanges();
-
-
             }
-            catch
-            {
-
-            }
+            return RedirectToAction("JobProfile", "Job", new { id = jobId }); 
+            
         }
 
 
@@ -270,11 +243,6 @@ namespace Prototype.Controllers
 
 
             var candidateId = _db.Candidates.Where(c => c.UserId == userId).Select(i => i.CandidateID).First();
-
-
-
-
-
             return candidateId;
         }
 
@@ -284,6 +252,7 @@ namespace Prototype.Controllers
             var user = GetUser();
             var candidateId = 0;
             var employerId = 0;
+          
             if (User.IsInRole("Employer"))
             {
                 employerId = (int)user.EmployerId;
@@ -297,150 +266,45 @@ namespace Prototype.Controllers
 
             }
 
-
-            var likes = (from l in _db.Likes
-                         where
-    (l.EmployerId == employerId && l.CandidateId == candidateId && l.LikeType == LikeType.EmployerLikesCandidate)
-    || ((l.EmployerId == employerId && l.CandidateId == candidateId && l.LikeType == LikeType.CandidateLikesEmployer)
-    || (l.EmployerId == employerId && l.CandidateId == candidateId && l.LikeType == LikeType.CandidateLikesJob))
-                         select new Like
-                         {
-                             LikeType = l.LikeType,
-                             JobId = l.JobId,
-                             EmployerId = l.EmployerId,
-                             CandidateId = l.CandidateId
-
-
-                         }).ToList();
+            var likes = LikeHelper.GetLikesForMutualLikeCheck(_db, employerId, candidateId); 
             //loop here to check result has right like types 
             if (likes != null)
             {
-                mutualLike = LikeTypeCount(likes);
+                mutualLike = LikeHelper.LikeTypeCount(likes);
             }
 
             return mutualLike;
         }
 
-        public bool LikeTypeCount(List<Like> likes)
-        {
-            var mutual = false;
-            var employerCount = 0;
-            var candidateCount = 0;
-            //loop through to check like types 
-            foreach (Like like in likes)
-            {
-                employerCount = like.LikeType == LikeType.EmployerLikesCandidate ? ++employerCount : employerCount;
-                candidateCount = like.LikeType == LikeType.CandidateLikesEmployer || like.LikeType == LikeType.CandidateLikesJob ?
-                    ++candidateCount : candidateCount;
-                if (employerCount > 0 && candidateCount > 0)
-                {
-                    mutual = true;
-                    return mutual;
-                }
-
-            }
-
-            return mutual;
-        }
+   
 
         public bool AlreadyLiked(int id)
         {
             var alreadyLiked = false;
-
+            var user = GetUser();
             if (User.IsInRole("Employer"))
             {
                 //checks DB for likes in by by candidate to employer
-                alreadyLiked = CheckEmployerLikesCandidate(id);
+                alreadyLiked = LikeHelper.CheckEmployerLikesCandidate(id, user, _db);
 
             }
             else if (User.IsInRole("Candidate"))
             {
                 //checks DB for likes in by by Employer to Candidate
-                alreadyLiked = CheckCandidateLikesEmployer(id);
+                alreadyLiked = LikeHelper.CheckCandidateLikesEmployer(id, user, _db);
             }
 
             return alreadyLiked;
         }
 
-        //checks DB for likes in by by candidate to employer
-        public bool CheckCandidateLikesEmployer(int employerId)
-        {
-            var liked = false;
-            var user = GetUser();
-            var candidateId = GetCandidateIdByUserID(user.Id);
-            var likes = (from l in _db.Likes
-                         where l.EmployerId == employerId
-                         && l.CandidateId == candidateId
-                         && (l.LikeType == LikeType.CandidateLikesEmployer || l.LikeType == LikeType.CandidateLikesJob)
-                         select new Like
-                         {
-                             LikeType = l.LikeType,
-                             JobId = l.JobId,
-                             EmployerId = l.EmployerId,
-                             CandidateId = l.CandidateId
-
-
-                         }).ToList();
-            if (likes.Count() > 0)
-            {
-                liked = true;
-            }
-
-
-            return liked;
-
-
-        }
-
-        public bool CheckEmployerLikesCandidate(int candidateId)
-        {
-            var liked = false;
-            var user = GetUser();
-            var likes = (from l in _db.Likes
-                         where l.CandidateId == candidateId
-                         && l.EmployerId == user.EmployerId
-                         && (l.LikeType == LikeType.EmployerLikesCandidate)
-                         select new Like
-                         {
-                             LikeType = l.LikeType,
-                             JobId = l.JobId,
-                             EmployerId = l.EmployerId,
-                             CandidateId = l.CandidateId
-
-
-                         }).ToList();
-            if (likes.Count() > 0)
-            {
-                liked = true;
-            }
-
-
-            return liked;
-
-        }
+     
 
         public bool AlreadyLikedJob(int jobId)
         {
-            var liked = false;
+            
             var user = GetUser();
             var candidateId = GetCandidateIdByUserID(user.Id);
-            var likes = (from l in _db.Likes
-                         where l.JobId == jobId
-                         && l.CandidateId == candidateId
-                         && (l.LikeType == LikeType.CandidateLikesJob)
-                         select new Like
-                         {
-                             LikeType = l.LikeType,
-                             JobId = l.JobId,
-                             EmployerId = l.EmployerId,
-                             CandidateId = l.CandidateId
-
-
-                         }).ToList();
-            if (likes.Count() > 0)
-            {
-                liked = true;
-            }
+            var liked = LikeHelper.CheckAlreadyLikedJob(jobId, user, _db); 
 
 
             return liked;

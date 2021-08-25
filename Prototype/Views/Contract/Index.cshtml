@@ -3,29 +3,29 @@
 <script type="text/javascript">
     //ajax for update button
 
-     $('#endContract').click(function () {
+     //$('#endContract').click(function () {
 
 
                
                
-                $("#endContract").html(
-                    '<div id="like">'+
-                       ' <button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button>'+
-                    '</div>'
-                );
+     //           $("#endContract").html(
+     //               '<div id="like">'+
+     //                  ' <button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button>'+
+     //               '</div>'
+     //           );
 
                
 
 
-            },
-            error: function (jqxhr, status, exception) {
-                alert('Exception:', exception);
+     //       },
+     //       error: function (jqxhr, status, exception) {
+     //           alert('Exception:', exception);
 
-            }
+     //       }
 
 
        
-        }); //end click
+     //   }); //end click
 
 
 
@@ -47,7 +47,7 @@
             <h6>Status: @if(Model.IsUnderContract){ <span>In Progress</span> }
             else {<span>Completed</span> }</h6>
             <h6>Colleague: @Model.Candidate.ApplicationUser.FirstName   @Model.Candidate.ApplicationUser.LastName</h6>
-            <h6>Current Rate: @Model.AgreedRate</h6>
+            <h6>Agreed Rate: £@Model.AgreedRate per hour</h6>
             <h6>Job: @Model.Job.JobTitleEnum</h6>
             <h6>Start Date: @Model.StartDate.ToShortDateString()</h6>
             @if (!Model.IsUnderContract)
@@ -73,7 +73,7 @@
                                 <label class=" form-label">Ammend Rate</label>
                                 <div class="  form-group " style="width: 100%">
 
-                                    <input class="border form-control" required name="rate" type="number" placeholder="@Model.EndDate" />
+                                    <input class="border form-control" required name="rate" type="number" placeholder="@Model.AgreedRate" />
                                 </div>
                                 <div class=" form-group">
                                     <input asp-for="ContractId" data-val="true" value="@Model.ContractId" type="hidden" />

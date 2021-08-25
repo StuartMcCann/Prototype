@@ -7,7 +7,7 @@ namespace Prototype.Models
 {
     public class Candidate
     {
-
+        private const double MinimumWage = 8.21;
 
         [Key]
         public int CandidateID { get; set; }
@@ -17,6 +17,7 @@ namespace Prototype.Models
         public Boolean IsAvailable { get; set; }
         [NotMapped]
         private DateTime _AvailableFrom;
+        [Required]
         public DateTime AvailableFrom
         {
             get
@@ -40,10 +41,12 @@ namespace Prototype.Models
             }
         }
 
-        //skill will need one to many 
+        //REMOVE SKILL
         public String Skill { get; set; }
 
         public double Rating { get; set; }
+        [Required]
+        [Range(MinimumWage, double.MaxValue, ErrorMessage = "Please select a value over national living wage")]
         public double Rate { get; set; }
 
         public Level LevelEnum { get; set; }
@@ -66,6 +69,8 @@ namespace Prototype.Models
         //many to many with Skills
         public virtual ICollection<Skill> Skills { get; set; }
         [NotMapped]
+        [Required]
+        [MinLength(3, ErrorMessage = "Please select at least 3 skills")]
         public IEnumerable<int> SkillIds { get; set; }
 
 
@@ -77,10 +82,10 @@ namespace Prototype.Models
 
         }
 
-       
+
 
 
     }
 
-  
+
 }

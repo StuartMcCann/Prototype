@@ -66,15 +66,27 @@
                 //console.log(data);
                 //if already liked replace with unlike button
                 if (data == true) {
-                     var url = '@Url.Action("RemoveLikeForJob", "Like", new { jobId = "replaceToken" })';
-                    url = url.replace("replaceToken", val.jobId);
+                    var url = '@Url.Action("RemoveLikeForJob", "Like", new { jobId = Model.JobId })';
+                    //url = url.replace("replaceToken", val.jobId);
 
                     $("#like").html(
                         '<div id="like">' +
-                      
-                      '<a href=""><button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button></a>' +
+
+                        '<a href="' + url + '"><button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button></a>' +
                         '</div>'
                     );
+                } else {          
+             
+                     var url = '@Url.Action("CreateLikeJob", "Like", new { employerId = Model.EmployerId ,jobId = Model.JobId })';
+                                
+
+                    $("#like").html(
+                        '<div id="like">' +
+
+                        '<a href="' + url + '"><button type="button" class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button></a>' +
+                        '</div>'
+                    );
+
                 }
 
 
@@ -87,7 +99,7 @@
 
          }); //end ajax
 
-        $('#like').click(function () {
+        @*$('#like').click(function () {
 
 
                  var like = '@LikeType.CandidateLikesJob';
@@ -119,7 +131,7 @@
 
 
         }); //end ajax
-        }); //end click
+        }); //end click*@
 
 
 
@@ -180,7 +192,7 @@
             <div class="col-sm">
 
                 <div id="like">
-                    <button type="button" class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button>
+                    @*<button type="button" class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button>*@
                 </div>
                 <div id="message">
                     @*<a asp-controller="Chat" asp-action="Index" asp-route-userId="@Model.UserId">

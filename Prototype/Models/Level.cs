@@ -11,7 +11,7 @@ namespace Prototype.Models
         [Display(Name = "Entry", Description = "1-2 years Experience")]
         Entry,
         [Display(Name = "Intermediate", Description = "3-7 years Experience")]
-        Intermedidate,
+        Intermediate,
 
         [Display(Name = "Expert", Description = "7+ years Experience")]
         Expert

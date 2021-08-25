@@ -114,7 +114,7 @@ namespace Prototype.Controllers
             var averageCandidateRating = allRatedContracts.Average();
             //update candidate in DB
             var candidate = _db.Candidates.Where(c => c.CandidateID == candidateId).First();
-            candidate.Rating = (double)averageCandidateRating;
+            candidate.Rating = Math.Round((double)averageCandidateRating);
             //clear skills to avoid conflict
             candidate.Skills.Clear();
             _db.Candidates.Update(candidate);
@@ -147,7 +147,7 @@ namespace Prototype.Controllers
             var averageEmployerRating = allRatedContracts.Average();
             //update candidate in DB
             var employer = _db.Employers.Where(e => e.EmployerId == employerId).First();
-            employer.Rating = (double)averageEmployerRating;
+            employer.Rating = Math.Round((double)averageEmployerRating);
 
             _db.Employers.Update(employer);
             _db.SaveChanges();

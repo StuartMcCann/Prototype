@@ -8,7 +8,8 @@ namespace Prototype.Models
 {
     public class Contract
     {
-
+        private const int MaxRating = 5;
+        private const int MinRating = 1;
 
         [Key]
         public int ContractId { get; set; }
@@ -19,32 +20,30 @@ namespace Prototype.Models
         public bool IsRatedByCandidate { get; set; }
         public bool IsUnderContract { get; set; }
         //foreign key one to many with Candidate - one candidate has many contracts 
-        //[ForeignKey("Candidate")]
         public int CandidateId { get; set; }
         public Candidate Candidate { get; set; }
         //foreign key one to many with Employer - one employer has many contracts 
-        //[ForeignKey("Employer")]
         public int EmployerId { get; set; }
         public Employer Employer { get; set; }
         //foreign key one to one with Job 
-        //[ForeignKey("Job")]
         public int JobId { get; set; }
         public virtual Job Job { get; set; }
-
-        // public int? ContractRatingByCandidate { get; set; }
+               
         [NotMapped]
         private int _ContractRatingByCandidate;
+        [Range(MinRating, MaxRating, ErrorMessage = "Please select a number between 1 and 5 inclusive")]
         public int? ContractRatingByCandidate
         {
             get { return _ContractRatingByCandidate; }
             set
-            { 
-                if(value>0 && value != null) { this.IsRatedByCandidate = true; }                
+            {
+                if (value > 0 && value != null) { this.IsRatedByCandidate = true; }
                 _ContractRatingByCandidate = (int)value;
             }
         }
         [NotMapped]
         private int _ContractRatingByEmployer;
+        [Range(MinRating, MaxRating, ErrorMessage = "Please select a number between 1 and 5 inclusive")]
         public int? ContractRatingByEmployer
         {
             get { return _ContractRatingByEmployer; }

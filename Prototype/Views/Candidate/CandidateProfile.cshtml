@@ -23,9 +23,9 @@
                     var url = '@Url.Action("CandidateProfile", "Candidate", new { id = "replaceToken" })';
                     url = url.replace("replaceToken", val.candidateID);
                     var skillscontent = "";
-                    //loop to get multiple skills from data returned 
+                    //loop to get multiple skills from data returned
                     for (var loop = 0; loop < val.skills.length; loop++) {
-                        skillscontent = skillscontent += '<h5>' + val.skills[loop].skillName + '</h5>'; 
+                        skillscontent = skillscontent += '<h5>' + val.skills[loop].skillName + '</h5>';
                     }
                     $("#output").html(
                         '<div class="buffer">' +
@@ -38,7 +38,7 @@
 
                         "<h5 class='card-title'>" + val.level + "</h5>" +
                            skillscontent+
-                          
+
                             "</div>"+
                             "</div>"+
                         "</div>"
@@ -68,11 +68,25 @@
                // console.log(data);
                 //if already liked replace with unlike button
                 if (data == true) {
+                    var url = '@Url.Action("RemoveLikeCandidate", "Like", new { candidateId = Model.CandidateID })';
                     $("#like").html(
                         '<div id="like">' +
-                        ' <button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button>' +
+                        '<a href="' + url + '"><button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button></a>'+
+
                         '</div>'
                     );
+                }else {
+
+                     var url = '@Url.Action("Create", "Like", new { candidateId = Model.CandidateID })';
+
+
+                    $("#like").html(
+                        '<div id="like">' +
+
+                        '<a href="' + url + '"><button type="button" class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button></a>' +
+                        '</div>'
+                    );
+
                 }
 
 
@@ -119,7 +133,7 @@
 
         }); //end ajax
 
-        $('#like').click(function () {
+        @*$('#like').click(function () {
 
 
                  var like = '@LikeType.EmployerLikesCandidate';
@@ -133,14 +147,14 @@
                     cache: false,
                     data: data,
                     success: function () {
-                //potential to take this out in refactoring 
+                //potential to take this out in refactoring
                 $("#like").html(
                     '<div id="unlike">'+
                        ' <button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button>'+
                     '</div>'
                 );
 
-                location.reload(); 
+                location.reload();
 
                 //console.log(data);
             },
@@ -151,7 +165,7 @@
 
 
         }); //end ajax
-        }); //end click
+        }); //end click*@
 
 
          $('#unlike').click(function () {
