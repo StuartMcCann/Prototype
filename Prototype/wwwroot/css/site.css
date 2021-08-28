@@ -115,6 +115,10 @@ body {
     color: #2b6777;
 }
 
+.largeFont{
+    font-size: 50px; 
+}
+
 .subheading {
     color: #c8d8e4;
 }
@@ -186,23 +190,7 @@ button:focus {
    min-height: 90%; 
 }
 
-/*.fromMessage {
-    background-color: #2b6777;
-    color: #fff;
-    border-radius: 2vh;
-    width: 50%;
-    word-wrap: break-word
-}
 
-.toMessage {
-    color: #2b6777;
-    border-radius: 2vh;
-    float: right;
-    width: 50%;
-    border-radius: 2vh;
-    background-color: #c8d8e4;
-    word-wrap: break-word
-}*/
 
 .bubble-left,
 .bubble-right {

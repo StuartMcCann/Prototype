@@ -2,11 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Prototype.Models;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Prototype.Controllers
 {
@@ -14,28 +10,29 @@ namespace Prototype.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager; 
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
         public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             _logger = logger;
             _userManager = userManager;
-            _signInManager = signInManager; 
+            _signInManager = signInManager;
 
         }
 
         public IActionResult Index()
         {
-            //if (_signInManager.IsSignedIn(User)&& User.IsInRole("Candidate"))
-            //{
-            //    return RedirectToAction("Hub", "Candidate"); 
-            //}else if(_signInManager.IsSignedIn(User) && User.IsInRole("Employer"))
-            //{
-            //    return RedirectToAction("Hub", "Employer");
-            //}
-                
-                
-                
+            if (_signInManager.IsSignedIn(User)){
+
+                if (User.IsInRole("Candidate"))
+                {
+                    return RedirectToAction("Create", "Candidate");
+                }else if (User.IsInRole("Employer"))
+                {
+                    return RedirectToAction("Create", "Employer"); 
+                }
+            }
+
             return View();
         }
 

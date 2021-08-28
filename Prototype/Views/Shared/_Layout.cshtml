@@ -12,6 +12,7 @@
     <script src="~/lib/jquery/dist/jquery.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -38,28 +39,36 @@
                                 {
                                     <li class="nav-item">
                                         <a class="nav-link active" aria-current="page" asp-controller="Candidate" asp-action="Index">
-                                        <i class="fas fa-users"></i> Browse Candidates</a>
+                                            <i class="fas fa-users"></i> Browse Candidates
+                                        </a>
                                     </li>
                                     <li>
                                         <a class="nav-link active" aria-current="page" asp-controller="Employer" asp-action="Hub">
-                                            <i class="fas fa-broadcast-tower"></i> Employer Hub</a>
+                                            <i class="fas fa-broadcast-tower"></i> Employer Hub
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#"><i class="fas fa-chart-line"></i> Market Trends</a>
                                     </li>
                                 }
                                 @if (SignInManager.IsSignedIn(User) && User.IsInRole("Candidate"))
                                 {
                                     <li class="nav-item">
                                         <a class="nav-link active" aria-current="page" asp-controller="Job" asp-action="Index">
-                                            <i class="fas fa-globe"></i> Browse Jobs</a>
+                                            <i class="fas fa-globe"></i> Browse Jobs
+                                        </a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link active" aria-current="page" asp-controller="Candidate" asp-action="Hub">
-                                            <i class="fas fa-broadcast-tower"></i> Freelancer Hub</a>
+                                            <i class="fas fa-broadcast-tower"></i> Freelancer Hub
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Analytics" asp-action="AnalyticsForCandidate"><i class="fas fa-chart-line"></i> Market Trends</a>
                                     </li>
 
                                 }
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#"><i class="fas fa-chart-line"></i> Market Trends</a>
-                                </li>
+
 
                             </ul>
 

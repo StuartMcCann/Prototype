@@ -86,7 +86,20 @@ namespace Prototype.Controllers
         //get for create
         public IActionResult Create()
         {
-            return View();
+
+            var user = GetUser();
+            var employerId = user.EmployerId;
+          
+            if (employerId != null && employerId!=0)
+            {
+                return RedirectToAction("Edit");
+            }
+            else
+            {
+                return View();
+            }
+
+            
         }
         //post for create
         [HttpPost]

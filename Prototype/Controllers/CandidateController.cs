@@ -137,9 +137,24 @@ namespace Prototype.Controllers
         //get for create
         public IActionResult Create()
         {
-            //view bag for skills dropdowns 
-            ViewBag.Skills = new SelectList(_db.Skills, "SkillId", "SkillName");
-            return View();
+
+            //get the application user details 
+            var user = GetUser();
+            var userId = user.Id;
+            var candidate = GetCandidateDetailsByUser(userId);
+            //making sure a user has a candidate profile created 
+            if (candidate != null)
+            {
+                return RedirectToAction("Edit");
+            }
+            else
+            {
+                //view bag for skills dropdowns 
+                ViewBag.Skills = new SelectList(_db.Skills, "SkillId", "SkillName");
+                return View();
+            }
+           
+           
         }
 
 

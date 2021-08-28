@@ -1,12 +1,16 @@
 ﻿@model Prototype.Models.CandidateProfile
 
-    <script type="text/javascript">
+@{
+    ViewData["Title"] = "Keep Your Details Up To Date";
+}
+
+<script type="text/javascript">
 
 
         $(document).ready(function () {
 
 
-        // below ajax gets jobs connected to the  the logged in user
+       
         $.ajax({
             url: '/Candidate/GetSkillsForCandidateUpdate',
             dataType: "Json",
@@ -17,7 +21,7 @@
             //this needs changed whe table fully normalised
 
             success: function (data) {
-                console.log(data)
+
 
 
                 //loops through values returned in json format by above url
@@ -42,9 +46,69 @@
 
         }); //end ajax
 
+
+            $.ajax({
+                url: '/Analytics/AnalysisByCandidateJobTitle',
+                dataType: "Json",
+                type: "GET",
+                data:  { jobTitle: '@Model.JobTitleEnum'},
+                contentType: 'application/x-www-form-urlencoded',
+                cache: false,
+                //this needs changed whe table fully normalised
+
+                success: function (data) {
+                    
+                    //set up data for chart
+                    const labels = ['Entry', 'Intermediate', 'Expert',];
+                    const chartData = {
+                        labels: labels,
+                        datasets: [{
+                                label: 'Average',
+                                 backgroundColor: 'rgb(	43, 103, 119)',
+                            borderColor: 'rgb(43, 103, 119)',
+                                data: [data.AverageEntry, data.AverageIntermediate, data.AverageExpert],
+                                type: 'line'
+                            },
+                            {
+                            label: 'Lowest Rate',
+                            backgroundColor: 'rgb(82, 171, 152)',
+                            borderColor: 'rgb(255, 99, 132)',
+                            data: [data.LowestEntry, data.LowestIntermediate, data.LowestExpert],
+                        },
+                         {
+                                label: 'Highest Rate',
+                                backgroundColor: 'rgb(82, 171, 152)',
+                                borderColor: 'rgb(255, 99, 132)',
+                                data: [data.HighestEntry, data.HighestIntermediate, data.HighestExpert],
+                            }
+
+                        ]
+                    };
+
+                    //render chart
+                    const config = {
+                        type: 'bar',
+                        data: chartData,
+                        options: {}
+                    };
+
+                    var myChart = new Chart(
+                        document.getElementById('myChart'),
+                        config
+                    );
+
+
+
+                }, //end of success function
+                error: function (xhr) {
+                    alert('error');
+                }
+
+            }); //end ajax
+
     }); //end document.load
 
-    </script>
+</script>
 
 <div class="container text">
 
@@ -58,14 +122,17 @@
             <h5 class="buffer">Job Title: @Model.JobTitle</h5>
             <h5 class="buffer">Requested Rate: @Model.Rate per hour</h5>
             <!--ADD LOGIC HERE FOR RATE ADVISE-->
-            <h5 class="buffer">Current Availablity: @if (Model.IsAvailable)
-            {<span>Available For Contracts <button type="button" onclick="location.href='@Url.Action("ToggleCandidateAvailability", "Candidate") '" class="btn btn-primary"><i class="fas fa-toggle-on"></i></button></span>}
-            else
-            {<span>Not AvailableFor Contracts <button type="button" onclick="location.href='@Url.Action("ToggleCandidateAvailability", "Candidate") '" class="btn btn-primary"><i class="fas fa-toggle-off"></i></button></span>} </h5>
+            <h5 class="buffer">
+                Current Availablity: @if (Model.IsAvailable)
+                {<span>Available For Contracts <button type="button" onclick="location.href='@Url.Action("ToggleCandidateAvailability", "Candidate") '" class="btn btn-primary"><i class="fas fa-toggle-on"></i></button></span>}
+                else
+                {<span>Not AvailableFor Contracts <button type="button" onclick="location.href='@Url.Action("ToggleCandidateAvailability", "Candidate") '" class="btn btn-primary"><i class="fas fa-toggle-off"></i></button></span>}
+            </h5>
             <h5 class="buffer">Available Date: @Model.AvailableFrom.ToShortDateString()</h5>
             <h5 class="buffer">Current Level: @Model.Level</h5>
-            <h5 class=" buffer">Skills: 
-            
+            <h5 class=" buffer">
+                Skills:
+
                 @foreach (var skill in Model.Skills)
                 {
                     <span class="badge skill">@skill.SkillName</span>
@@ -73,7 +140,10 @@
                 }
             </h5>
 
-
+            <div><h4>Check out rates other candidates with your job title are asking for!</h4></div>
+            <div>
+                <canvas id="myChart"></canvas>
+            </div>
 
 
         </div>
@@ -81,7 +151,7 @@
             <h3>Actions</h3>
 
             <form asp-action="UpdateCandidateSkill" asp-controller="Candidate" method="post" enctype="multipart/form-data">
-              
+
                 <div class="input-group">
 
                     <select class="form-control" id="skillsDropdown" name="skillsIds" multiple required>
@@ -132,7 +202,7 @@
 
             <form asp-action="UpdateCandidateAvailableDate" asp-controller="Candidate" method="post" enctype="multipart/form-data">
                 <div class="form-group">
-                    
+
                     <label asp-for="AvailableFrom"></label>
                     <input name="availableDate" type="date" class="form-control" id="exampleFormControlTextarea1">
                     <span asp-validation-for="AvailableFrom" class="text-danger"></span>
@@ -142,7 +212,7 @@
             </form>
 
 
-           
+
 
 
 
