@@ -1,0 +1,127 @@
+﻿<script type="text/javascript">
+
+   
+
+    function GetJobTitleData() {
+
+        var value = document.getElementById("jobTitleDropDown");
+        var getValue = value.options[value.selectedIndex].value;
+        var gettext = value.options[value.selectedIndex].text;
+       
+        console.log("value:-" + " " + getValue + " " + "Text:-" + " " + gettext);
+
+         $.ajax({
+                url: '/Analytics/AnalysisByCandidateJobTitle',
+                dataType: "Json",
+                type: "GET",
+                data:  { jobTitle: getValue},
+                contentType: 'application/x-www-form-urlencoded',
+                cache: false,
+                //this needs changed whe table fully normalised
+             
+                success: function (data) {
+                    console.log(data); 
+                    $("#jobTitleChart").remove(); 
+                    $("#chartBox").after("<canvas id='jobTitleChart'></canvas>");
+                    
+                    
+                    
+                   // set up data for chart
+                    const labels = ['Entry', 'Intermediate', 'Expert',];
+                    const chartData = {
+                        labels: labels,
+                        datasets: [{
+                                label: 'Average',
+                                 backgroundColor: 'rgb(	43, 103, 119)',
+                            borderColor: 'rgb(43, 103, 119)',
+                                data: [data.AverageEntry, data.AverageIntermediate, data.AverageExpert],
+                                type: 'line'
+                            },
+                            {
+                            label: 'Lowest Rate',
+                            backgroundColor: 'rgb(82, 171, 152)',
+                            borderColor: 'rgb(255, 99, 132)',
+                            data: [data.LowestEntry, data.LowestIntermediate, data.LowestExpert],
+                        },
+                         {
+                                label: 'Highest Rate',
+                                backgroundColor: 'rgb(82, 171, 152)',
+                                borderColor: 'rgb(255, 99, 132)',
+                                data: [data.HighestEntry, data.HighestIntermediate, data.HighestExpert],
+                            }
+
+                        ]
+                    };
+
+                    //render chart
+                    const config = {
+                        type: 'bar',
+                        data: chartData,
+                        options: {}
+                    };
+
+                    var myChart = new Chart(
+                        document.getElementById('jobTitleChart'),
+                        config
+                    );
+
+                    
+
+
+
+                }, //end of success function
+                error: function (xhr) {
+                    alert('error');
+                }
+
+            }); //end ajax
+    }
+
+
+
+</script>
+
+
+
+    <div class="container text">
+        <div class="row">
+            <div class="col-sm">
+
+
+
+
+
+            </div>
+            <div class="col-sm">
+
+                <div class="form-group">
+                    <label>Job Title</label>
+                    <select id="jobTitleDropDown" onchange="GetJobTitleData()" name="jobTitle" asp-items="Html.GetEnumSelectList<JobTitle>()" class="form-control"></select>
+                    <span class="text-danger"></span>
+
+                    <div id="chartBox">
+                        <canvas id="jobTitleChart"></canvas>
+                    </div>
+
+                </div>
+
+
+
+
+            </div>
+
+        </div>
+        <div class="row"></div>
+        <div class="col-sm">
+
+
+        </div>
+        <div class="col-sm">
+
+
+        </div>
+
+
+
+
+    </div>

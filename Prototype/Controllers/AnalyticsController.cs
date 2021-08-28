@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Prototype.Data;
 using Prototype.Models;
 using Prototype.Service;
@@ -36,6 +37,15 @@ namespace Prototype.Controllers
             var candidate = _db.Candidates.Where(c => c.UserId == userId).FirstOrDefault(); 
 
             return View(candidate); 
+        }
+
+        public IActionResult AnalyticsForEmployer()
+        {
+            var user = _db.Users.Where(u=> u.Id == _userManager.GetUserId(User)).FirstOrDefault();
+            var employer = _db.Employers.Where(e => e.EmployerId == user.EmployerId).FirstOrDefault();
+            ViewBag.Skills = new SelectList(_db.Skills, "SkillId", "SkillName");
+
+            return View(employer);
         }
 
 
