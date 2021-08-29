@@ -1,13 +1,15 @@
-﻿<script type="text/javascript">
+﻿@model Prototype.Models.Employer  
 
-   
+<script type="text/javascript">
+
+
 
     function GetJobTitleData() {
 
         var value = document.getElementById("jobTitleDropDown");
         var getValue = value.options[value.selectedIndex].value;
         var gettext = value.options[value.selectedIndex].text;
-       
+
         console.log("value:-" + " " + getValue + " " + "Text:-" + " " + gettext);
 
          $.ajax({
@@ -18,34 +20,34 @@
                 contentType: 'application/x-www-form-urlencoded',
                 cache: false,
                 //this needs changed whe table fully normalised
-             
+
                 success: function (data) {
-                    console.log(data); 
-                    $("#jobTitleChart").remove(); 
+                    console.log(data);
+                    $("#jobTitleChart").remove();
                     $("#chartBox").after("<canvas id='jobTitleChart'></canvas>");
-                    
-                    
-                    
+
+
+
                    // set up data for chart
                     const labels = ['Entry', 'Intermediate', 'Expert',];
                     const chartData = {
                         labels: labels,
                         datasets: [{
                                 label: 'Average',
-                                 backgroundColor: 'rgb(	43, 103, 119)',
-                            borderColor: 'rgb(43, 103, 119)',
+                            backgroundColor: 'rgb(82, 171, 152)',
+                         borderColor: 'rgb(82, 171, 152)',
                                 data: [data.AverageEntry, data.AverageIntermediate, data.AverageExpert],
                                 type: 'line'
                             },
                             {
                             label: 'Lowest Rate',
-                            backgroundColor: 'rgb(82, 171, 152)',
+                                backgroundColor: 'rgb(	43, 103, 119)',
                             borderColor: 'rgb(255, 99, 132)',
                             data: [data.LowestEntry, data.LowestIntermediate, data.LowestExpert],
                         },
                          {
                                 label: 'Highest Rate',
-                                backgroundColor: 'rgb(82, 171, 152)',
+                             backgroundColor: 'rgb(54, 90, 111)',
                                 borderColor: 'rgb(255, 99, 132)',
                                 data: [data.HighestEntry, data.HighestIntermediate, data.HighestExpert],
                             }
@@ -65,7 +67,7 @@
                         config
                     );
 
-                    
+
 
 
 
@@ -75,53 +77,222 @@
                 }
 
             }); //end ajax
-    }
+    }//end on change function
 
+    $(document).ready(function () {
+
+
+        $.ajax({
+            url: '/Analytics/PopularSkills',
+            dataType: "Json",
+            type: "GET",
+            data: "",
+            contentType: 'application/x-www-form-urlencoded',
+            cache: false,
+            //this needs changed whe table fully normalised
+
+            success: function (data) {
+
+
+                labels = [];
+                values = [];
+
+                $.each(data, function (key, val) {
+
+
+                    labels.push(key);
+                    values.push(val);
+
+                });//end of for loop
+
+
+
+                const chartData = {
+                    labels: labels,
+                    datasets: [{
+                        label: '% of candidates with skill',
+                        backgroundColor: 'rgb(	43, 103, 119)',
+                        borderColor: 'rgb(43, 103, 119)',
+                        data: values,
+
+                    },
+                    ]
+                };
+
+                //render chart
+                const config = {
+                    type: 'bar',
+                    data: chartData,
+                    options: {
+                        indexAxis: 'y',
+
+                        scales: {
+                            x: {
+
+                                max: 100,
+                            }
+                        }
+
+                    }
+                };
+
+                var myChart = new Chart(
+                    document.getElementById('popularSkills'),
+                    config
+                );
+
+
+
+            }, //end of success function
+            error: function (xhr) {
+                alert('error');
+            }
+
+        }); //end ajax
+
+
+        $.ajax({
+            url: '/Analytics/GetJobTitlesOfAllCandidates',
+            dataType: "Json",
+            type: "GET",
+            data: "",
+            contentType: 'application/x-www-form-urlencoded',
+            cache: false,
+            //this needs changed whe table fully normalised
+
+            success: function (data) {
+
+
+                var labels = [];
+                var numJobs = [];
+
+
+                $.each(data, function (key, val) {
+                    labels.push(key);
+                    numJobs.push(val);
+                });//end of for loop
+
+
+
+                const chartData = {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Jobs Per Job Title',
+                        backgroundColor: ['rgb(	43, 103, 119)', 'rgb(110, 200, 191)', 'rgb(82, 171, 152)', 'rgb(0, 172, 157)', ' rgb(54, 90, 111)', 'rgb(82, 172, 164)'],
+                        borderColor: 'rgb(43, 103, 119)',
+                        data: numJobs,
+                        hoverOffset: 4
+                    },
+                    ]
+                };
+
+                //render chart
+                const config = {
+                    type: 'doughnut',
+                    data: chartData,
+                    options: {
+
+
+                    }
+                };
+
+                var myChart = new Chart(
+                    document.getElementById('candidateJobTitles'),
+                    config
+                );
+
+
+
+            }, //end of success function
+            error: function (xhr) {
+                alert('error');
+            }
+
+        }); //end ajax
+
+         $.ajax({
+                url: '/Analytics/GetBespokeEmployerData',
+                dataType: "Json",
+                type: "GET",
+                data:  { employerId : @Model.EmployerId},
+                contentType: 'application/x-www-form-urlencoded',
+                cache: false,
+
+
+                success: function (data) {
+                    console.log(data);
+
+                    $("#personalSummary").append(
+                        '<h4 class="buffer"> Your profile has recieved <span class="heading largeFont">'+data.TotalLikes+'</span> like(s). </h4> '+
+                        '<h4 class="buffer"> <span class="heading largeFont">' + data.NumCandidateLikes + '</span> candidates(s) have liked your profile or jobs. </h4> ' +
+                        '<h4 class="buffer">You have filled <span class="heading largeFont">' + data.FillRate + '</span>% of jobs advertised </h4> ' +
+                        '<h4 class="buffer"> We found <span class="heading largeFont">' + data.CandidatesMatched + '</span> candidates(s) that match job titles you are recruiting for. </h4> '
+                    );
+
+
+                }, //end of success function
+                error: function (xhr) {
+                    alert('error');
+                }
+
+            }); //end ajax
+
+
+    }); //end document.load
 
 
 </script>
 
 
 
-    <div class="container text">
-        <div class="row">
-            <div class="col-sm">
+<div class="container text">
 
-
-
-
-
+    <h1 class="heading">Check Out The Lastest Market Trends</h1>
+    <div class="row">
+        <div class="col-sm">
+            <h3>Popular Skills</h3>
+            <div class=" ">
+                <canvas id="popularSkills"></canvas>
             </div>
-            <div class="col-sm">
 
-                <div class="form-group">
-                    <label>Job Title</label>
-                    <select id="jobTitleDropDown" onchange="GetJobTitleData()" name="jobTitle" asp-items="Html.GetEnumSelectList<JobTitle>()" class="form-control"></select>
-                    <span class="text-danger"></span>
 
-                    <div id="chartBox">
-                        <canvas id="jobTitleChart"></canvas>
-                    </div>
 
+
+        </div>
+        <div class="col-sm">
+            <h3>Find Out Market Rates Per Job Title</h3>
+            <div>
+                <label>Job Title</label>
+                <select id="jobTitleDropDown" onchange="GetJobTitleData()" name="jobTitle" asp-items="Html.GetEnumSelectList<JobTitle>()" class="form-control"></select>
+                <span class="text-danger"></span>
+
+                <div id="chartBox">
+                    <canvas id="jobTitleChart"></canvas>
                 </div>
 
+            </div>
 
 
 
+
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <h3>Job Titles Of Available Candidates</h3>
+            <div class=" ">
+                <canvas id="candidateJobTitles"></canvas>
             </div>
 
         </div>
-        <div class="row"></div>
         <div class="col-sm">
-
+            <h3>Your Personal Summary</h3>
+            <div id="personalSummary"></div>
 
         </div>
-        <div class="col-sm">
-
-
-        </div>
-
-
-
 
     </div>
+
+
+</div>

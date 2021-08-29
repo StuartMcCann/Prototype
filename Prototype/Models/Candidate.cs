@@ -41,8 +41,7 @@ namespace Prototype.Models
             }
         }
 
-        //REMOVE SKILL
-        public String Skill { get; set; }
+       
 
         public double Rating { get; set; }
         [Required]

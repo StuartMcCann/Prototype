@@ -6,6 +6,7 @@ using Prototype.Data;
 using Prototype.Enums;
 using Prototype.Helpers;
 using Prototype.Models;
+using Prototype.Service;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,33 +27,13 @@ namespace Prototype.Controllers
             _userManager = userManager; 
         }
 
-        //can change to have level and skills - pass skills as a List?
-        public ActionResult GetCandidatesLikeThis(string skill, int id)
+        
+        public ActionResult GetCandidatesLikeThis( int candidateId)
         {
-            
-
-            // change to job title??
-            var candidatesLikeThis = (from c in _db.Candidates
-                                      join u in _db.Users on
-                                      c.UserId equals u.Id
-                                      where c.Skill== skill && c.CandidateID != id
-                                      && c.IsAvailable == true
-                                      select new CandidateProfile
-                                      {
-                                         
-                                          FirstName = u.FirstName, 
-                                          LastName = u.LastName,
-                                          LevelEnum = c.LevelEnum,
-                                          Rating = c.Rating,
-                                          Rate = c.Rate,
-                                          Skill = c.Skill,
-                                          CandidateID = c.CandidateID,
-                                          Level = c.LevelEnum.GetDisplayName(), 
-                                          Skills = c.Skills
 
 
-                                      }).ToList();
-            //return candidatesLikeThis; 
+            var candidatesLikeThis = CandidateHelper.GetCandidatesLikeThis(_db, candidateId); 
+
             return Json(new { data = candidatesLikeThis });
 
         }
@@ -167,33 +148,8 @@ namespace Prototype.Controllers
         public IActionResult CandidateProfile(int id)
         {
             
-
-            var candidate = ((from c in _db.Candidates
-                                  //join r in _db.Reviews on c.CandidateId equals
-                                  // r.CandidateRefId
-                              join u in _db.Users
-                              on c.UserId equals u.Id
-                              where c.CandidateID == id
-                              select new CandidateProfile
-                              {
-                                  CandidateID = c.CandidateID,
-                                  LevelEnum = c.LevelEnum,
-                                  Skill = c.Skill,
-                                  Rating = c.Rating,
-                                  Rate = c.Rate, 
-                                  UserId = u.Id, 
-                                  ProfilePicture = u.ProfilePicture, 
-                                  FirstName = u.FirstName, 
-                                  LastName = u.LastName, 
-                                 Skills = c.Skills, 
-                                 Likes = c.Likes, 
-                                 Contracts = c.Contracts
-
-                                  //for loop here to add to list of reviews or can do ajax call on page t print 
-
-                              })).FirstOrDefault();   
-
-
+            var candidate = CandidateHelper.GetCandidateProfile(_db, id); 
+            
 
             if (candidate == null)
             {
@@ -228,27 +184,7 @@ namespace Prototype.Controllers
 
         public CandidateProfile GetCandidateDetailsByUser(string userId)
         {
-            var candidate = (from c in _db.Candidates
-                             where c.UserId == userId
-                             select new CandidateProfile
-                             {
-
-                                 LevelEnum = c.LevelEnum,
-                                 Rating = c.Rating,
-                                 Rate = c.Rate,
-                                 CandidateID = c.CandidateID,
-                                 Skills = c.Skills,
-                                 Level = c.LevelEnum.GetDisplayName(),
-                                 JobTitle = c.JobTitleEnum.GetDisplayName(),
-                                 Likes = c.Likes,
-                                 IsAvailable = c.IsAvailable,
-                                 AvailableFrom = c.AvailableFrom,
-                                 UserId = userId,
-                                 ApplicationUser = _db.Users.Where(u => u.Id == userId).FirstOrDefault(), 
-                                 JobTitleEnum = c.JobTitleEnum, 
-                                 Contracts = c.Contracts
-                               
-                             }).FirstOrDefault();
+            var candidate = CandidateHelper.GetCandidateDetailsByUser(_db, userId); 
 
            
 
@@ -388,28 +324,8 @@ namespace Prototype.Controllers
         public List<CandidateProfile> GetAvailableCandidates()
         {
 
-            
-            var availableCandidates = (from c in _db.Candidates
-                                       join u in _db.Users on
-                                       c.UserId equals u.Id
-                                       where c.IsAvailable == true
-                                       select new CandidateProfile
-                                       {
-                                           FullName = u.FirstName+" "+u.LastName, 
-                                           FirstName = u.FirstName,
-                                           LastName = u.LastName,
-                                           LevelEnum = c.LevelEnum,
-                                           Rating = c.Rating,
-                                           Rate = c.Rate,
-                                           //Skill = c.Skill,
-                                           CandidateID = c.CandidateID,
-                                           Level = c.LevelEnum.GetDisplayName(), 
-                                           JobTitle = c.JobTitleEnum.GetDisplayName(), 
-                                           AvailableFrom = c.AvailableFrom, 
-                                           Skills = c.Skills
 
-
-                                       }).ToList();
+            var availableCandidates = CandidateHelper.GetAvailableCandidates(_db); 
 
 
             return availableCandidates; 

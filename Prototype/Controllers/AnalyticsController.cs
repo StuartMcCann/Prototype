@@ -64,6 +64,13 @@ namespace Prototype.Controllers
             return Json(inDemandSkills); 
         }
 
+        public ActionResult PopularSkills()
+        {
+            var popularSkills = AnalyticsHelper.PopularSkills(_db);
+
+            return Json(popularSkills);
+        }
+
         public ActionResult GetTopRatedEmployers()
         {
             var topRatedEmployers = AnalyticsHelper.GetTopRatedEmployers(_db);
@@ -78,11 +85,28 @@ namespace Prototype.Controllers
             return Json(jobTitleData); 
         }
 
+        public ActionResult GetJobTitlesOfAllCandidates()
+        {
+
+            var jobTitleData = AnalyticsHelper.GetJobsTitlesOfAvailableCandidates(_db);
+
+            return Json(jobTitleData); 
+        }
+
         public ActionResult GetBespokeCandidateData(int candidateId)
         {
             
-            var likes = AnalyticsHelper.GetBespokeCandidateData(_db, candidateId);
-            return Json(likes); 
+            var analysedData = AnalyticsHelper.GetBespokeCandidateData(_db, candidateId);
+            return Json(analysedData); 
+
+
+        }
+
+        public ActionResult GetBespokeEmployerData(int employerId)
+        {
+
+            var analysedData = AnalyticsHelper.GetBespokeEmployerData(_db, employerId);
+            return Json(analysedData);
 
 
         }

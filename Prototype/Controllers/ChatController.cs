@@ -75,7 +75,7 @@ namespace Prototype.Controllers
                                            FirstName = u.FirstName,
                                            LastName = u.LastName,
                                            ProfilePicture = u.ProfilePicture,
-                                           Skill = c.Skill,
+                                           
                                            Rating = c.Rating,
                                            CandidateId = c.CandidateID,
                                            Id = userId,

@@ -198,12 +198,12 @@ namespace Prototype.Service
                                         CompanyName = _db.Employers.Where(e => e.EmployerId == j.EmployerRefId).First().CompanyName,
                                         DisplayStartDate = j.StartDate.ToShortDateString()
 
-                                    }).ToList(); 
+                                    }).ToList();
 
 
 
 
-            return jobsStartingSoon; 
+            return jobsStartingSoon;
 
 
 

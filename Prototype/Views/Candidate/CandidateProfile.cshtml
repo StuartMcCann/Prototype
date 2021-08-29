@@ -14,36 +14,49 @@
             contentType: 'application/json; charset=utf-8',
             cache: false,
             //this needs changed whe table fully normalised
-            data: { skill: "@Model.Skill", id : @Model.CandidateID}  ,
+            data: { candidateId : @Model.CandidateID}  ,
             success: function (data) {
                 console.log(data);
                 //loops through values returned in json format by above url
-                $.each(data.data, function (key, val) {
-                    //need to add validation that not empty here
-                    var url = '@Url.Action("CandidateProfile", "Candidate", new { id = "replaceToken" })';
-                    url = url.replace("replaceToken", val.candidateID);
-                    var skillscontent = "";
-                    //loop to get multiple skills from data returned
-                    for (var loop = 0; loop < val.skills.length; loop++) {
-                        skillscontent = skillscontent += '<h5>' + val.skills[loop].skillName + '</h5>';
-                    }
+                if (data.length>0) {
+
+
+                    $.each(data.data, function (key, val) {
+                        //need to add validation that not empty here
+                        var url = '@Url.Action("CandidateProfile", "Candidate", new { id = "replaceToken" })';
+                        url = url.replace("replaceToken", val.candidateID);
+                        var skillscontent = "<h5>";
+                        //loop to get multiple skills from data returned 
+                        for (var loop = 0; loop < val.skills.length; loop++) {
+                            skillscontent = skillscontent += ' <span class="badge skill">' + val.skills[loop].skillName + '</span> ';
+                        }
+                        skillscontent += '</h5>';
+                        $("#output").html(
+                            '<div class="buffer" style="max-width:350px">' +
+                            '<div class="card">' +
+                            '<a href="' + url + '"><h5 class="card-header">' + val.firstName + ' ' + val.lastName + '</h5></a>' +
+                            '<div class="card-body">' +
+                            '<h5 class="card-title">Rate: £' + val.rate + "</h5>" +
+
+                            //add job title
+
+                            "<h5 class='card-title'>" + val.level + "</h5>" +
+                            skillscontent +
+
+                            "</div>" +
+                            "</div>" +
+                            "</div>"
+                        );
+                    });
+                } else {
                     $("#output").html(
-                        '<div class="buffer">' +
-                        '<div class="card">' +
-                        '<a href="' + url + '"><h5 class="card-header">' + val.firstName + ' ' + val.lastName + '</h5></a>' +
-                        '<div class="card-body">' +
-                        '<h5 class="card-title">Rate: £' + val.rate + "</h5>" +
 
-                        //add job title
+                        '<h7> We cannot find any matches right now - try back again later</h7>'
 
-                        "<h5 class='card-title'>" + val.level + "</h5>" +
-                           skillscontent+
 
-                            "</div>"+
-                            "</div>"+
-                        "</div>"
-                    );
-                });
+                    ); 
+
+                }
 
 
 
@@ -133,39 +146,7 @@
 
         }); //end ajax
 
-        @*$('#like').click(function () {
 
-
-                 var like = '@LikeType.EmployerLikesCandidate';
-                var id = @Model.CandidateID;
-                var data = { likeType : like, candId: id };
-                //console.log(id);
-                $.ajax({
-                    url: '/Like/Create/',
-                    type: "POST",
-                    contentType: 'application/x-www-form-urlencoded',
-                    cache: false,
-                    data: data,
-                    success: function () {
-                //potential to take this out in refactoring
-                $("#like").html(
-                    '<div id="unlike">'+
-                       ' <button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button>'+
-                    '</div>'
-                );
-
-                location.reload();
-
-                //console.log(data);
-            },
-            error: function (jqxhr, status, exception) {
-                alert('Exception:', exception);
-                console.log(candId);
-            }
-
-
-        }); //end ajax
-        }); //end click*@
 
 
          $('#unlike').click(function () {
@@ -270,7 +251,7 @@
 
                 </div>
             @*<div class="col-sm">col-sm</div>*@
-            <div class="col-sm">
+            <div class="col-sm-3">
                 <h3>More Like This</h3>
                 <div id="output"></div>
 

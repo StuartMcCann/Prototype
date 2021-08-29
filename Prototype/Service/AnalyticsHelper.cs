@@ -120,6 +120,60 @@ namespace Prototype.Service
 
         }
 
+
+        public static Dictionary<string, double> PopularSkills(ApplicationDbContext _db)
+        {
+            //get all skills and add to dictionary data structure 
+            var skillsMapped = CountCandidateSkills(_db);
+            // find top 4
+            var topSkills = skillsMapped.OrderByDescending(p => p.Value).Take(4).ToDictionary(p => p.Key, p => p.Value);
+            //find percentage of live jobs have the skills 
+            var canddidatesCount = _db.Candidates.ToList().Count();
+            var dataAnalysed = new Dictionary<string, double>();
+            foreach (var item in topSkills)
+            {
+                double percentage = (((double)item.Value / canddidatesCount) * 100);
+                dataAnalysed.Add(item.Key.SkillName, percentage);
+            }
+
+            return dataAnalysed;
+
+
+        }
+
+        public static Dictionary<Skill, int> CountCandidateSkills(ApplicationDbContext _db)
+        {
+
+            var skillsMapped = new Dictionary<Skill, int>();
+            var allCandidates = (from c in _db.Candidates
+                           
+                           select new Candidate
+                           {
+                               Skills = c.Skills
+                           })
+                            .ToList();
+            //get count for each 
+
+            foreach (Candidate candidate in allCandidates)
+            {
+                foreach (Skill skill in candidate.Skills)
+                {
+                    if (!skillsMapped.ContainsKey(skill))
+                    {
+                        skillsMapped.Add(skill, 1);
+                    }
+                    else
+                    {
+                        skillsMapped[skill]++;
+                    }
+                }
+            }
+
+            return skillsMapped;
+
+
+        }
+
         public static List<Employer> GetTopRatedEmployers(ApplicationDbContext _db)
         {
             var topRatedEmployers = _db.Employers.OrderByDescending(e => e.Rating).Take(5).ToList();
@@ -204,6 +258,110 @@ namespace Prototype.Service
 
             return (int)percentage; 
 
+        }
+
+        public static Dictionary<string, int> GetJobsTitlesOfAvailableCandidates(ApplicationDbContext _db)
+        {
+
+            var jobTitleCounts = new Dictionary<string, int>();
+            //get all jobs 
+            var allCandidates = _db.Candidates.Where(c => c.IsAvailable == true).ToList();
+            //add job titles to dictionary or update count 
+            foreach (Candidate candidate in allCandidates)
+            {
+                if (!jobTitleCounts.ContainsKey(candidate.JobTitleEnum.ToString()))
+                {
+                    jobTitleCounts.Add(candidate.JobTitleEnum.ToString(), 1);
+                }
+                else
+                {
+                    jobTitleCounts[candidate.JobTitleEnum.ToString()]++;
+                }
+            }
+
+            return jobTitleCounts;
+
+        }
+
+        public static Dictionary<string, int> GetBespokeEmployerData(ApplicationDbContext _db, int employerId)
+        {
+            var analysedData = new Dictionary<string, int>();
+            //get employer
+            var employer = (from e in _db.Employers
+                            where e.EmployerId == employerId
+                            select new Employer
+                            {
+
+                                Contracts = e.Contracts,
+                                Jobs = e.Jobs,
+                                Likes = e.Likes
+
+                            }).FirstOrDefault();
+            //get likes 
+            var likes = _db.Likes.Where(l => l.EmployerId == employerId).ToList();
+            var totalLikesCount = likes.Count();
+            //get number of candidates who have likes 
+            var numCandidateLikes = likes.GroupBy(e => e.CandidateId).Distinct().ToList().Count();
+            //get % of jobs filled / success rate 
+            var fillRate = PercentageFillRate(employer.Contracts, employer.Jobs);
+            //get number of candidates from jobs that they have live 
+            var numberOfCandidatesMatchJobs = GetNumberOfJobsWithMatch(_db, employer.Jobs); 
+            //add to dictionary 
+            analysedData.Add("TotalLikes", totalLikesCount);
+            analysedData.Add("NumCandidateLikes", numCandidateLikes);
+            analysedData.Add("FillRate",(int) fillRate);
+            analysedData.Add("CandidatesMatched", numberOfCandidatesMatchJobs); 
+
+            return analysedData;
+        }
+
+        public static double PercentageFillRate( ICollection<Contract> contracts, ICollection<Job> jobs)
+        {
+            double fillRate = 0;
+
+            //get total Jobs by employer
+            var totalJobs = jobs.Count();
+
+            //Get filled jobs 
+            var filledJobs = contracts.Count();
+
+            //get percentage 
+            fillRate = ((double)filledJobs / totalJobs) * 100; 
+
+
+            return fillRate; 
+        }
+
+        public static int GetNumberOfJobsWithMatch(ApplicationDbContext _db, ICollection<Job> jobs)
+        {
+            int count = 0;
+            //get candidates available
+            var availableCandidates = _db.Candidates.Where(c => c.IsAvailable).ToList();
+            //get all job titles from jobs 
+                       
+            var allJobTitles = new List<JobTitle>(); 
+            
+            foreach (Job job in jobs){
+                if (!allJobTitles.Contains(job.JobTitleEnum)&& job.IsLive)
+                {
+                    allJobTitles.Add(job.JobTitleEnum); 
+                }
+
+            }
+
+
+            foreach(Candidate candidate in availableCandidates)
+            {
+                if(allJobTitles.Contains(candidate.JobTitleEnum))
+                {
+                    count++; 
+                }
+            }
+
+
+            return count;
+
+            
         }
 
 
