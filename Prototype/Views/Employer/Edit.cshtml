@@ -1,61 +1,62 @@
 ﻿@model Prototype.Models.Employer
 
+<div class="container buffer text">
+    <h1 class="heading">Keep Your Company Details Updated and Attract Quality Freelancers</h1>
 
-<h1>Add Your Company Details and Attract Quality Freelancers</h1>
+    <form asp-action="Edit" asp-controller="Employer" method="post" enctype="multipart/form-data">
+        <input asp-for="EmployerId" hidden />
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Update your company details</h4>
 
-<form asp-action="Edit" asp-controller="Employer" method="post" enctype="multipart/form-data">
-    <input asp-for="EmployerId" hidden />
-    <div class="row">
-        <div class="col-md-6">
-            <h4>Update your company details</h4>
+                <div asp-validation-summary="All" class="text-danger"></div>
 
-            <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="CompanyName"></label>
+                    <input asp-for="CompanyName" class="form-control" />
+                    <span asp-validation-for="CompanyName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="CompanyOverview"></label>
+                    <textarea asp-for="CompanyOverview" class="form-control" id="exampleFormControlTextarea1"
+                              placeholder="Make your company stand out..">  </textarea>
+                    <span asp-validation-for="CompanyOverview" class="text-danger"></span>
+                </div>
 
-            <div class="form-group">
-                <label asp-for="CompanyName"></label>
-                <input asp-for="CompanyName" class="form-control" />
-                <span asp-validation-for="CompanyName" class="text-danger"></span>
+                <button type="submit" class="btn btn-primary">Update</button>
             </div>
-            <div class="form-group">
-                <label asp-for="CompanyOverview"></label>
-                <textarea asp-for="CompanyOverview" class="form-control" id="exampleFormControlTextarea1"
-                          placeholder="Make your company stand out..">  </textarea>
-                <span asp-validation-for="CompanyOverview" class="text-danger"></span>
-            </div>
 
-            <button type="submit" class="btn btn-primary">Update</button>
-        </div>
-
-        <div class="col-md-6">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="@Model.CompanyLogo" style="width: 100%;"></label>
-                @if (Model.CompanyLogo != null)
+            <div class="col-md-6">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="@Model.CompanyLogo" style="width: 100%;"></label>
+                    @if (Model.CompanyLogo != null)
                     {
                         <img id="profilePicture" style="width:350px;height:350px; object-fit:cover" src="data:image/*;base64,@(Convert.ToBase64String(Model.CompanyLogo))">
                     }
                     else
-                {
-                <img id="profilePicture" style="width:350px;height:350px; object-fit:cover" src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png">
-                }
-                <input type="file"
-                       accept=".png,.jpg,.jpeg,.gif,.tif"
-                       asp-for="@Model.CompanyLogo"
-                       class="form-control"
-                       style="border:0px!important;padding: 0px;padding-top: 10px;padding-bottom: 30px;"
-                       onchange="document.getElementById('profilePicture').src = window.URL.createObjectURL(this.files[0])" />
-                <span asp-validation-for="@Model.CompanyLogo" class="text-danger"></span>
+                    {
+                        <img id="profilePicture" style="width:350px;height:350px; object-fit:cover" src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png">
+                    }
+                    <input type="file"
+                           accept=".png,.jpg,.jpeg,.gif,.tif"
+                           asp-for="@Model.CompanyLogo"
+                           class="form-control"
+                           style="border:0px!important;padding: 0px;padding-top: 10px;padding-bottom: 30px;"
+                           onchange="document.getElementById('profilePicture').src = window.URL.createObjectURL(this.files[0])" />
+                    <span asp-validation-for="@Model.CompanyLogo" class="text-danger"></span>
+                </div>
             </div>
+
+
+            <!-- need to add route/ param for employee id -->
+            <a asp-controller="Employer" asp-action="Index" asp-route-id="@Model.EmployerId">View Public View</a>
+
         </div>
 
 
-        <!-- need to add route/ param for employee id -->
-        <a asp-controller="Employer" asp-action="Index" asp-route-id="@Model.EmployerId">View Public View</a>
-
-    </div>
 
 
+    </form>
 
-
-</form>
-
+</div>

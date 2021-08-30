@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Prototype.Data;
@@ -26,8 +27,8 @@ namespace Prototype.Controllers
             
         }
 
-
-       
+        
+        [Authorize]
         public IActionResult Index(int id)
         {
 
@@ -39,6 +40,7 @@ namespace Prototype.Controllers
 
         }
 
+        [Authorize(Roles = "Employer")]
         public IActionResult Hub()
         {
 
@@ -66,6 +68,7 @@ namespace Prototype.Controllers
         }
 
         //get for create
+        [Authorize(Roles = "Employer")]
         public IActionResult Create()
         {
 
@@ -118,7 +121,7 @@ namespace Prototype.Controllers
             
         }
 
-        
+        [Authorize(Roles = "Employer")]
         public IActionResult Edit()
         {
             //get the application user details 
@@ -165,10 +168,7 @@ namespace Prototype.Controllers
 
         }
 
-        public IActionResult Delete()
-        {
-            return View();
-        }
+       
 
         public ApplicationUser GetUser()
         {

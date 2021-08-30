@@ -8,6 +8,84 @@ namespace Prototype.Service
 {
     public class LikeHelper
     {
+
+        public static List<EmployerLike> GetLikesByEmployerId(ApplicationDbContext _db, int employerId)
+        {
+            return (from l in _db.Likes
+                    join c in _db.Candidates
+                    on l.CandidateId equals c.CandidateID
+                    join u in _db.Users
+                    on c.UserId equals u.Id
+                    orderby l.DateLiked descending
+                    where l.EmployerId == employerId &&
+                    (l.LikeType == LikeType.CandidateLikesEmployer || l.LikeType == LikeType.CandidateLikesJob)
+                    select new EmployerLike
+                    {
+                        CandidateId = c.CandidateID,
+                        EmployerId = l.EmployerId,
+                        LikeType = l.LikeType,
+                        FirstName = u.FirstName,
+                        LastName = u.LastName
+
+
+
+                    }).ToList();
+
+        }
+
+        public static List<EmployerLike> GetLikesByJobId(ApplicationDbContext _db, int jobId)
+        {
+            return (from l in _db.Likes
+                    join c in _db.Candidates
+                    on l.CandidateId equals c.CandidateID
+                    join u in _db.Users
+                    on c.UserId equals u.Id
+                    orderby l.DateLiked descending
+                    where l.JobId == jobId &&
+                    (l.LikeType == LikeType.CandidateLikesEmployer || l.LikeType == LikeType.CandidateLikesJob)
+                    select new EmployerLike
+                    {
+                        CandidateId = c.CandidateID,
+                        EmployerId = l.EmployerId,
+                        LikeType = l.LikeType,
+                        FirstName = u.FirstName,
+                        LastName = u.LastName, 
+                      CandidateJobTitle = c.JobTitleEnum.GetDisplayName(), 
+                      DateLiked = l.DateLiked, 
+                      Candidate =c
+
+
+
+                    }).ToList();
+
+        }
+
+        public static List<EmployerLike> GetLikesByCandidateId(ApplicationDbContext _db, int candidateId)
+        {
+            return (from l in _db.Likes
+                    join e in _db.Employers on
+                    l.EmployerId equals e.EmployerId
+                    join u in _db.Users on
+                    e.EmployerId equals u.EmployerId
+                    orderby l.DateLiked descending
+                    where l.CandidateId == candidateId &&
+(l.LikeType == LikeType.CandidateLikesEmployer || l.LikeType == LikeType.CandidateLikesJob)
+
+                    select new EmployerLike
+                    {
+                        CandidateId = l.CandidateId,
+                        EmployerId = l.EmployerId,
+                        LikeType = l.LikeType,
+                        FirstName = u.FirstName,
+                        LastName = u.LastName,
+                        Employer = l.Employer
+
+
+                    }).ToList();
+
+        }
+
+
         public static bool CheckAlreadyLikedJob(int jobId, ApplicationUser user, ApplicationDbContext _db)
         {
             var candidateId = GetCandidateIdByUserID(user.Id, _db);
@@ -37,7 +115,7 @@ namespace Prototype.Service
         public static bool CheckCandidateLikesEmployer(int employerId, ApplicationUser user, ApplicationDbContext _db)
         {
             var liked = false;
-           
+
             var candidateId = GetCandidateIdByUserID(user.Id, _db);
             var likes = (from l in _db.Likes
                          where l.EmployerId == employerId
@@ -66,7 +144,7 @@ namespace Prototype.Service
         public static bool CheckEmployerLikesCandidate(int candidateId, ApplicationUser user, ApplicationDbContext _db)
         {
             var liked = false;
-            
+
             var likes = (from l in _db.Likes
                          where l.CandidateId == candidateId
                          && l.EmployerId == user.EmployerId

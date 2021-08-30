@@ -73,7 +73,8 @@ namespace Prototype.Service
                   LastName = u.LastName,
                   Skills = c.Skills,
                   Likes = c.Likes,
-                  Contracts = c.Contracts
+                  Contracts = c.Contracts, 
+                  AvailableFrom = c.AvailableFrom
 
                 
 

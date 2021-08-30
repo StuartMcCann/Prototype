@@ -1,65 +1,146 @@
 ﻿@model Prototype.Models.Job
 
+<script type="text/javascript">
+
+    //TODO: AJAX for Likes / AJAX for reviews / AJAx for Contracts
+
+    $(document).ready(function () {
+
+        $.ajax({
+            url: '/Like/GetlikesByJobId',
+            dataType: "Json",
+            type: "GET",
+            data: { jobId: @Model.JobId},
+            contentType: 'application/x-www-form-urlencoded',
+            cache: false,
 
 
-<h3> Edit Job</h3>
+            success: function (data) {
+                console.log(data); 
+                if (data.length > 0) {
 
 
-<form method="post" asp-action="Edit">
-    <div asp-validation-summary="All" class="text-danger"></div>
+
+
+                    // loops through values returned in json format by above url
+                    $.each(data, function (key, val) {
+                        //need to add validation that not empty here
+                        //job id is jobId
+
+                        //action link use to generate url string
+                        var url = '@Url.Action("CandidateProfile", "Candidate", new { id = "replaceToken" })';
+                        url = url.replace("replaceToken", val.candidateId);
+
+
+                        $("#likesoutput").append(
+
+                            '<div class= "card">' +
+                            ' <div class="card-body">' +
+                            '<p><a href="' + url + '">' + val.firstName + ' ' + val.lastName + ' </a></p>' +
+                            '<p>' + val.candidateJobTitle + ', £' + val.candidate.rate + ' per hour</p>' +
+                            'Available From: ' + val.candidate.availableFrom.substring(0, 10) +
+
+                            '</div>' +
+                            '</div >'
+
+                        );//end of .append
+                    });//end of for loop
+                } else {
+                    $("#likesoutput").append(
+
+                        '<h4 class="buffer">No likes received yet <i class="fas fa-frown-open"></i></h4>'
+
+                    );//end of .append
+
+                }
+            }, //end of success function
+            error: function (xhr) {
+                alert( 'error');
+            }
+
+        }); //end ajax
 
 
 
-    <div class="mb-3">
-        <label asp-for="JobTitleEnum">Job Title</label>
-        <select asp-for="JobTitleEnum" asp-items="Html.GetEnumSelectList<JobTitle>()" class="form-control"></select>
-        <span asp-validation-for="JobTitleEnum" class="text-danger"></span>
-    </div>
-    @Html.Hidden("JobId", Model.JobId)
-    <div class="mb-3">
-        <label asp-for="Skills">Skills</label>
-        @Html.ListBoxFor(m => m.SkillIds, (SelectList)ViewBag.Skills, htmlAttributes: new { @class = "form-control" })
-        <span asp-validation-for="Skills" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="StartDate" class="form-label">Start Date</label>
-        <input asp-for="StartDate" type="date" class="form-control">
-        <span asp-validation-for="StartDate" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="LowerRate" class="form-label">Rate From £:</label>
-        <input asp-for="LowerRate" type="text" class="form-control">
-        <span asp-validation-for="LowerRate" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="UpperRate" class="form-label">Rate To £:</label>
-        <input asp-for="UpperRate" type="text" class="form-control">
-        <span asp-validation-for="UpperRate" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Duration" class="form-label">Duration (Weeks):</label>
-        <input asp-for="Duration" type="text" class="form-control">
-        <span asp-validation-for="Duration" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="JobDescription" class="form-label">Job Description</label>
-        <textarea asp-for="JobDescription" type="Text" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-    </div>
-    <div class="form-group">
-        <label asp-for="LevelEnum">Level Required</label>
-        <select asp-for="LevelEnum" asp-items="Html.GetEnumSelectList<Level>()" class="form-control"></select>
-        <span asp-validation-for="LevelEnum" class="text-danger"></span>
-
-    </div>
-
-    <div class="form-group">
-        <input asp-for="IsLive" data-val="true" value="True" type="hidden" class="control-label" />
-        <input asp-for="IsFilled" data-val="true" value="false" valuetype="hidden" class="control-label" />
-        <input asp-for="IsUnderContract" data-val="true" value="false" type="hidden" class="control-label" />
-
-    </div>
+    }); //end document.load
 
 
-    <button type="submit" class="btn btn-primary">Confirm Changes</button>
-</form>
+</script>
+
+
+
+<div class="container buffer text">
+    <h1 class="heading">@Model.JobTitleEnum.GetDisplayName()</h1>
+
+    <div class=" row">
+        <div class="col-sm-8">
+            <h3> Edit Job</h3>
+
+
+            <form method="post" asp-action="Edit">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+
+
+                <div class="mb-3">
+                    <label asp-for="JobTitleEnum">Job Title</label>
+                    <select asp-for="JobTitleEnum" asp-items="Html.GetEnumSelectList<JobTitle>()" class="form-control"></select>
+                    <span asp-validation-for="JobTitleEnum" class="text-danger"></span>
+                </div>
+                @Html.Hidden("JobId", Model.JobId)
+                <div class="mb-3">
+                    <label asp-for="Skills">Skills</label>
+                    @Html.ListBoxFor(m => m.SkillIds, (SelectList)ViewBag.Skills, htmlAttributes: new { @class = "form-control" })
+                    <span asp-validation-for="Skills" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="StartDate" class="form-label">Start Date</label>
+                    <input asp-for="StartDate" type="date" class="form-control">
+                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="LowerRate" class="form-label">Rate From £:</label>
+                    <input asp-for="LowerRate" type="text" class="form-control">
+                    <span asp-validation-for="LowerRate" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="UpperRate" class="form-label">Rate To £:</label>
+                    <input asp-for="UpperRate" type="text" class="form-control">
+                    <span asp-validation-for="UpperRate" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Duration" class="form-label">Duration (Weeks):</label>
+                    <input asp-for="Duration" type="text" class="form-control">
+                    <span asp-validation-for="Duration" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="JobDescription" class="form-label">Job Description</label>
+                    <textarea asp-for="JobDescription" type="Text" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label asp-for="LevelEnum">Level Required</label>
+                    <select asp-for="LevelEnum" asp-items="Html.GetEnumSelectList<Level>()" class="form-control"></select>
+                    <span asp-validation-for="LevelEnum" class="text-danger"></span>
+
+                </div>
+
+                <div class="form-group">
+                    <input asp-for="IsLive" data-val="true" value="True" type="hidden" class="control-label" />
+                    <input asp-for="IsFilled" data-val="true" value="false" valuetype="hidden" class="control-label" />
+                    <input asp-for="IsUnderContract" data-val="true" value="false" type="hidden" class="control-label" />
+
+                </div>
+
+
+                <button type="submit" class="btn btn-primary">Confirm Changes</button>
+            </form>
+        </div><!--end of  col-->
+
+        <div class="col-sm-4">
+            <h3>Candidates Who Have Liked This Job</h3>
+            <div class="border scrollgrid" id="likesoutput"></div>
+
+        </div>
+    </div><!--end of row -->
+</div>

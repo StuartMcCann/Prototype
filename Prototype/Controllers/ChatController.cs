@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Prototype.Data;
 using Prototype.Models;
+using Prototype.Service;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -31,7 +33,8 @@ namespace Prototype.Controllers
             return allUsers;
         }
 
-        //change this to messahe user/ chane message user page to index and this to index
+
+        [Authorize]
         public IActionResult Index(string userId)
         {
             var user = GetUserDetails(userId);
@@ -65,24 +68,7 @@ namespace Prototype.Controllers
 
         public UserProfile GetUserProfileCandidate(string userId)
         {
-            UserProfile userProfile = (from u in _db.Users
-
-                                       join c in _db.Candidates
-                                       on u.Id equals c.UserId
-                                       where u.Id == userId
-                                       select new UserProfile
-                                       {
-                                           FirstName = u.FirstName,
-                                           LastName = u.LastName,
-                                           ProfilePicture = u.ProfilePicture,
-                                           
-                                           Rating = c.Rating,
-                                           CandidateId = c.CandidateID,
-                                           Id = userId,
-                                       }).FirstOrDefault();
-
-
-
+            UserProfile userProfile = ChatHelper.GetUserProfileCandidate(_db, userId); 
 
             return userProfile;
         }
@@ -90,23 +76,7 @@ namespace Prototype.Controllers
 
         public UserProfile GetUserProfileEmployer(string userId)
         {
-            UserProfile userProfile = (from u in _db.Users
-
-                                       join e in _db.Employers
-                                       on u.EmployerId equals e.EmployerId
-                                       where u.Id == userId
-                                       select new UserProfile
-                                       {
-                                           FirstName = u.FirstName,
-                                           LastName = u.LastName,
-                                           ProfilePicture = u.ProfilePicture,
-                                           CompanyName = e.CompanyName,
-                                           Rating = e.Rating,
-                                           Id = userId
-                                       }).FirstOrDefault();
-
-
-
+            UserProfile userProfile = ChatHelper.GetUserProfileEmployer(_db, userId); 
 
             return userProfile;
         }
@@ -123,17 +93,18 @@ namespace Prototype.Controllers
         public ActionResult SaveMessage(string toUserId, string messageContent)
         {
 
-            //ChatMessage message = new ChatMessage();
-            //separate methods for belwp
+            
             var userId = GetCurrentUserID();
             var fromUser = GetUserByUserId(userId);
             var toUser = GetUserByUserId(toUserId);
 
             ChatMessage message = new ChatMessage(fromUser, toUser, messageContent);
 
-
-            _db.ChatMessages.Add(message);
-            _db.SaveChanges();
+            if (ModelState.IsValid)
+            {
+                _db.ChatMessages.Add(message);
+                _db.SaveChanges();
+            }
             return RedirectToAction("Index", new { userId = toUserId });
 
 
@@ -156,22 +127,7 @@ namespace Prototype.Controllers
         public List<ChatMessage> GetChatHistory(string toUserId)
         {
             var userId = GetCurrentUserID();
-            var messages = _db.ChatMessages
-                    .Where(h => (h.FromUserId == toUserId && h.ToUserId == userId) || (h.FromUserId == userId && h.ToUserId == toUserId))
-                    .OrderBy(a => a.CreatedDate)
-                    .Include(a => a.FromUser)
-                    .Include(a => a.ToUser)
-                    .Select(x => new ChatMessage
-                    {
-                        FromUserId = x.FromUserId,
-                        Message = x.Message,
-                        CreatedDate = x.CreatedDate,
-                        Id = x.Id,
-                        ToUserId = x.ToUserId,
-                        ToUser = x.ToUser,
-                        FromUser = x.FromUser
-                    }).ToList();
-
+            var messages = ChatHelper.GetChatHistory(_db, userId, toUserId); 
 
             return messages;
         }
@@ -180,14 +136,8 @@ namespace Prototype.Controllers
         {
 
             var userId = GetCurrentUserID();
-            //this works
-            
-            var messages = _db.ChatMessages.Where(m => m.ToUserId == userId || m.FromUserId == userId)
-                .Select(c => new DisplayMessage
-                {
-                    FullName = (c.ToUserId == userId) ? c.FromUser.FirstName + " "+ c.FromUser.LastName : c.ToUser.FirstName+" "+c.ToUser.LastName, 
-                    DisplayId = (c.ToUserId == userId) ? c.FromUser.Id : c.ToUser.Id
-                }).Distinct().ToList(); 
+           
+            var messages = ChatHelper.GetConversations(_db, userId); 
 
 
             return Json(new { data = messages });

@@ -116,28 +116,17 @@ namespace Prototype.Controllers
         public List<EmployerLike> GetLikesByEmployerId(int employerId)
         {
 
-            List<EmployerLike> likes = (from l in _db.Likes
-                                        join c in _db.Candidates
-                                        on l.CandidateId equals c.CandidateID
-                                        join u in _db.Users
-                                        on c.UserId equals u.Id
-                                        orderby l.DateLiked descending
-                                        where l.EmployerId == employerId &&
-           (l.LikeType == LikeType.CandidateLikesEmployer || l.LikeType == LikeType.CandidateLikesJob)
-                                        select new EmployerLike
-                                        {
-                                            CandidateId = c.CandidateID,
-                                            EmployerId = l.EmployerId,
-                                            LikeType = l.LikeType,
-                                            FirstName = u.FirstName,
-                                            LastName = u.LastName
-
-
-
-                                        }).ToList();
+            List<EmployerLike> likes = LikeHelper.GetLikesByEmployerId(_db, employerId); 
 
             return likes;
 
+        }
+
+        public IActionResult GetLikesByJobId(int jobId)
+        {
+            var jobLikes = LikeHelper.GetLikesByJobId(_db, jobId);
+
+            return Json(jobLikes);  
         }
 
 
@@ -145,26 +134,7 @@ namespace Prototype.Controllers
         public List<EmployerLike> GetLikesByCandidateId(int candidateId)
         {
 
-            List<EmployerLike> likes = (from l in _db.Likes
-                                        join e in _db.Employers on
-                                        l.EmployerId equals e.EmployerId
-                                        join u in _db.Users on
-                                        e.EmployerId equals u.EmployerId
-                                        orderby l.DateLiked descending
-                                        where l.CandidateId == candidateId &&
-                   (l.LikeType == LikeType.CandidateLikesEmployer || l.LikeType == LikeType.CandidateLikesJob)
-
-                                        select new EmployerLike
-                                        {
-                                            CandidateId = l.CandidateId,
-                                            EmployerId = l.EmployerId,
-                                            LikeType = l.LikeType,
-                                            FirstName = u.FirstName,
-                                            LastName = u.LastName,
-                                            Employer = l.Employer
-
-
-                                        }).ToList();
+            List<EmployerLike> likes = LikeHelper.GetLikesByCandidateId(_db, candidateId); 
 
             return likes;
 
@@ -215,7 +185,7 @@ namespace Prototype.Controllers
                 var candidateId = GetCandidateIdByUserID(user.Id);
                 var employerId = _db.Jobs.Where(j => j.JobId == jobId).First().EmployerRefId;
             var likeType = LikeType.CandidateLikesJob;
-            //= new Like(likeType, employerId, candidateId,jobId, _db);
+            
             var likeToRemove = _db.Likes.Where(l => l.LikeType == likeType && l.CandidateId == candidateId && l.JobId == jobId).First();
             if (ModelState.IsValid)
             {

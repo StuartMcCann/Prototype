@@ -10,9 +10,12 @@ namespace Prototype.Models
     {
         private const int MaxRating = 5;
         private const int MinRating = 1;
+        private const double MinimumWage = 8.21;
 
         [Key]
         public int ContractId { get; set; }
+        [Required]
+        [Range(MinimumWage, double.MaxValue, ErrorMessage = "Please select a value over national living wage")]
         public double AgreedRate { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }

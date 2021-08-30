@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Prototype.Data;
 using Prototype.Enums;
-using Prototype.Helpers;
+
 using Prototype.Models;
 using Prototype.Service;
 using System;
@@ -37,7 +38,7 @@ namespace Prototype.Controllers
             return Json(new { data = candidatesLikeThis });
 
         }
-
+        [Authorize(Roles="Candidate")]
         //get for edit 
         public IActionResult Edit()
         {
@@ -75,6 +76,8 @@ namespace Prototype.Controllers
             {
                 return View(candidate);
             }
+
+
 
         }
 
@@ -116,6 +119,7 @@ namespace Prototype.Controllers
 
 
         //get for create
+        [Authorize(Roles = "Candidate")]
         public IActionResult Create()
         {
 
@@ -138,13 +142,15 @@ namespace Prototype.Controllers
            
         }
 
-
+        //Page Used For employers to browse candidates 
+        [Authorize(Roles = "Employer")]
         public IActionResult Index()
         {
 
             return View();
         }
 
+        [Authorize(Roles = "Employer")]
         public IActionResult CandidateProfile(int id)
         {
             
@@ -157,7 +163,7 @@ namespace Prototype.Controllers
             }
             return View(candidate);
         }
-
+        [Authorize(Roles = "Candidate")]
         //get for hub
         public IActionResult Hub()
         {
@@ -234,14 +240,16 @@ namespace Prototype.Controllers
             //set jobtitleenum
             candidate.JobTitleEnum = jobtitle;
             //need to clear skills so no conlfict 
-            candidate.Skills.Clear(); 
+            candidate.Skills.Clear();
             //update and save changes 
-
+            if (ModelState.IsValid) { 
             _db.Candidates.Update(candidate);
-            _db.SaveChanges(); 
+            _db.SaveChanges();
+                return RedirectToAction("Edit");
+            }
 
-
-            return RedirectToAction("Edit"); 
+            return View("Edit"); 
+            
         }
 
 
@@ -255,9 +263,12 @@ namespace Prototype.Controllers
             //need to clear skills so no conlfict 
             candidate.Skills.Clear();
             //update and save changes 
-
-            _db.Candidates.Update(candidate);
-            _db.SaveChanges();
+            if (ModelState.IsValid)
+            {
+                _db.Candidates.Update(candidate);
+                _db.SaveChanges();
+            }
+           
 
 
             return RedirectToAction("Edit");
@@ -273,9 +284,12 @@ namespace Prototype.Controllers
             //need to clear skills so no conlfict 
             candidate.Skills.Clear();
             //update and save changes 
-
-            _db.Candidates.Update(candidate);
-            _db.SaveChanges();
+            if (ModelState.IsValid)
+            {
+                _db.Candidates.Update(candidate);
+                _db.SaveChanges();
+            }
+          
 
 
             return RedirectToAction("Edit");
@@ -292,9 +306,12 @@ namespace Prototype.Controllers
             //need to clear skills so no conlfict 
             candidate.Skills.Clear();
             //update and save changes 
-
-            _db.Candidates.Update(candidate);
-            _db.SaveChanges();
+            if(ModelState.IsValid)
+            {
+                _db.Candidates.Update(candidate);
+                _db.SaveChanges();
+            }
+          
 
 
             return RedirectToAction("Edit");

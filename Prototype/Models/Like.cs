@@ -70,6 +70,8 @@ namespace Prototype.Models
 
         public string LastName { get; set; }
 
+        public string CandidateJobTitle { get; set; }
+
 
 
 

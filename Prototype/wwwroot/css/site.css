@@ -245,7 +245,7 @@ button:focus {
 .centreDiv {
     margin: auto;
     width: 60%;
-    border: 5px solid #FFFF00;
+    
     padding: 10px;
     position: absolute;
     top: 50%;

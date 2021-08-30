@@ -64,25 +64,28 @@
         <div class=" col-sm-8  buffer">
 
             <form method="post" asp-action="Create" asp-controller="Contract" enctype="multipart/form-data">
+                <div asp-validation-summary="All" class="text-danger"></div>
                 <label class="form-label">Start Date</label>
                 <div class=" input-group">
                     @Html.Hidden("candidateId", Model.CandidateID)
 
                     <input required name="startDate" type="date" class="form-control" />
+                   
                 </div>
                 <label class="form-label">Job</label>
                 <div class="input-group">
 
-                    <select  class="form-control" id="jobsDropdown" name="jobId" required>
+                    <select class="form-control" id="jobsDropdown" name="jobId" required>
                         <!--This dropdown is populated by ajax-->
                     </select>
                 </div>
                 <label class="form-label">Agreed Rate</label>
                 <div class=" input-group">
-                    <input required name="rate" type="number"  />
+                    <input required name="rate" type="number" min="8.62" />
+                    <span asp-validation-for="Rate" class="text-danger"></span>
                 </div>
 
-                <button type ="submit" class=" add-margin btn btn-primary float-right"> Confirm</button>
+                <button type="submit" class=" add-margin btn btn-primary float-right"> Confirm</button>
             </form>
 
 
@@ -108,6 +111,13 @@
             <p>Expected Rate: £@Model.Rate per hour</p>
             <p>Level: @Model.LevelEnum</p>
             <p>Available From: @Model.AvailableFrom.ToShortDateString()</p>
+            <h5>
+                @foreach (var skill in Model.Skills)
+                {
+                    <span class="badge skill">@skill.SkillName</span>
+
+                }
+            </h5>
 
         </div>
 

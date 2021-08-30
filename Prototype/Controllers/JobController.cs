@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Prototype.Data;
@@ -22,29 +23,28 @@ namespace Prototype.Controllers
             _userManager = userManager;
 
         }
-
+        //view for candidates to view jobs 
+        [Authorize(Roles = "Candidate")]
         public IActionResult Index()
         {
 
-            //below gets Jobs from db
-            IEnumerable<Job> jobList = _db.Jobs;
-            return View(jobList);
+            return View();
         }
 
-        public ActionResult GetJobsByUserID()
+        public ActionResult GetJobsByEmployerId(int employerId)
         {
 
             // getting user id using user manager 
             // var userId = _userManager.GetUserId(User);
-            var user = GetUser();
-            var employerId = user.EmployerId;
+            //var user = GetUser();
+            //var employerId = user.EmployerId;
 
             var userJobs = JobHelper.GetUserJobs(_db, (int)employerId); 
 
             return Json(new { data = userJobs });
         }
 
-
+        [Authorize(Roles = "Employer")]
         //get for create
         public IActionResult Create()
         {
@@ -86,7 +86,7 @@ namespace Prototype.Controllers
 
 
         }
-
+        [Authorize(Roles = "Employer")]
         public IActionResult JobMatch(Job job)
         {
             //change to jobprofile? and add more complex logic 
@@ -109,10 +109,10 @@ namespace Prototype.Controllers
 
 
 
-      
 
 
 
+        [Authorize]
         //get by id method
         public IActionResult JobProfile(int id)
         {
@@ -134,6 +134,7 @@ namespace Prototype.Controllers
 
 
         //GET for Edit
+        [Authorize(Roles = "Employer")]
         public IActionResult Edit(int? id)
         {
 

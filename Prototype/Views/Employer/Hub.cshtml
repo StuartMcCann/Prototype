@@ -8,15 +8,16 @@
 
         // below ajax gets Jobs connected by user Id and displays them on the page
         $.ajax({
-            url: '/Job/GetJobsByUserID',
+            url: '/Job/GetJobsByEmployerId',
             dataType: "Json",
             type: "GET",
+            data: {employerId: @Model.EmployerId},
             contentType: 'application/json; charset=utf-8',
             cache: false,
-            //this needs changed whe table fully normalised
+           
 
             success: function (data) {
-                //console.log(data)
+               
                // loops through values returned in json format by above url
                 if (data != null) {
 
@@ -64,10 +65,10 @@
             data: { employerId: @Model.EmployerId},
             contentType: 'application/x-www-form-urlencoded',
             cache: false,
-            //this needs changed whe table fully normalised
+         
 
             success: function (data) {
-                 // console.log(data)
+                
                // loops through values returned in json format by above url
                 $.each(data, function (key, val) {
                    //need to add validation that not empty here
@@ -112,7 +113,7 @@
             cache: false,
 
             success: function (data) {
-                console.log(data)
+              
 
                 $.each(data.data, function (key, val) {
                    //need to add validation that not empty here
