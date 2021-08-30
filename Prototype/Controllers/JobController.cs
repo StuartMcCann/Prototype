@@ -112,7 +112,7 @@ namespace Prototype.Controllers
 
 
 
-        [Authorize]
+        [Authorize(Roles = "Candidate")]
         //get by id method
         public IActionResult JobProfile(int id)
         {

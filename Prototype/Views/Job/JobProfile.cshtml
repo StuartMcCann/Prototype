@@ -99,41 +99,7 @@
 
          }); //end ajax
 
-        @*$('#like').click(function () {
-
-
-                 var like = '@LikeType.CandidateLikesJob';
-                var jId = @Model.JobId;
-                var eId = @Model.EmployerId;
-                var data = { likeType : like, jobId : jId, employerId : eId };
-
-                $.ajax({
-                    url: '/Like/CreateLikeJob/',
-                    type: "POST",
-                    contentType: 'application/x-www-form-urlencoded',
-                    cache: false,
-                    data: data,
-            success: function () {
-                $("#like").html(
-                    '<div id="like">'+
-                       ' <button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button>'+
-                    '</div>'
-                );
-
-               // location.reload();
-
-
-            },
-            error: function (jqxhr, status, exception) {
-                alert('Exception:', exception);
-
-            }
-
-
-        }); //end ajax
-        }); //end click*@
-
-
+       
 
         //ajax to check if candidate has mutual like with employer and then allow messaging
         $.ajax({
@@ -185,6 +151,7 @@
                 <h2>@Model.JobTitleEnum.GetDisplayName()</h2>
 
                 <h2>FROM £@Model.LowerRate - @Model.UpperRate</h2>
+                <h2>Start Date: @Model.StartDate.ToShortDateString()</h2>
                 <h2>Duration: @Model.Duration weeks</h2>
             </div>
             <div class="col-sm">
