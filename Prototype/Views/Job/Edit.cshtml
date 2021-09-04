@@ -1,9 +1,6 @@
 ﻿@model Prototype.Models.Job
 
 <script type="text/javascript">
-
-    //TODO: AJAX for Likes / AJAX for reviews / AJAx for Contracts
-
     $(document).ready(function () {
 
         $.ajax({
@@ -13,58 +10,37 @@
             data: { jobId: @Model.JobId},
             contentType: 'application/x-www-form-urlencoded',
             cache: false,
-
-
             success: function (data) {
-                console.log(data); 
+                //check that data has been reurned  
                 if (data.length > 0) {
-
-
-
 
                     // loops through values returned in json format by above url
                     $.each(data, function (key, val) {
-                        //need to add validation that not empty here
-                        //job id is jobId
-
                         //action link use to generate url string
                         var url = '@Url.Action("CandidateProfile", "Candidate", new { id = "replaceToken" })';
                         url = url.replace("replaceToken", val.candidateId);
-
-
+                        //append html to relevant div element 
                         $("#likesoutput").append(
-
                             '<div class= "card">' +
                             ' <div class="card-body">' +
                             '<p><a href="' + url + '">' + val.firstName + ' ' + val.lastName + ' </a></p>' +
                             '<p>' + val.candidateJobTitle + ', £' + val.candidate.rate + ' per hour</p>' +
                             'Available From: ' + val.candidate.availableFrom.substring(0, 10) +
-
                             '</div>' +
                             '</div >'
-
                         );//end of .append
                     });//end of for loop
                 } else {
                     $("#likesoutput").append(
-
                         '<h4 class="buffer">No likes received yet <i class="fas fa-frown-open"></i></h4>'
-
                     );//end of .append
-
                 }
             }, //end of success function
             error: function (xhr) {
-                alert( 'error');
-            }
-
-        }); //end ajax
-
-
-
+                alert('error');
+            }//end of error function
+            }); //end ajax
     }); //end document.load
-
-
 </script>
 
 

@@ -34,15 +34,21 @@ namespace Prototype.Controllers
         public ActionResult GetJobsByEmployerId(int employerId)
         {
 
-            // getting user id using user manager 
-            // var userId = _userManager.GetUserId(User);
-            //var user = GetUser();
-            //var employerId = user.EmployerId;
-
+            
             var userJobs = JobHelper.GetUserJobs(_db, (int)employerId); 
 
             return Json(new { data = userJobs });
         }
+
+        public ActionResult GetJobsByUserId()
+        {
+           var user= GetUser(); 
+
+            var userJobs = JobHelper.GetUserJobs(_db, (int)user.EmployerId);
+
+            return Json(new { data = userJobs });
+        }
+
 
         [Authorize(Roles = "Employer")]
         //get for create

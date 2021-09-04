@@ -1,4 +1,5 @@
-﻿using Prototype.Data;
+﻿using Microsoft.AspNetCore.Identity;
+using Prototype.Data;
 using Prototype.Models;
 using System;
 using System.Collections.Generic;
@@ -8,8 +9,12 @@ using System.Threading.Tasks;
 namespace Prototype.Service
 {
     public class JobHelper
+
+
     {
 
+
+        
         public static List<JobProfile> GetUserJobs(ApplicationDbContext _db, int employerId)
         {
 

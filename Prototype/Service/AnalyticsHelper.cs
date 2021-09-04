@@ -8,7 +8,7 @@ namespace Prototype.Service
 {
     public class AnalyticsHelper
     {
-
+       
         public static Dictionary<String, double> GetRateAnalysisForJobTitle(ApplicationDbContext _db, JobTitle jobTitle)
         {
             //initialised variables

@@ -14,9 +14,27 @@ namespace Prototype.Models
 
         [Key]
         public int ContractId { get; set; }
+        
+        [NotMapped]
+        private double _AgreedRate;
         [Required]
         [Range(MinimumWage, double.MaxValue, ErrorMessage = "Please select a value over national living wage")]
-        public double AgreedRate { get; set; }
+        public double AgreedRate
+        {
+            get { return _AgreedRate; }
+            set
+            {
+                if (value >= MinimumWage)
+                {
+                    _AgreedRate = value;
+                }
+                else
+                {
+                    throw new ArgumentException("Agreed Rate Cannot be below Minimum Wage");
+                }
+
+            }
+        }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public bool IsRatedByEmployer { get; set; }

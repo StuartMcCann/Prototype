@@ -41,12 +41,57 @@ namespace Prototype.Models
             }
         }
 
-       
+        [NotMapped]
+        private double _Rating;
 
-        public double Rating { get; set; }
+        public double Rating
+        {
+
+            get
+            {
+                return _Rating;
+
+            }
+            set
+            {
+                if (value > 0 && value <= 5)
+                {
+                    _Rating = value;
+                }
+                else
+                {
+                    throw new ArgumentException("Rating cannot be less than 0 or grater than 5");
+                }
+
+
+               ;
+            }
+        }
+
+
+
+
+
+        [NotMapped]
+        private double _Rate;
         [Required]
         [Range(MinimumWage, double.MaxValue, ErrorMessage = "Please select a value over national living wage")]
-        public double Rate { get; set; }
+        public double Rate
+        {
+            get { return _Rate; }
+            set
+            {
+                if (value >= MinimumWage)
+                {
+                    _Rate = value;
+                }
+                else
+                {
+                    throw new ArgumentException("Rate Cannot be below Minimum Wage");
+                }
+
+            }
+        }
 
         public Level LevelEnum { get; set; }
         //normalised JobTitle
