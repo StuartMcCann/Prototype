@@ -37,27 +37,21 @@
                     //establishing if a sent or recieved message and formatting 
                     var align; 
                     if(val.fromUserId != '@Model.Id'){
-                    /*align = '<div class= "  card   bubble-left" >'; */
+                   
                         align = '<div class=" row  bubble-right" >'
                             + '<div class="">' +
                             ' <div class=" messageDark" >'; 
                     }else{
-                    /* align = '<div class= "  card  bubble-right" >'; */
+                    
                         align = '<div class=" row buffer bubble-left" >'
                             + '<div class="">' + 
                             ' <div class=" messageLight" >'; 
                     }
 
                     $("#conversation").append(
-
-
-                        //float-right
-                        align +
-                        ///*'<div class=" row buffer" >'*/
-                        //+'<div class="card">'+
-                        ///* + align +*/ 
-                        /*' <div class="card-body" >' +*/
-                        '<p>' + val.fromUser.firstName + ' ' + val.fromUser.lastName + '</p>' +
+                                                                       
+                        align +                    
+                       '<p>' + val.fromUser.firstName + ' ' + val.fromUser.lastName + '</p>' +
                         '<p>' + val.message + '</p>' +
                         '<p> Sent: ' + date + ' at ' + time + '</p>' +
 

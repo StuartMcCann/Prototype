@@ -22,7 +22,7 @@
                 if (data != null) {
 
 
-                $.each(data.data, function (key, val) {
+                $.each(data, function (key, val) {
                    //need to add validation that not empty here
                    //job id is jobId
 
@@ -115,7 +115,7 @@
             success: function (data) {
               
 
-                $.each(data.data, function (key, val) {
+                $.each(data, function (key, val) {
                    //need to add validation that not empty here
 
                     if (val.isUnderContract == true) {
@@ -175,9 +175,9 @@
 
 
             success: function (data) {
-                console.log(data)
+              
 
-                $.each(data.data, function (key, val) {
+                $.each(data, function (key, val) {
                    //need to add validation that not empty here
 
 

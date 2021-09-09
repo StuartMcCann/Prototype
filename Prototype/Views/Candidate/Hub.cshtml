@@ -21,8 +21,7 @@
 
                // loops through values returned in json format by above url
                 $.each(data, function (key, val) {
-                   //need to add validation that not empty here
-                   //job id is jobId
+                   
 
                     //action link use to generate url string
                     var url = '@Url.Action("Index", "Employer", new { id = "replaceToken" })';
@@ -61,7 +60,7 @@
             success: function (data) {
 
 
-                $.each(data.data, function (key, val) {
+                $.each(data, function (key, val) {
                    //need to add validation that not empty here
 
 
@@ -128,7 +127,7 @@
             success: function (data) {
 
 
-                $.each(data.data, function (key, val) {
+                $.each(data, function (key, val) {
                    //need to add validation that not empty here
 
 

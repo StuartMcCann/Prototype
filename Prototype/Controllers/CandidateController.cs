@@ -35,7 +35,7 @@ namespace Prototype.Controllers
 
             var candidatesLikeThis = CandidateHelper.GetCandidatesLikeThis(_db, candidateId); 
 
-            return Json(new { data = candidatesLikeThis });
+            return Json(candidatesLikeThis);
 
         }
         [Authorize(Roles="Candidate")]

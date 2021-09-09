@@ -35,9 +35,9 @@ namespace Prototype.Controllers
         {
 
             
-            var userJobs = JobHelper.GetUserJobs(_db, (int)employerId); 
-
-            return Json(new { data = userJobs });
+            var userJobs = JobHelper.GetUserJobs(_db, (int)employerId);
+            return Json(userJobs); 
+            //return Json(new { data = userJobs });
         }
 
         public ActionResult GetJobsByUserId()
@@ -46,7 +46,7 @@ namespace Prototype.Controllers
 
             var userJobs = JobHelper.GetUserJobs(_db, (int)user.EmployerId);
 
-            return Json(new { data = userJobs });
+            return Json(userJobs);
         }
 
 
@@ -109,7 +109,7 @@ namespace Prototype.Controllers
 
             var jobsLikeThis = JobHelper.GetJobsLikesThis(_db, jobTitle, jobId); 
 
-            return Json(new { data = jobsLikeThis });
+            return Json(jobsLikeThis);
 
         }
 

@@ -37,7 +37,7 @@ namespace Prototype.Service
                                           LevelEnum = c.LevelEnum,
                                           Rating = c.Rating,
                                           Rate = c.Rate,
-
+                                          JobTitleEnum = c.JobTitleEnum, 
                                           CandidateID = c.CandidateID,
                                           Level = c.LevelEnum.GetDisplayName(),
                                           Skills = c.Skills

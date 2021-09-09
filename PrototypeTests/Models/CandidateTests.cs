@@ -23,7 +23,7 @@ namespace Prototype.Models.Tests
             validDateInPast = DateTime.Now.AddDays(-1);
             candidate = new Candidate();
             ratingValid = 3;
-            ratingInvalidLower = 0;
+            ratingInvalidLower = -1;
             ratingInvalidUpper = 6;
             rateValid = 8.21;
             rateInvalid = 8.2;

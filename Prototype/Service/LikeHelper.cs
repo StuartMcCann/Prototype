@@ -49,10 +49,11 @@ namespace Prototype.Service
                         EmployerId = l.EmployerId,
                         LikeType = l.LikeType,
                         FirstName = u.FirstName,
-                        LastName = u.LastName, 
-                      CandidateJobTitle = c.JobTitleEnum.GetDisplayName(), 
-                      DateLiked = l.DateLiked, 
-                      Candidate =c
+                        LastName = u.LastName,
+                        CandidateJobTitle = c.JobTitleEnum.GetDisplayName(),
+                        DateLiked = l.DateLiked,
+                        Candidate = c,
+                        JobId = l.JobId
 
 
 

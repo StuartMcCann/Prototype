@@ -10,11 +10,13 @@ using System.Linq;
 
 namespace Prototype.Controllers
 {
+   
     public class ContractController : Controller
     {
-
+        protected static int NumberOfDecimalPlacesRating = 1;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _db;
+
         public ContractController(UserManager<ApplicationUser> userManager, ApplicationDbContext applicationDbContext)
         {
             _userManager = userManager;
@@ -105,11 +107,12 @@ namespace Prototype.Controllers
         {
             //get all rated contracts for candidate and count 
             var allRatedContracts = _db.Contracts.Where(c => c.CandidateId == candidateId && c.IsRatedByEmployer == true).Select(c => c.ContractRatingByEmployer).ToList();
-            //get average 
-            var averageCandidateRating = allRatedContracts.Average();
-            //update candidate in DB
+            //Find relevant candidate 
             var candidate = _db.Candidates.Where(c => c.CandidateID == candidateId).First();
-            candidate.Rating = Math.Round((double)averageCandidateRating);
+            //get average 
+            var averageCandidateRating = allRatedContracts.Average();            
+            //round rating value to required decimal decimal place and assign to relevant candidate 
+            candidate.Rating = Math.Round((double)averageCandidateRating, NumberOfDecimalPlacesRating);
             //clear skills to avoid conflict
             candidate.Skills.Clear();
             if (ModelState.IsValid)
@@ -144,11 +147,12 @@ namespace Prototype.Controllers
         {
             //get all rated contracts for candidate and count 
             var allRatedContracts = _db.Contracts.Where(c => c.EmployerId == employerId && c.IsRatedByCandidate == true).Select(c => c.ContractRatingByCandidate).ToList();
-            //get average 
-            var averageEmployerRating = allRatedContracts.Average();
-            //update candidate in DB
+            //Find relevant employer 
             var employer = _db.Employers.Where(e => e.EmployerId == employerId).First();
-            employer.Rating = Math.Round((double)averageEmployerRating);
+            //get average 
+            var averageEmployerRating = allRatedContracts.Average();            
+            //round average rating to reqquired decimal places and update employer entity 
+            employer.Rating = Math.Round((double)averageEmployerRating, NumberOfDecimalPlacesRating);
             if (ModelState.IsValid)
             {
                 _db.Employers.Update(employer);
@@ -184,7 +188,7 @@ namespace Prototype.Controllers
             // var contracts = _db.Contracts.Where(c => c.EmployerId == employerId).ToList();
             var contracts = ContractHelper.GetContractsForEmployerHub(_db, employerId); 
             //return contracts; 
-            return Json(new { data = contracts });
+            return Json( contracts);
         }
 
         public ActionResult GetContractsCandidateHub(int candidateId)
@@ -193,7 +197,7 @@ namespace Prototype.Controllers
             // var contracts = _db.Contracts.Where(c => c.EmployerId == employerId).ToList();
             var contracts = ContractHelper.GetContractForCandidateHub(_db, candidateId); 
             //return contracts; 
-            return Json(new { data = contracts });
+            return Json(contracts);
         }
 
 
@@ -201,17 +205,10 @@ namespace Prototype.Controllers
         public ActionResult GetContractsToRate(int id)
         {
             var contracts = new List<ContractProfile>();
-            if (User.IsInRole("Candidate"))
-            {
+            
                 contracts = ContractHelper.GetContractToRateCandidate(_db, id); 
 
-            }
-            else if (User.IsInRole("Employer"))
-            {
-                //contracts = _db.Contracts.Where(c => c.EmployerId == id && !c.IsRatedByEmployer).ToList();
-
-            }
-
+           
             return Json(contracts);
         }
 

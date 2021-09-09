@@ -54,7 +54,7 @@ namespace Prototype.Models
             }
             set
             {
-                if (value > 0 && value <= 5)
+                if (value >= 0 && value <= 5)
                 {
                     _Rating = value;
                 }

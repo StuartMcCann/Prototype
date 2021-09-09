@@ -18,9 +18,9 @@
             //this needs changed whe table fully normalised
             data: { title: "@Model.JobTitle", jobId : @Model.JobId}  ,
             success: function (data) {
-                console.log(data);
+                
                 //loops through values returned in json format by above url
-                $.each(data.data, function (key, val) {
+                $.each(data, function (key, val) {
                     //need to add validation that not empty here
                      var url = '@Url.Action("JobProfile", "Job", new { id = "replaceToken" })';
                     url = url.replace("replaceToken", val.jobId);

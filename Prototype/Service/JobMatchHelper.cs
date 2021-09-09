@@ -15,7 +15,7 @@ namespace Prototype.Service
 
             var finalMatches = new List<CandidateProfile>(); 
             var matchedCandidatesByJobtitle = MatchByJobtitle(_db, job.JobTitleEnum); 
-            //if job title has no matches exit or check for skills?
+            //if job title has no matches exit 
             if(matchedCandidatesByJobtitle.Count() == 0)
             {
                 // returns no matches by job title 
@@ -46,7 +46,7 @@ namespace Prototype.Service
         public static List<CandidateProfile> CheckForMatchedSkills(List<CandidateProfile> candidates, ICollection<Skill> jobSkills)
         {
             var candidatesMatchedBySkills = new List<CandidateProfile>();
-
+            //loop through list of candidates that have been matched by job title
             foreach(CandidateProfile candidate in candidates)
             {
                 //if intersect returns a result then there is a match with skills 
@@ -109,6 +109,7 @@ namespace Prototype.Service
         public static List<JobTitle> GetSimilarJobTitles(JobTitle jobTitle)
         {
             var similarJobTitles = new List<JobTitle>(); 
+            //switch / case statement to find job similr job titles and add to list 
             switch (jobTitle)
             {
                 case JobTitle.SoftwareEngineer:
@@ -178,9 +179,8 @@ namespace Prototype.Service
 
         public static List<JobProfile> GetJobsStartingSoon(JobTitle jobTitle, ApplicationDbContext _db)
         {
+            //get similar job titles 
             var similarJobTitles = GetSimilarJobTitles(jobTitle);
-
-
             // below gets date 1 week in furtue to use in query 
             var dateCriteria = DateTime.Now.AddDays(+7);
 
@@ -196,12 +196,10 @@ namespace Prototype.Service
                                         EmployerId = j.EmployerRefId,
                                         JobTitle = j.JobTitleEnum.GetDisplayName(),
                                         CompanyName = _db.Employers.Where(e => e.EmployerId == j.EmployerRefId).First().CompanyName,
-                                        DisplayStartDate = j.StartDate.ToShortDateString()
+                                        DisplayStartDate = j.StartDate.ToShortDateString(), 
+                                        StartDate = j.StartDate
 
                                     }).ToList();
-
-
-
 
             return jobsStartingSoon;
 

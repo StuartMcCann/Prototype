@@ -23,7 +23,7 @@ namespace Prototype.Service
                         //EndDate = c.EndDate,
                         IsUnderContract = c.IsUnderContract,
                         FullName = GetFullName(c.CandidateId, _db),
-
+                        EmployerId = c.EmployerId, 
                         JobTitle = _db.Jobs.Where(j => j.JobId == c.JobId).First().JobTitleEnum.GetDisplayName(),
                         IsRatedByEmployer = c.IsRatedByEmployer
 
@@ -46,7 +46,8 @@ namespace Prototype.Service
                         JobTitle = _db.Jobs.Where(j => j.JobId == c.JobId).First().JobTitleEnum.GetDisplayName(),
                         IsRatedByEmployer = c.IsRatedByEmployer,
                         CompanyName = c.Employer.CompanyName,
-                        EmployerId = c.Employer.EmployerId
+                        EmployerId = c.Employer.EmployerId, 
+                        CandidateId = c.CandidateId
                     }).ToList();
         }
 
@@ -54,7 +55,7 @@ namespace Prototype.Service
         public static List<ContractProfile> GetContractToRateCandidate(ApplicationDbContext _db, int candidateId)
         {
             return (from c in _db.Contracts
-                    where c.CandidateId == candidateId && c.IsRatedByCandidate == false
+                    where c.CandidateId == candidateId && c.IsRatedByCandidate == false && c.IsRatedByEmployer == true
                     select new ContractProfile
 
                     {

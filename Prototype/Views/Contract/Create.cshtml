@@ -2,7 +2,7 @@
 <script type="text/javascript">
 
 
-        $(document).ready(function () {
+    $(document).ready(function () {
 
 
         // below ajax gets jobs connected to the  the logged in user
@@ -10,34 +10,34 @@
             url: '/Job/GetJobsByUserId',
             dataType: "Json",
             type: "GET",
-            data: "" ,
+            data: "",
             contentType: 'application/x-www-form-urlencoded',
             cache: false,
             //this needs changed whe table fully normalised
 
             success: function (data) {
-                console.log(data)
+
 
 
                 //loops through values returned in json format by above url
-                var disabledOption = '<option selected value="" >Please Select A Job</option>'; 
-                $.each(data.data, function (key, val) {
+                var disabledOption = '<option selected value="" >Please Select A Job</option>';
+                $.each(data, function (key, val) {
                     disabledOption += '<option value="' + val.jobId + '">' + val.jobTitle +
-                        ', (£'+val.lowerRate+'-'+val.upperRate+
+                        ', (£' + val.lowerRate + '-' + val.upperRate +
 
-                        ' p/h) </option>'; 
-                    
+                        ' p/h) </option>';
+
                 });//end of for loop
 
                 $("#jobsDropdown").html(
                     disabledOption
 
 
-                );//end of html 
+                );//end of html
 
             }, //end of success function
             error: function (xhr) {
-                alert( 'error');
+                alert('error');
             }
 
         }); //end ajax
@@ -70,7 +70,7 @@
                     @Html.Hidden("candidateId", Model.CandidateID)
 
                     <input required name="startDate" type="date" class="form-control" />
-                   
+
                 </div>
                 <label class="form-label">Job</label>
                 <div class="input-group">
@@ -81,7 +81,7 @@
                 </div>
                 <label class="form-label">Agreed Rate</label>
                 <div class=" input-group">
-                    <input required name="rate" type="number" min="8.62" />
+                    <input required name="rate" />
                     <span asp-validation-for="Rate" class="text-danger"></span>
                 </div>
 
@@ -125,3 +125,10 @@
     </div>
 
 </div>
+
+@section Scripts{
+    @*code below for validation client side using javascript*@
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

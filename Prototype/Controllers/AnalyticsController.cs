@@ -49,6 +49,9 @@ namespace Prototype.Controllers
                 return View("Error"); 
             }
         }
+
+
+
         [Authorize(Roles ="Employer")]
         public IActionResult AnalyticsForEmployer()
         {

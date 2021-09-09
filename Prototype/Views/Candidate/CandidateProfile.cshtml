@@ -21,7 +21,7 @@
                 if (data.length>0) {
 
 
-                    $.each(data.data, function (key, val) {
+                    $.each(data, function (key, val) {
                         //need to add validation that not empty here
                         var url = '@Url.Action("CandidateProfile", "Candidate", new { id = "replaceToken" })';
                         url = url.replace("replaceToken", val.candidateID);
@@ -120,8 +120,7 @@
             contentType: 'application/json; charset=utf-8',
             cache: false,
             //this needs changed whe table fully normalised
-            data: { id : @Model.CandidateID}  ,
-            success: function (data) {
+            data: { id : @Model.CandidateID}  ,            success: function (data) {
                 //console.log(data);
                 //if mutual like true replace with message
                 if (data == true) {
@@ -149,7 +148,7 @@
 
 
 
-         $('#unlike').click(function () {
+         @*$('#unlike').click(function () {
 
 
                  var like = '@LikeType.EmployerLikesCandidate';
@@ -179,7 +178,7 @@
 
 
         }); //end ajax
-        }); //end click
+        }); //end click*@
 
     }); //end document.load
 

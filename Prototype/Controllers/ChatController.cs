@@ -140,7 +140,7 @@ namespace Prototype.Controllers
             var messages = ChatHelper.GetConversations(_db, userId); 
 
 
-            return Json(new { data = messages });
+            return Json( messages);
 
 
         }

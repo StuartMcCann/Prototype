@@ -8,7 +8,7 @@ namespace Prototype.Service
 {
     public class AnalyticsHelper
     {
-       
+
         public static Dictionary<String, double> GetRateAnalysisForJobTitle(ApplicationDbContext _db, JobTitle jobTitle)
         {
             //initialised variables
@@ -60,7 +60,7 @@ namespace Prototype.Service
             analysedData.Add("AverageExpert", averageExpert);
             analysedData.Add("HighestExpert", highestExpert);
 
-            
+
 
             return analysedData;
 
@@ -72,17 +72,19 @@ namespace Prototype.Service
             //get all skills and add to dictionary data structure 
             var skillsMapped = CountJobSkills(_db);
             // find top 4
-            var topSkills = skillsMapped.OrderByDescending(p => p.Value).Take(4).ToDictionary(p=>p.Key, p=>p.Value);
-            //find percentage of live jobs have the skills 
-            var liveJobsCount = _db.Jobs.Where(j => j.IsLive == true).ToList().Count(); 
-            var dataAnalysed = new Dictionary<string, double>(); 
-            foreach(var item in topSkills)
+            var topSkills = skillsMapped.OrderByDescending(p => p.Value).Take(4).ToDictionary(p => p.Key, p => p.Value);
+            //find total number of live jobs
+            var liveJobsCount = _db.Jobs.Where(j => j.IsLive == true).ToList().Count();
+            var dataAnalysed = new Dictionary<string, double>();
+            //find percentage of jobs which have skill using livejobs count
+            foreach (var item in topSkills)
             {
                 double percentage = (((double)item.Value / liveJobsCount) * 100);
-                dataAnalysed.Add(item.Key.SkillName, percentage); 
+                //add to dictionary for comapability with charts.js
+                dataAnalysed.Add(item.Key.SkillName, percentage);
             }
 
-            return dataAnalysed ; 
+            return dataAnalysed;
 
 
         }
@@ -98,24 +100,25 @@ namespace Prototype.Service
                                Skills = j.Skills
                            })
                             .ToList();
-            //get count for each 
-
+            //get count for each skill in database 
             foreach (Job job in allJobs)
             {
                 foreach (Skill skill in job.Skills)
                 {
                     if (!skillsMapped.ContainsKey(skill))
                     {
+                        //add to map to register skill
                         skillsMapped.Add(skill, 1);
                     }
                     else
                     {
+                        //increase skill count 
                         skillsMapped[skill]++;
                     }
                 }
             }
 
-            return skillsMapped; 
+            return skillsMapped;
 
 
         }
@@ -146,11 +149,11 @@ namespace Prototype.Service
 
             var skillsMapped = new Dictionary<Skill, int>();
             var allCandidates = (from c in _db.Candidates
-                           
-                           select new Candidate
-                           {
-                               Skills = c.Skills
-                           })
+
+                                 select new Candidate
+                                 {
+                                     Skills = c.Skills
+                                 })
                             .ToList();
             //get count for each 
 
@@ -178,31 +181,33 @@ namespace Prototype.Service
         {
             var topRatedEmployers = _db.Employers.OrderByDescending(e => e.Rating).Take(5).ToList();
 
-            return topRatedEmployers; 
+            return topRatedEmployers;
 
 
         }
 
         public static Dictionary<string, int> GetJobsTitlesCount(ApplicationDbContext _db)
         {
-            
-             var jobTitleCounts = new Dictionary<string, int>();
-            //get all jobs 
-            var allJobs = _db.Jobs.Where(j => j.IsLive == true).ToList(); 
-            //add job titles to dictionary or update count 
-            foreach(Job job in allJobs)
+            //instantiate dictionary 
+            var jobTitleCounts = new Dictionary<string, int>();
+            //get all jobs from database 
+            var allJobs = _db.Jobs.Where(j => j.IsLive == true).ToList();
+            //loop through live jobs 
+            foreach (Job job in allJobs)
             {
-                if (!jobTitleCounts.ContainsKey(job.JobTitleEnum.ToString())){
+                //check if dictionary containes job already
+                if (!jobTitleCounts.ContainsKey(job.JobTitleEnum.ToString()))
+                {
+                    //register job title in dictionary data structure 
                     jobTitleCounts.Add(job.JobTitleEnum.ToString(), 1);
                 }
                 else
                 {
-                    jobTitleCounts[job.JobTitleEnum.ToString()]++; 
+                    //increase relevant count if already present 
+                    jobTitleCounts[job.JobTitleEnum.ToString()]++;
                 }
             }
-
-            return jobTitleCounts; 
-
+            return jobTitleCounts;
         }
 
         public static Dictionary<string, int> GetBespokeCandidateData(ApplicationDbContext _db, int candidateId)
@@ -217,7 +222,7 @@ namespace Prototype.Service
                                  JobTitleEnum = c.JobTitleEnum,
                                  Skills = c.Skills
 
-                             }).FirstOrDefault(); 
+                             }).FirstOrDefault();
             //get likes
             var likesPerCandidate = _db.Likes.Where(l => l.CandidateId == candidateId).ToList();
 
@@ -226,37 +231,37 @@ namespace Prototype.Service
 
             //get num employers liked
             var numEmployerLikes = likesPerCandidate.GroupBy(e => e.EmployerId).Distinct().ToList().Count();
-            
+
             //get num jobs with job title
             var numJobsWithJobTitle = _db.Jobs.Where(j => j.JobTitleEnum == candidate.JobTitleEnum).ToList().Count();
             //get % jobs with skills
-            var percentage = GetPercentageOfJobsWithSkills(candidate, _db); 
+            var percentage = GetPercentageOfJobsWithSkills(candidate, _db);
 
 
             analysedData.Add("NumberOfLikes", likesPerCandidateCount);
             analysedData.Add("NumberOfEmployerLikes", numEmployerLikes);
             analysedData.Add("NumberOfJobsWithJobTitle", numJobsWithJobTitle);
-            analysedData.Add("PercentageOfJobsWithSkillsMatch", percentage); 
+            analysedData.Add("PercentageOfJobsWithSkillsMatch", percentage);
 
-            return analysedData; 
+            return analysedData;
         }
 
         public static int GetPercentageOfJobsWithSkills(Candidate candidate, ApplicationDbContext _db)
         {
-            var allJobs = (from j in _db.Jobs where j.IsLive == true select new Job { Skills = j.Skills }).ToList(); 
+            var allJobs = (from j in _db.Jobs where j.IsLive == true select new Job { Skills = j.Skills }).ToList();
             var totalJobsCount = allJobs.Count();
-            var skillsMatchCount = 0; 
-            foreach(Job job in allJobs)
+            var skillsMatchCount = 0;
+            foreach (Job job in allJobs)
             {
                 if (job.Skills.Intersect(candidate.Skills).Any())
                 {
-                    skillsMatchCount++; 
+                    skillsMatchCount++;
                 }
             }
 
             var percentage = ((double)skillsMatchCount / totalJobsCount) * 100;
 
-            return (int)percentage; 
+            return (int)percentage;
 
         }
 
@@ -305,31 +310,28 @@ namespace Prototype.Service
             //get % of jobs filled / success rate 
             var fillRate = PercentageFillRate(employer.Contracts, employer.Jobs);
             //get number of candidates from jobs that they have live 
-            var numberOfCandidatesMatchJobs = GetNumberOfJobsWithMatch(_db, employer.Jobs); 
+            var numberOfCandidatesMatchJobs = GetNumberOfJobsWithMatch(_db, employer.Jobs);
             //add to dictionary 
             analysedData.Add("TotalLikes", totalLikesCount);
             analysedData.Add("NumCandidateLikes", numCandidateLikes);
-            analysedData.Add("FillRate",(int) fillRate);
-            analysedData.Add("CandidatesMatched", numberOfCandidatesMatchJobs); 
+            analysedData.Add("FillRate", (int)fillRate);
+            analysedData.Add("CandidatesMatched", numberOfCandidatesMatchJobs);
 
             return analysedData;
         }
 
-        public static double PercentageFillRate( ICollection<Contract> contracts, ICollection<Job> jobs)
+        public static double PercentageFillRate(ICollection<Contract> contracts, ICollection<Job> jobs)
         {
+            //instantiate var 
             double fillRate = 0;
-
-            //get total Jobs by employer
+            //get total Jobs by employer from method parameter 
             var totalJobs = jobs.Count();
-
-            //Get filled jobs 
+            //Get filled jobs from method parameter 
             var filledJobs = contracts.Count();
-
             //get percentage 
-            fillRate = ((double)filledJobs / totalJobs) * 100; 
+            fillRate = ((double)filledJobs / totalJobs) * 100;
 
-
-            return fillRate; 
+            return fillRate;
         }
 
         public static int GetNumberOfJobsWithMatch(ApplicationDbContext _db, ICollection<Job> jobs)
@@ -338,30 +340,31 @@ namespace Prototype.Service
             //get candidates available
             var availableCandidates = _db.Candidates.Where(c => c.IsAvailable).ToList();
             //get all job titles from jobs 
-                       
-            var allJobTitles = new List<JobTitle>(); 
-            
-            foreach (Job job in jobs){
-                if (!allJobTitles.Contains(job.JobTitleEnum)&& job.IsLive)
+
+            var allJobTitles = new List<JobTitle>();
+
+            foreach (Job job in jobs)
+            {
+                if (!allJobTitles.Contains(job.JobTitleEnum) && job.IsLive)
                 {
-                    allJobTitles.Add(job.JobTitleEnum); 
+                    allJobTitles.Add(job.JobTitleEnum);
                 }
 
             }
 
 
-            foreach(Candidate candidate in availableCandidates)
+            foreach (Candidate candidate in availableCandidates)
             {
-                if(allJobTitles.Contains(candidate.JobTitleEnum))
+                if (allJobTitles.Contains(candidate.JobTitleEnum))
                 {
-                    count++; 
+                    count++;
                 }
             }
 
 
             return count;
 
-            
+
         }
 
 
