@@ -1,0 +1,134 @@
+﻿@model Prototype.Models.CandidateProfile
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+
+
+        // below ajax gets jobs connected to the  the logged in user
+        $.ajax({
+            url: '/Job/GetJobsByUserId',
+            dataType: "Json",
+            type: "GET",
+            data: "",
+            contentType: 'application/x-www-form-urlencoded',
+            cache: false,
+            //this needs changed whe table fully normalised
+
+            success: function (data) {
+
+
+
+                //loops through values returned in json format by above url
+                var disabledOption = '<option selected value="" >Please Select A Job</option>';
+                $.each(data, function (key, val) {
+                    disabledOption += '<option value="' + val.jobId + '">' + val.jobTitle +
+                        ', (£' + val.lowerRate + '-' + val.upperRate +
+
+                        ' p/h) </option>';
+
+                });//end of for loop
+
+                $("#jobsDropdown").html(
+                    disabledOption
+
+
+                );//end of html
+
+            }, //end of success function
+            error: function (xhr) {
+                alert('error');
+            }
+
+        }); //end ajax
+
+    }); //end document.load
+
+</script>
+
+
+
+
+<div class="container text">
+
+
+    <h1 class=" heading buffer"> Create a contract with @Model.FirstName @Model.LastName</h1>
+
+    <p class=" buffer">Here's where you can confirm the details of your agreement with @Model.FirstName.</p>
+
+
+
+
+
+    <div class="row border">
+        <div class=" col-sm-8  buffer">
+
+            <form method="post" asp-action="Create" asp-controller="Contract" enctype="multipart/form-data">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <label class="form-label">Start Date</label>
+                <div class=" input-group">
+                    @Html.Hidden("candidateId", Model.CandidateID)
+
+                    <input required name="startDate" type="date" class="form-control" />
+
+                </div>
+                <label class="form-label">Job</label>
+                <div class="input-group">
+
+                    <select class="form-control" id="jobsDropdown" name="jobId" required>
+                        <!--This dropdown is populated by ajax-->
+                    </select>
+                </div>
+                <label class="form-label">Agreed Rate</label>
+                <div class=" input-group">
+                    <input required name="rate" />
+                    <span asp-validation-for="Rate" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class=" add-margin btn btn-primary float-right"> Confirm</button>
+            </form>
+
+
+
+
+
+
+
+
+        </div>
+        <div class=" col-sm-3 border buffer add-margin">
+            @if (Model.ProfilePicture != null)
+            {
+                <img class="thumbnail" src="data:image/*;base64,@(Convert.ToBase64String(Model.ProfilePicture))">
+
+            }
+            else
+            {
+
+            }
+
+            <h5 class="heading">About @Model.FirstName</h5>
+            <p>Expected Rate: £@Model.Rate per hour</p>
+            <p>Level: @Model.LevelEnum</p>
+            <p>Available From: @Model.AvailableFrom.ToShortDateString()</p>
+            <h5>
+                @foreach (var skill in Model.Skills)
+                {
+                    <span class="badge skill">@skill.SkillName</span>
+
+                }
+            </h5>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+@section Scripts{
+    @*code below for validation client side using javascript*@
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

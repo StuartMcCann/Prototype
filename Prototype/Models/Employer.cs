@@ -10,16 +10,15 @@ namespace Prototype.Models
     public class Employer
     {
 
-       /* public Employer()
-        {
-            this.Candidates = new HashSet<Candidate>();
-        }*/
+       
         [Key]
         public int EmployerId { get; set; }
         [Required]
         [DisplayName("Company Name")]
         public String CompanyName { get; set; }
         [DisplayName("Company Overview")]
+        [Required]
+        [StringLength(maximumLength: 1000, MinimumLength = 100, ErrorMessage = "Company overview must be between 100 - 1000 characters")]
         public String CompanyOverview { get; set; }
         public double Rating { get; set; }
         [Display(Name = "Company Logo")]
@@ -31,6 +30,8 @@ namespace Prototype.Models
         /*Many to many With Candidates for Likes
         public ICollection<Candidate> Candidates { get; set; }*/
         public ICollection<Like> Likes { get; set; }
+        //foreign key one to many with Contracts
+        public ICollection<Contract> Contracts { get; set; }
 
         //one to many relationship with Application User - one employer can have any users associated with it 
         //public ApplicationUser ApplicationUser { get; set; }

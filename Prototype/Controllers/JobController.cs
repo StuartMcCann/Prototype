@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Prototype.Data;
 using Prototype.Models;
+using Prototype.Service;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
-using Microsoft.AspNetCore.Identity;
 
 namespace Prototype.Controllers
 {
@@ -13,64 +14,48 @@ namespace Prototype.Controllers
     {
         private readonly ApplicationDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
-        
+
 
         public JobController(ApplicationDbContext db, UserManager<ApplicationUser> userManager)
         {
             //creates a db objext for use in controller using dependency injection
             _db = db;
             _userManager = userManager;
-            
-        }
 
+        }
+        //view for candidates to view jobs 
+        [Authorize(Roles = "Candidate")]
         public IActionResult Index()
         {
-           
-            //below gets Jobs from db
-            IEnumerable<Job> jobList = _db.Jobs;
-            return View(jobList);
+
+            return View();
         }
 
-        public List<Job> GetJobsByUserID()
+        public ActionResult GetJobsByEmployerId(int employerId)
         {
 
-            // getting user id using user manager 
-            // var userId = _userManager.GetUserId(User);
-            var user = GetUser();
-            var employerId = user.EmployerId;
-
-            var userJobs = (from j in _db.Jobs
-                            join u in _db.Users
-                            on j.EmployerRefId equals u.EmployerId
-                            where j.EmployerRefId == employerId
-                            select new Job
-                            {
-                                JobId = j.JobId,
-                                JobTitle = j.JobTitle,
-                                StartDate = j.StartDate,
-                                UpperRate = j.UpperRate,
-                                LowerRate = j.LowerRate,
-                                Duration = j.Duration,
-                                JobDescription = j.JobDescription,
-                                IsFilled = j.IsFilled,
-                                IsLive = j.IsLive,
-                                IsUnderContract = j.IsUnderContract,
-                                EmployerRefId = j.EmployerRefId
-
-
-
-                            }).ToList();                          
-                                
-                                
-                  
-  
-            return userJobs; 
+            
+            var userJobs = JobHelper.GetUserJobs(_db, (int)employerId);
+            return Json(userJobs); 
+            //return Json(new { data = userJobs });
         }
 
-        
+        public ActionResult GetJobsByUserId()
+        {
+           var user= GetUser(); 
+
+            var userJobs = JobHelper.GetUserJobs(_db, (int)user.EmployerId);
+
+            return Json(userJobs);
+        }
+
+
+        [Authorize(Roles = "Employer")]
         //get for create
         public IActionResult Create()
         {
+            //populate bag for dropdown menu 
+            ViewBag.Skills = new SelectList(_db.Skills, "SkillId", "SkillName"); 
 
             return View();
         }
@@ -80,13 +65,18 @@ namespace Prototype.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Job job)
         {
-
+            //get all skills 
+            foreach(int skillId in job.SkillIds)
+            {
+                job.Skills.Add(_db.Skills.Where(s => s.SkillId == skillId).First()); 
+            }
             var user = GetUser();
-            
-                int employerId = (int)user.EmployerId;
-                job.EmployerRefId = employerId;
-            
-             
+            int employerId = (int)user.EmployerId;
+            Employer employer = _db.Employers.Where(e => e.EmployerId == employerId).First();
+            job.AddEmployer(employer);
+
+
+
             //validation below 
             if (ModelState.IsValid)
             {
@@ -94,98 +84,52 @@ namespace Prototype.Controllers
                 //save changes exexutes action to DB
                 _db.SaveChanges();
                 //needs changed to direct to edit 
-                return RedirectToAction("Index");
+                return RedirectToAction("JobMatch", job);
 
             }
             return View(job);
-           
+
 
 
         }
-
-        public ActionResult GetJobsLikeThis(string title)
+        [Authorize(Roles = "Employer")]
+        public IActionResult JobMatch(Job job)
         {
-            
+            //change to jobprofile? and add more complex logic 
+            var matchedCandidates = JobMatchHelper.JobMatchWithCandidates(_db, job); 
 
-            var jobsLikeThis = (from j in _db.Jobs
-                       join employers in _db.Employers on j.EmployerRefId
-                       equals employers.EmployerId
-                       join jobTitle in _db.JobTitle on
-                       j.JobTitleRefId equals jobTitle.JobTitleId
-                       where j.JobTitle == title
-                       select new JobProfile
-                       {
-                           JobId = j.JobId,
-                           //remove title when normalise properly 
-                           Title = j.JobTitle, 
-                           JobDescription = j.JobDescription,
-                           UpperRate = j.UpperRate,
-                           LowerRate = j.LowerRate,
-                           JobTitle = jobTitle.Title,
-                           CompanyName = employers.CompanyName,
-                           Duration = j.Duration,
-                           StartDate = j.StartDate,
-                           Rating = employers.Rating
-
-                       }).ToList();
-
-            return Json(new { data = jobsLikeThis });
+            return View(matchedCandidates);
 
         }
 
-
-        public ActionResult GetJobTitles()
+        public ActionResult GetJobsLikeThis(JobTitle jobTitle, int jobId)
         {
-            List<JobTitle> jobTitles = _db.JobTitle.ToList();
 
-            return Json(new { data = jobTitles }); 
 
-        }
 
-        public ActionResult GetJobSkills()
-        {
-            List<JobTitle> jobTitles = _db.JobTitle.ToList();
+            var jobsLikeThis = JobHelper.GetJobsLikesThis(_db, jobTitle, jobId); 
 
-            return Json(new { data = jobTitles });
+            return Json(jobsLikeThis);
 
         }
 
 
 
+
+
+
+        [Authorize(Roles = "Candidate")]
         //get by id method
         public IActionResult JobProfile(int id)
         {
 
 
             // var job = _db.Jobs.Find(id);
-            var job = (from j in _db.Jobs
-                      join employers in _db.Employers on j.EmployerRefId
-                      equals employers.EmployerId
-                      join u in _db.Users 
-                      on j.EmployerRefId equals u.EmployerId
-                      //join jobTitle in _db.JobTitle on
-                      //j.JobTitleRefId equals jobTitle.JobTitleId
-                      where j.JobId == id
-                      select new JobProfile
-                      {
-                         JobId= j.JobId,
-                         Title = j.JobTitle,
-                          JobDescription = j.JobDescription,
-                         UpperRate = j.UpperRate,
-                         LowerRate = j.LowerRate,
-                         JobTitle =j.JobTitle,
-                         CompanyName =employers.CompanyName,
-                         Duration =  j.Duration,
-                         StartDate=  j.StartDate,
-                          Rating = employers.Rating,
-                          EmployerId = employers.EmployerId,
-                          UserId = u.Id
-
-                      }).FirstOrDefault(); 
+            var job = JobHelper.GetJobProfile(_db, id); 
 
 
 
-             if (job == null)
+            if (job == null)
             {
                 return NotFound();
             }
@@ -193,11 +137,14 @@ namespace Prototype.Controllers
 
         }
 
-        
+
 
         //GET for Edit
+        [Authorize(Roles = "Employer")]
         public IActionResult Edit(int? id)
         {
+
+            ViewBag.Skills = new SelectList(_db.Skills, "SkillId", "SkillName");
             if (id == null || id == 0)
             {
                 return NotFound();
@@ -219,16 +166,45 @@ namespace Prototype.Controllers
             //validation below 
             if (ModelState.IsValid)
             {
+                var user = GetUser();
+                job.EmployerRefId = (int)user.EmployerId;
+                if (job.SkillIds != null)
+                {
+                    job.Skills.Clear(); 
+                    job.Skills = UpdateJobSkills(job); 
+                }
                 //update needs primary key to update
                 _db.Jobs.Update(job);
                 //save changes exexutes action to DB
                 _db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Hub", "Employer");
 
             }
             return View(job);
 
 
+        }
+
+
+
+
+        public List<Skill> UpdateJobSkills(Job job)
+        {
+            var skillsToBeAdded = new List<Skill>();
+
+
+            foreach (int skillId in job.SkillIds)
+            {
+                Skill skill = _db.Skills.Where(s => s.SkillId == skillId).First();
+                //check if duplicate skill
+                if (!job.Skills.Contains(skill))
+                {
+                    skillsToBeAdded.Add(skill);
+                }
+
+            }
+
+            return skillsToBeAdded;
         }
 
         //GET for Delete 
@@ -274,7 +250,28 @@ namespace Prototype.Controllers
             return user;
         }
 
-        
+        public List<JobProfile> GetAllLiveJobs()
+        {
+
+
+            var availableJobs = JobHelper.GetAllLiveJobs(_db); 
+
+
+            return availableJobs;
+
+        }
+
+
+        public List<JobProfile> GetJobsStartingSoon(JobTitle jobTitle)
+        {
+
+
+            var jobsClosingSoon = JobMatchHelper.GetJobsStartingSoon(jobTitle, _db); 
+
+
+            return jobsClosingSoon;
+
+        }
 
 
     }

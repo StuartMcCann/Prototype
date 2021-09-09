@@ -1,0 +1,242 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Prototype.Models.ApplicationUser">
+    <Position X="0.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAEAEAAAAAAAAAAAAQAAAAAAAAAAAAABAAAAAACAAg=</HashCode>
+      <FileName>Models\ApplicationUser.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Models.UserProfile">
+    <Position X="1.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAASAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ApplicationUser.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Models.Candidate">
+    <Position X="2.75" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>UAAAAAAAQAAAAAAQAAAAACgiAIEQAAECAAAIAIAAAAA=</HashCode>
+      <FileName>Models\Candidate.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Models.CandidateProfile">
+    <Position X="2.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAIAAAAAAAAAAAAAAAAABBAAAAAAIAAg=</HashCode>
+      <FileName>Models\CandidateProfile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Models.ChatMessage">
+    <Position X="5" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAACwAAgAAAAAAAAAAAAAAAAAAAAAAAAAgAAICAAAAA=</HashCode>
+      <FileName>Models\ChatMessage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Models.Contract">
+    <Position X="0.5" Y="8.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAUCCAASCAAEAAAAAUAQAAgAAADCAIAAAAAAEQAQEA=</HashCode>
+      <FileName>Models\Contract.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Models.ContractProfile">
+    <Position X="2.5" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAABIAAAAAAAAAAAAAAAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>Models\Contract.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Models.DisplayMessage">
+    <Position X="5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAAAAAAAAAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\DisplayMessage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Models.Employer">
+    <Position X="11.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAEAAAAAEQAAAAAAAAAAAECAAAJAAAAAAA=</HashCode>
+      <FileName>Models\Employer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Models.EnumExtensions">
+    <Position X="11.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\EnumExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Models.ErrorViewModel" Collapsed="true">
+    <Position X="10" Y="12.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ErrorViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Models.Job">
+    <Position X="9" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAUAAAEQCACAAgAAAAAIEAgAIkAAIACAAAIAMAAAAA=</HashCode>
+      <FileName>Models\Job.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Models.JobProfile">
+    <Position X="0.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAAAAAAAAQAAAgAAAAAAAEBAAAAAAAIAAE=</HashCode>
+      <FileName>Models\JobProfile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Models.Like">
+    <Position X="8.25" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAcCAAAAAAAAAAAAAQBAAAAAAgDAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Like.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Models.EmployerLike">
+    <Position X="7" Y="4" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAg=</HashCode>
+      <FileName>Models\Like.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Models.Skill">
+    <Position X="6.25" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAAAAAAABAIQAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Skill.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Service.AnalyticsHelper">
+    <Position X="20" Y="5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACkEABAAAAABEAAAAAIAAAAAAABAAAAgAAAAEEA=</HashCode>
+      <FileName>Service\AnalyticsHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Service.CandidateHelper">
+    <Position X="13.25" Y="1.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAACAAAABAAAEAAAAAAAAAAA=</HashCode>
+      <FileName>Service\CandidateHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Service.ChatHelper">
+    <Position X="15.5" Y="3.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAIAAAAAAAoAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Service\ChatHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Service.ContractHelper">
+    <Position X="13.75" Y="5.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAIQAAAQAAAAAA=</HashCode>
+      <FileName>Service\ContractHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Service.JobHelper">
+    <Position X="17.5" Y="6.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAACAAAAgAAAAAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Service\JobHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Service.JobMatchHelper">
+    <Position X="13.25" Y="7.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAABAAAAAAAAABAAAAAAAABAAAAAAQAIAAAA=</HashCode>
+      <FileName>Service\JobMatchHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Service.LikeHelper">
+    <Position X="9.75" Y="2.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAAkAAAAAAACAAABAgAEAAAIAAAAAEAA=</HashCode>
+      <FileName>Service\LikeHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Controllers.AnalyticsController" Collapsed="true">
+    <Position X="14.25" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAgAhCAAAAAAAAABEAAAAAIgAgAAAAAAAAEAAAAAQBA=</HashCode>
+      <FileName>Controllers\AnalyticsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Controllers.CandidateController" Collapsed="true">
+    <Position X="20" Y="3.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>CAAQhIAAAABAAAAAAAAAAACAAAABAEgKFAFAABBAAAQ=</HashCode>
+      <FileName>Controllers\CandidateController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Controllers.ChatController" Collapsed="true">
+    <Position X="19.75" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>IEAAhIAIAEIAAAAoAAAAAAAAQAAAAAAAIAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\ChatController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Controllers.ContractController" Collapsed="true">
+    <Position X="17.25" Y="3.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AABAhAAAQAAAAAAASAAAAAEACAAAAEABgAEAAgIAAAA=</HashCode>
+      <FileName>Controllers\ContractController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Controllers.EmployerController" Collapsed="true">
+    <Position X="17.75" Y="4" Width="2" />
+    <TypeIdentifier>
+      <HashCode>CAAAhAAAAEAAAAAAAAAAAAAAAAAAAEgCEAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\EmployerController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Controllers.HomeController" Collapsed="true">
+    <Position X="20.25" Y="3" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAQAAAABAAAAAIAAAAQBAAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\HomeController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Controllers.JobController" Collapsed="true">
+    <Position X="16.25" Y="2.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>gAAChAAAAAAIAAAAAAAAAAAAEAEAAEACEAECABAAARA=</HashCode>
+      <FileName>Controllers\JobController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Prototype.Controllers.LikeController" Collapsed="true">
+    <Position X="17.75" Y="1.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAhAAAAAkBAAkIACAAAgAAAABAAFAAEAAAAAAAEIA=</HashCode>
+      <FileName>Controllers\LikeController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="Prototype.Models.JobTitle">
+    <Position X="13.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAgAAAAAAIhAgAAAAACBAAAAAAAAAAEAAEAAAAAgA=</HashCode>
+      <FileName>Models\JobTitle.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Prototype.Models.Level">
+    <Position X="11.75" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Models\Level.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Prototype.Models.LikeType">
+    <Position X="8.25" Y="12.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAAAAAAAAAQAAAAAAAAAAQAAAAAAAA=</HashCode>
+      <FileName>Models\Like.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

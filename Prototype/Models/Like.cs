@@ -1,4 +1,5 @@
 ﻿using Prototype.Data;
+using Prototype.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -18,10 +19,11 @@ namespace Prototype.Models
         public Employer Employer { get; set; }
         public int CandidateId { get; set; }
         public Candidate Candidate { get; set; }
+        public DateTime DateLiked { get; set; }
 
         public Like()
         {
-
+            
         }
 
         public Like(LikeType likeType,  int employerId, int candidateId, ApplicationDbContext db)
@@ -29,8 +31,9 @@ namespace Prototype.Models
             this.LikeType =likeType;
             this.EmployerId = employerId;
             this.CandidateId = candidateId;
-            this.Employer = (Employer)db.Employers.Where(e => e.EmployerId == employerId).First();
-            this.Candidate = (Candidate)db.Candidates.Where(c => c.CandidateID == candidateId).First();
+            this.Employer = db.Employers.Where(e => e.EmployerId == employerId).First();
+            this.Candidate = db.Candidates.Where(c => c.CandidateID == candidateId).First();
+            this.DateLiked = DateTime.UtcNow;
 
         }
 
@@ -40,35 +43,34 @@ namespace Prototype.Models
             this.EmployerId = employerId;
             this.CandidateId = candidateId;
             this.JobId = jobId;
-            this.Employer = (Employer)db.Employers.Where(e => e.EmployerId == employerId).First();
-            this.Candidate = (Candidate)db.Candidates.Where(c => c.CandidateID == candidateId).First();
-            this.Job = (Job)db.Jobs.Where(j => j.JobId == jobId).First(); 
+            this.Employer = db.Employers.Where(e => e.EmployerId == employerId).First();
+            this.Candidate = db.Candidates.Where(c => c.CandidateID == candidateId).First();
+            this.Job = db.Jobs.Where(j => j.JobId == jobId).First();
+            this.DateLiked = DateTime.UtcNow;
 
         }
         
 
 
 
-        //Foreign Keys to Job/Employer/Candidate One to Many Relationships
+        
     }
-
-   
 
     public enum LikeType
     {
         EmployerLikesCandidate, CandidateLikesJob, CandidateLikesEmployer
     }
 
-    public class EmployerLike
+
+    public class EmployerLike:Like
     {
 
-        public int CandidateId { get; set; }
-        public int? EmployerId { get; set; }
-
-        public LikeType LikeType { get; set; }
+        
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
+
+        public string CandidateJobTitle { get; set; }
 
 
 

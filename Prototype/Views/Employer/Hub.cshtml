@@ -8,16 +8,20 @@
 
         // below ajax gets Jobs connected by user Id and displays them on the page
         $.ajax({
-            url: '/Job/GetJobsByUserID',
+            url: '/Job/GetJobsByEmployerId',
             dataType: "Json",
             type: "GET",
+            data: {employerId: @Model.EmployerId},
             contentType: 'application/json; charset=utf-8',
             cache: false,
-            //this needs changed whe table fully normalised
+           
 
             success: function (data) {
-
+               
                // loops through values returned in json format by above url
+                if (data != null) {
+
+
                 $.each(data, function (key, val) {
                    //need to add validation that not empty here
                    //job id is jobId
@@ -43,7 +47,7 @@
                        ' </div>'
                     );//end of .append
                 });//end of for loop
-
+                }
             }, //end of success function
             error: function (xhr) {
                 alert( 'error');
@@ -51,12 +55,7 @@
 
         }); //end ajax
 
-    @*}); //end document.load
 
-
-
-     $(document).ready(function () {
-         var employerId = @Model.EmployerId;*@
 
         // below ajax gets Jobs connected by user Id and displays them on the page
         $.ajax({
@@ -66,10 +65,10 @@
             data: { employerId: @Model.EmployerId},
             contentType: 'application/x-www-form-urlencoded',
             cache: false,
-            //this needs changed whe table fully normalised
+         
 
             success: function (data) {
-                  console.log(data)
+                
                // loops through values returned in json format by above url
                 $.each(data, function (key, val) {
                    //need to add validation that not empty here
@@ -105,45 +104,101 @@
 
         }); //end ajax
 
-
          $.ajax({
-            url: '/Like/GetlikesByEmployerID',
-            dataType: "Json",
+             url: '/Contract/GetContractsEmployerHub',
+            dataType: "json",
             type: "GET",
             data: { employerId: @Model.EmployerId},
             contentType: 'application/x-www-form-urlencoded',
             cache: false,
-            //this needs changed whe table fully normalised
 
             success: function (data) {
-                  console.log(data)
-               // loops through values returned in json format by above url
+              
+
                 $.each(data, function (key, val) {
                    //need to add validation that not empty here
-                   //job id is jobId
+
+                    if (val.isUnderContract == true) {
+                        //action link use to generate url string
+                        var url = '@Url.Action("EmployerHubRedirect", "Contract", new { contractId = "replaceToken" })';
+                        url = url.replace("replaceToken", val.contractId);
+
+                        $("#contractsoutput").append(
+
+                            '<div class= "card">' +
+                            ' <div class="card-body">' +
+                            '<h5><a href="' + url + '">' + val.fullName + ' <i class="far fa-edit"></i> </a>'
+                            + '</h5>' +
+                            '<h5>' + val.jobTitle + '</h5>' +
+                            '<p> Start Date: ' + val.startDate.substring(0, 10) + '</p>' +
+                            '</div>' +
+                            '</div >'
+
+                        );//end of .append
+                    } else {
+
+                         var url = '@Url.Action("EmployerHubRedirect", "Contract", new { contractId = "replaceToken" })';
+                        url = url.replace("replaceToken", val.contractId);
+
+                        $("#contractsoutput").append(
+
+                            '<div class= "card completed">' +
+                            ' <div class="card-body">' +
+                            '<h5>' + val.fullName + '<a href="' + url + '"> Completed Contract <i class="fa fa-check" aria-hidden="true"></i></a>'
+                            + '</h5>' +
+                            '<h5>' + val.jobTitle + '</h5>' +
+                            '<p> Start Date: ' + val.startDate.substring(0, 10) + '</p>' +
+                            '</div>' +
+                            '</div >'
+                            );//end of .append
+
+                    }
+                });//end of for loop
+
+            }, //end of success function
+            error: function (xhr) {
+                console.log(xhr);
+            }
+
+        }); //end ajax
+
+
+
+
+
+         $.ajax({
+            url: '/Chat/GetConversations',
+            dataType: "Json",
+            type: "GET",
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+
+
+            success: function (data) {
+              
+
+                $.each(data, function (key, val) {
+                   //need to add validation that not empty here
+
 
                     //action link use to generate url string
-                    var url = '@Url.Action("CandidateProfile", "Candidate", new { id = "replaceToken" })';
-                    url = url.replace("replaceToken", val.candidateId);
-                    //bleow appende content to div with id passed as arg
-                    var type;
-                    if (val.likeType == 1) {
-                         type = ' your job!'
-                    } else if (val.likeType == 2) {
-                         type =  'your company!'
-                    }
-                    $("#likesoutput").append(
+                    var url = '@Url.Action("Index", "Chat", new { userId = "replaceToken" })';
+                    url = url.replace("replaceToken", val.displayId);
+
+                    $("#messagesoutput").append(
 
                         '<div class= "card">'+
                        ' <div class="card-body">'+
-                        '<p><a href="'+url+'">' + val.firstName + ' ' + val.lastName + ' </a> likes ' +
-                       type
-                    +'</p>'+
+                        '<h5> Continue your conversation with <a href="' + url + '"> ' + val.fullName + '  </a>'
+                        + '</h5>' +
+
+
                          '</div>'+
                         '</div >'
 
                     );//end of .append
                 });//end of for loop
+
 
             }, //end of success function
             error: function (xhr) {
@@ -151,6 +206,8 @@
             }
 
         }); //end ajax
+
+
 
     }); //end document.load
 
@@ -201,20 +258,7 @@
                 <div class="container buffer">
 
     <!--ajax call to get jobs by user id content appened to this div -->
-    <div class="card">
-        <div class="card-body">
-            CandidateName likes your company
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-body">
-            CandidateName likes your this job
-        </div>
-    </div>
-
-
-
-    <div id="likesoutput"></div>
+       <div id="likesoutput"></div>
 </div>
             </div>
         </div>
@@ -229,7 +273,7 @@
                 <!--content here using ajax-->
                 <div class="container buffer">
 
-                    <!--ajax call to get jobs by user id content appened to this div -->
+                    <!--ajax call to get contracts  id content appened to this div -->
                     <div id="contractsoutput"></div>
                 </div>
             </div>
@@ -239,7 +283,7 @@
 
 
         <div class="  col-sm">
-            <h3 class=" heading">Your Messages <i class="far fa-comments"></i></h3>
+            <h3 class=" heading">Your Conversations <i class="far fa-comments"></i></h3>
             <div class=" scrollgrid  border">
                 <!--content here using ajax-->
                 <div class="container buffer">

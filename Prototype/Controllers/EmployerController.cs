@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Prototype.Data;
@@ -26,26 +27,8 @@ namespace Prototype.Controllers
             
         }
 
-
-        //if employer profile is created sends to create if not 
-        //public IActionResult Index()
-        //{
-        //    //get the application user details 
-        //    var user = GetUser();
-        //    var employerId = user.EmployerId; 
-        //    Employer employer = _db.Employers.Find(employerId);
-        //    if (employer == null)
-        //    {
-        //        return RedirectToAction("Create");
-        //    }
-        //    else
-        //    {
-        //        return View(employer);
-        //    }
-
-
-        //}
-
+        
+        [Authorize]
         public IActionResult Index(int id)
         {
 
@@ -57,10 +40,12 @@ namespace Prototype.Controllers
 
         }
 
+        [Authorize(Roles = "Employer")]
         public IActionResult Hub()
         {
 
             var user = GetUser();
+         
             var employer = GetEmployer(user.EmployerId);
             if (employer != null)
             {
@@ -83,11 +68,25 @@ namespace Prototype.Controllers
         }
 
         //get for create
+        [Authorize(Roles = "Employer")]
         public IActionResult Create()
         {
-            return View();
-        }
 
+            var user = GetUser();
+            var employerId = user.EmployerId;
+          
+            if (employerId != null && employerId!=0)
+            {
+                return RedirectToAction("Edit");
+            }
+            else
+            {
+                return View();
+            }
+
+            
+        }
+        //post for create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Employer employer)
@@ -113,15 +112,16 @@ namespace Prototype.Controllers
                
                 var  user = GetUser(); 
                 user.EmployerId = employer.EmployerId;
+                user.Employer = employer; 
                 _db.SaveChanges(); 
-                return RedirectToAction("Index");
+                return RedirectToAction("Hub");
 
             }
             return View(employer);
             
         }
 
-        
+        [Authorize(Roles = "Employer")]
         public IActionResult Edit()
         {
             //get the application user details 
@@ -168,10 +168,7 @@ namespace Prototype.Controllers
 
         }
 
-        public IActionResult Delete()
-        {
-            return View();
-        }
+       
 
         public ApplicationUser GetUser()
         {

@@ -1,20 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Prototype.Models
 {
-    public class JobTitle
+    public enum JobTitle
     {
-        [Key]
-        public int JobTitleId { get; set; }
-        public String Title { get; set; }
-
-        //foreign Keys 
-        [ForeignKey("JobTitleRefId")]
-        public ICollection<Job> Jobs { get; set; }
+        [Display(Name = "Software Engineer")]
+        SoftwareEngineer,
+        [Display(Name = "Web Developer")]
+        WebDeveloper,
+        [Display(Name = "Data Engineer")]
+        DataEngineer,
+        [Display(Name = "DevOps Engineer")]
+        DevOpsEngineer,
+        [Display(Name = "Software Architect")]
+        SoftwareArchitect,
+        [Display(Name = "Technical Lead")]
+        TechnicalLead,
+        [Display(Name = "Project Manager")]
+        ProjectManager,
+        [Display(Name = "Software Tester")]
+        SoftwareTester,
+        [Display(Name = "Full Stack Developer", Description = "Full Stack Developer")]
+        FullStackDeveloper,
+        [Display(Name = "Front End Engineer")]
+        FrontEndEngineer,
+        [Display(Name = "Back End Engineer")]
+        BackEndEngineer
     }
 }

@@ -1,0 +1,296 @@
+﻿@model       Prototype.Models.Candidate
+
+
+    @{
+        ViewData["Title"] = "Find Out The Lastest In The Market";
+    }
+
+
+<script type="text/javascript">
+
+
+        $(document).ready(function () {
+
+
+            $.ajax({
+                url: '/Analytics/GetBespokeCandidateData',
+                dataType: "Json",
+                type: "GET",
+                data:  { candidateId : @Model.CandidateID},
+                contentType: 'application/x-www-form-urlencoded',
+                cache: false,
+                
+
+                success: function (data) {
+                    console.log(data);
+
+                    $("#personalSummary").append(
+                        '<h4 class="buffer"> Your profile has recieved <span class="heading largeFont">'+data.NumberOfLikes+'</span> like(s). </h4> '+
+                        '<h4 class="buffer"> <span class="heading largeFont">' + data.NumberOfEmployerLikes + '</span> employer(s) have liked your profile. </h4> ' +
+                        '<h4 class="buffer"> <span class="heading largeFont">' + data.PercentageOfJobsWithSkillsMatch + '</span>% of live jobs require skills you have! </h4> ' +
+                        '<h4 class="buffer"> We found <span class="heading largeFont">' + data.NumberOfJobsWithJobTitle + '</span> jobs(s) that match your job title. </h4> ' 
+                    ); 
+
+
+                }, //end of success function
+                error: function (xhr) {
+                    alert('error');
+                }
+
+            }); //end ajax
+
+             $.ajax({
+                url: '/Analytics/InDemandSkills',
+                dataType: "Json",
+                type: "GET",
+                data: "",
+                contentType: 'application/x-www-form-urlencoded',
+                cache: false,
+                //this needs changed whe table fully normalised
+
+                success: function (data) {
+
+
+                    labels = [];
+                    values = [];
+
+                      $.each(data, function (key, val) {
+
+
+                          labels.push(key);
+                          values.push(val);
+
+                      });//end of for loop
+
+
+
+                    const chartData = {
+                        labels: labels,
+                        datasets: [{
+                            label: '% of jobs requiring skill',
+                            backgroundColor: 'rgb(	43, 103, 119)',
+                            borderColor: 'rgb(43, 103, 119)',
+                            data: values,
+
+                        },
+                                               ]
+                    };
+
+                    //render chart
+                    const config = {
+                        type: 'bar',
+                        data: chartData,
+                        options: {
+                            indexAxis: 'y',
+
+                            scales: {
+                                x: {
+
+                                    max: 100,
+                                }
+                            }
+
+                        }
+                    };
+
+                    var myChart = new Chart(
+                        document.getElementById('inDemandSkills'),
+                        config
+                    );
+
+
+
+                }, //end of success function
+                error: function (xhr) {
+                    alert('error');
+                }
+
+             }); //end ajax
+
+
+
+            $.ajax({
+                url: '/Analytics/GetTopRatedEmployers',
+                dataType: "Json",
+                type: "GET",
+                data: "",
+                contentType: 'application/x-www-form-urlencoded',
+                cache: false,
+                //this needs changed whe table fully normalised
+
+                success: function (data) {
+
+
+                    var labels = [];
+                    var ratings = [];
+
+
+                    $.each(data, function (key, val) {
+                        labels.push(val.companyName);
+                        ratings.push(val.rating);
+                    });//end of for loop
+
+
+
+                    const chartData = {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Employer Rating',
+                            backgroundColor: 'rgb(	43, 103, 119)',
+                            borderColor: 'rgb(43, 103, 119)',
+                            data: ratings,
+
+                        },
+                        ]
+                    };
+
+                    //render chart
+                    const config = {
+                        type: 'bar',
+                        data: chartData,
+                        options: {
+
+
+                            scales: {
+                                y: {
+
+                                    max: 5,
+                                }
+                            }
+
+                        }
+                    };
+
+                    var myChart = new Chart(
+                        document.getElementById('topRatedEmployers'),
+                        config
+                    );
+
+
+
+                }, //end of success function
+                error: function (xhr) {
+                    alert('error');
+                }
+
+            }); //end ajax
+
+
+
+
+            $.ajax({
+                url: '/Analytics/GetJobTitleData',
+                dataType: "Json",
+                type: "GET",
+                data: "",
+                contentType: 'application/x-www-form-urlencoded',
+                cache: false,
+                //this needs changed whe table fully normalised
+
+                success: function (data) {
+                    
+
+                    var labels = [];
+                    var numJobs = [];
+
+
+                    $.each(data, function (key, val) {
+                        labels.push(key);
+                        numJobs.push(val);
+                    });//end of for loop
+                    
+
+
+                    const chartData = {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Jobs Per Job Title',
+                            backgroundColor: ['rgb(	43, 103, 119)', 'rgb(110, 200, 191)', 'rgb(82, 171, 152)', 'rgb(0, 172, 157)', ' rgb(54, 90, 111)', 'rgb(82, 172, 164)' ],
+                            borderColor: 'rgb(43, 103, 119)',
+                            data: numJobs,
+                            hoverOffset: 4
+                        },
+                        ]
+                    };
+
+                    //render chart
+                    const config = {
+                        type: 'doughnut',
+                        data: chartData,
+                        options: {
+
+
+                        }
+                    };
+
+                    var myChart = new Chart(
+                        document.getElementById('popularJobTitles'),
+                        config
+                    );
+
+
+
+                }, //end of success function
+                error: function (xhr) {
+                    alert('error');
+                }
+
+            }); //end ajax
+
+        }); //end document.load
+
+</script>
+
+
+<div class="container text">
+
+    <h1 class="heading">Check Out The Latest Market Trends</h1>
+
+    <div class=" row">
+        <div class="col-sm">
+
+            <h3>In Demand Skills</h3>
+            <div >
+                <canvas  id="inDemandSkills"></canvas>
+            </div>
+
+
+        </div>
+        <div class="col-sm">
+
+            <h3>Top Rated Employers</h3>
+            <div>
+                <canvas  id="topRatedEmployers"></canvas>
+            </div>
+        </div>
+
+        </div>
+    <div class="buffer row">
+        <div class="col-sm">
+            <h3>Job Titles Employers Are Looking For</h3>
+            <div >
+                <canvas id="popularJobTitles"></canvas>
+            </div>
+
+
+        </div>
+        <div class="col-sm">
+            <h3>Your Personal Summary</h3>
+
+            <div id="personalSummary"></div>
+        </div>
+
+    </div>
+    
+
+
+
+
+
+
+
+
+
+
+
+</div>

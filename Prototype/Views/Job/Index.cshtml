@@ -1,123 +1,124 @@
-﻿
-@model IEnumerable<Prototype.Models.Job> //this adds object from method in controller
-@{
+﻿<h1 class="heading add-margin">Check out who's actively recruiting here!</h1>
+<div class="container  ">
 
-    ViewData["Title"] = "Index";
-}
+    <div id="myGrid" class="ag-theme-alpine" style="height: 600px; width:1100px;"></div>
 
-<h1 class="heading">Available Jobs</h1>
+</div>
+<script type="text/javascript" charset="utf-8">
+        // specify the columns
 
-<div class="container">
-    <div class="row">
-        <div class="col-sm-3 buffer">
+    var skillValueGetter = function (params) {
+        var cellData = '';
+                    if (params.data.skills.length != 0) {
+                       // console.log(params.data.skills);
+                        for (var loop = 0; loop < params.data.skills.length; loop++) {
 
+                            var skill = params.data.skills[loop].skillName;
 
-            <div class="dropdown buffer">
-                <!--Trigger-->
-                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1-1"
-                        data-toggle="dropdown">
-                    Filter By Level
-                </button>
-
-                <!--Menu-->
-                <div class="dropdown-menu dropdown-primary" id="your-custom-id">
-                    <input class="form-control" type="text" placeholder="Search" aria-label="Search">
-                    <a class="dropdown-item mdb-dropdownLink-1" href="#">Expert</a>
-                    <a class="dropdown-item mdb-dropdownLink-1" href="#">Intermediate</a>
-                    <a class="dropdown-item mdb-dropdownLink-1" href="#">Entry</a>
-
-                </div>
-            </div>
-
-            <div class="dropdown buffer">
-                <!--Trigger-->
-                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1-1"
-                        data-toggle="dropdown">
-                    Filter By Skill
-                </button>
-
-                <!--Menu-->
-                <div class="dropdown-menu dropdown-primary" id="your-custom-id">
-                    <input class="form-control" type="text" placeholder="Search" aria-label="Search">
-                    <a class="dropdown-item mdb-dropdownLink-1" href="#">Java</a>
-                    <a class="dropdown-item mdb-dropdownLink-1" href="#">Javascript</a>
-                    <a class="dropdown-item mdb-dropdownLink-1" href="#">SQL</a>
-                    <a class="dropdown-item mdb-dropdownLink-1" href="#">C</a>
-                    <a class="dropdown-item mdb-dropdownLink-1" href="#">PHP</a>
-                    <a class="dropdown-item mdb-dropdownLink-1" href="#">Python</a>
-
-                </div>
-            </div>
-
-
-
-
-        </div><!--End of filter column-->
-        <div class="col-sm-9">
-            <div class="container">
-                @if (Model.Count() > 0)
-                {
-                    foreach (var job in Model)
-                    {
-
-                <div class="row buffer">
-
-                    <div class="card text full-width">
-                        <div class="card-header text">
-                            <h4>@job.JobTitle</h4>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">£@job.LowerRate - @job.UpperRate per hour</h5>
-                            <p class="card-text">@job.Duration weeks</p>
-
-                            <p>Preferred Start date: @job.StartDate.ToShortDateString()</p>
-                            @if (job.JobDescription.Length >= 149)
-                            {
-                                <p class="card-text">@job.JobDescription.Substring(0, 150) ....</p>
-                            }
-                            else
-                            {
-                                <p class="card-text">@job.JobDescription.</p>
-                            }
-
-
-                            
-                            @Html.ActionLink("View more", "JobProfile", new { id = job.JobId })
-
-                        </div>
-                    </div>
-
-
-
-
-
-                </div><!--End of Row-->
-
-
-
-
-
-
+                           cellData += ' ' + skill + ' ';
+                        }
                     }
 
 
-
+                    return cellData ;
+    }
+        const columnDefs = [
+            {
+                field: "jobTitle", sortable: true, filter: true,
+                cellRenderer: function (params) {
+                     var url = '@Url.Action("JobProfile", "Job", new { id = "replaceToken" })';
+                    url = url.replace("replaceToken", params.data.jobId);
+                    return '<a href="'+url+'">' + params.value + '</a>'
                 }
-                else
-                {
-                    <p>No Live Jobs Available</p>
+            },
+            {
+                field: "skills", sortable: true, filter: true, valueGetter: skillValueGetter
+               
+            }
+                ,
+            {
+                field: "companyName", sortable: true, filter: true,
+
+                 cellRenderer: function (params) {
+                     var url = '@Url.Action("Index", "Employer", new { id = "replaceToken" })';
+                    url = url.replace("replaceToken", params.data.employerId);
+                    return '<a href="'+url+'">' + params.value + '</a>'
                 }
 
-            </div>
+
+            },
+            {
+                field: "rating", sortable: true, filter: true, 
+
+                cellRenderer: function (params) {
+                    console.log(params.value); 
+                    var cellData = "<span>"; 
+                    for (var loop = 0; loop < params.value; loop++) {
+                        cellData += ' <i class= " heading fas fa-star" ></i>'; 
+                                              
+                    }
+                    return cellData+='</span>'; 
+                   
+                }
+                   
+
+
+            },
+            { field: "lowerRate", sortable: true, filter: true },
+
+            { field: "upperRate", sortable: true, filter: true },
+
+            { field: "duration", sortable: true, filter: true },
+            { field: "jobDescription", sortable: true, filter: true }
+
+            ];
 
 
 
+        // let the grid know which columns to use
+        const gridOptions = {
+            columnDefs: columnDefs
+        };
+
+        // lookup the container we want the Grid to use
+        const eGridDiv = document.querySelector('#myGrid');
+
+        // create the grid passing in the div to use together with the columns & data we want to use
+        new agGrid.Grid(eGridDiv, gridOptions);
+
+         //fetch the row data to use and one ready provide it to the Grid via the Grid API
+        //agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/row-data.json' })
+        //    .then(data => {
+        //        gridOptions.api.setRowData(data);
+        //    });
+
+        agGrid.simpleHttpRequest({ url: '@Url.Action("GetAllLiveJobs", "Job")' })
+            .then(data => {
+                gridOptions.api.setRowData(data);
+            });
+          $.ajax({
+            url: '/Job/GetAllLiveJobs',
+            dataType: "Json",
+            type: "GET",
+            data: "",
+            contentType: 'application/x-www-form-urlencoded',
+            cache: false,
 
 
-            </div><!-- end of jobs column-->
-    </div>
-    
-</div>
+            success: function (data) {
+                  //console.log(data)
+
+
+            }, //end of success function
+            error: function (xhr) {
+                alert( 'error');
+            }
+
+        }); //end ajax
+
+
+
+</script>
 
 
 

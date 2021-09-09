@@ -1,8 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Prototype.Data;
+using Prototype.Enums;
+
 using Prototype.Models;
+using Prototype.Service;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,42 +28,33 @@ namespace Prototype.Controllers
             _userManager = userManager; 
         }
 
-        //can change to have level and skills - pass skills as a List?
-        public ActionResult GetCandidatesLikeThis(string skill, int id)
+        
+        public ActionResult GetCandidatesLikeThis( int candidateId)
         {
-            var canidatesLikethis = (from c in _db.Candidates
-                                where c.Skill == skill && c.CandidateID!=id
-                                select new CandidateProfile
-                                {
-                                    
-                                    Level = c.Level, 
-                                    Rating = c.Rating, 
-                                    Rate = c.Rate, 
-                                    Skill = c.Skill, 
-                                    CandidateID = c.CandidateID, 
-                                    LevelEnum = c.LevelEnum
 
-                                }).ToList();
 
-            return Json(new { data = canidatesLikethis });
+            var candidatesLikeThis = CandidateHelper.GetCandidatesLikeThis(_db, candidateId); 
+
+            return Json(candidatesLikeThis);
 
         }
-
+        [Authorize(Roles="Candidate")]
         //get for edit 
         public IActionResult Edit()
         {
             //get the application user details 
             var user = GetUser();
-            //update this
-
-            var userId = user.Id;
+             var userId = user.Id;
             var candidate = GetCandidateDetailsByUser(userId); 
-            if (candidate.Count() == 0)
+            //making sure a user has a candidate profile created 
+            if (candidate == null)
             {
                 return RedirectToAction("Create");
             }
             else
             {
+                //view bag for skills dropdowns 
+                ViewBag.Skills = new SelectList(_db.Skills, "SkillId", "SkillName");
                 return View(candidate);
             }
         }
@@ -80,6 +77,8 @@ namespace Prototype.Controllers
                 return View(candidate);
             }
 
+
+
         }
 
 
@@ -91,7 +90,13 @@ namespace Prototype.Controllers
 
             var user = GetUser();
             var userId = user.Id;
-            candidate.UserId = userId; 
+            candidate.ApplicationUser = user;
+            candidate.UserId = userId;
+            foreach (int skillId in candidate.SkillIds)
+            {
+                candidate.Skills.Add(_db.Skills.Where(s => s.SkillId == skillId).First());
+            }
+
             //validation below 
             if (ModelState.IsValid)
             {
@@ -101,10 +106,7 @@ namespace Prototype.Controllers
                 //save changes exexutes action to DB
                 _db.SaveChanges();
 
-                //add forign keys here?
-                //var user = GetUser();
-                //user.EmployerId = candidate.EmployerId;
-                //_db.SaveChanges();
+                
                 return RedirectToAction("Edit");
 
             }
@@ -117,70 +119,43 @@ namespace Prototype.Controllers
 
 
         //get for create
+        [Authorize(Roles = "Candidate")]
         public IActionResult Create()
         {
-            return View();
+
+            //get the application user details 
+            var user = GetUser();
+            var userId = user.Id;
+            var candidate = GetCandidateDetailsByUser(userId);
+            //making sure a user has a candidate profile created 
+            if (candidate != null)
+            {
+                return RedirectToAction("Edit");
+            }
+            else
+            {
+                //view bag for skills dropdowns 
+                ViewBag.Skills = new SelectList(_db.Skills, "SkillId", "SkillName");
+                return View();
+            }
+           
+           
         }
 
-
+        //Page Used For employers to browse candidates 
+        [Authorize(Roles = "Employer")]
         public IActionResult Index()
         {
 
-            //TODO - select query to create cand profile list where available = true
-
-            IEnumerable<CandidateProfile> candidateList = ((from c in _db.Candidates
-                                                         //join r in _db.Reviews on c.CandidateId equals
-                                                         // r.CandidateRefId
-                                                     join u in _db.Users
-                                                     on c.UserId equals u.Id
-                                                     where c.IsAvailable
-                                                     select new CandidateProfile
-                                                     {
-                                                         CandidateID = c.CandidateID,
-                                                         Level = c.Level,
-                                                         Skill = c.Skill,
-                                                         Rating = c.Rating,
-                                                         Rate = c.Rate,
-                                                         UserId = u.Id,
-                                                         ProfilePicture = u.ProfilePicture,
-                                                         FirstName = u.FirstName,
-                                                         LastName = u.LastName,
-
-                                                         //for loop here to add to list of reviews or can do ajax call on page t print 
-
-                                                     })).ToList(); 
-            
-            return View(candidateList);
+            return View();
         }
 
+        [Authorize(Roles = "Employer")]
         public IActionResult CandidateProfile(int id)
         {
             
-
-            var candidate = ((from c in _db.Candidates
-                                  //join r in _db.Reviews on c.CandidateId equals
-                                  // r.CandidateRefId
-                              join u in _db.Users
-                              on c.UserId equals u.Id
-                              where c.CandidateID == id
-                              select new CandidateProfile
-                              {
-                                  CandidateID = c.CandidateID,
-                                  Level = c.Level,
-                                  Skill = c.Skill,
-                                  Rating = c.Rating,
-                                  Rate = c.Rate, 
-                                  UserId = u.Id, 
-                                  ProfilePicture = u.ProfilePicture, 
-                                  FirstName = u.FirstName, 
-                                  LastName = u.LastName, 
-                                 
-
-                                  //for loop here to add to list of reviews or can do ajax call on page t print 
-
-                              })).FirstOrDefault();   
-
-
+            var candidate = CandidateHelper.GetCandidateProfile(_db, id); 
+            
 
             if (candidate == null)
             {
@@ -188,11 +163,21 @@ namespace Prototype.Controllers
             }
             return View(candidate);
         }
-
+        [Authorize(Roles = "Candidate")]
         //get for hub
         public IActionResult Hub()
         {
-            return View();
+            var user = GetUser();
+
+            var candidate = _db.Candidates.Where(c => c.UserId == user.Id).FirstOrDefault(); 
+            if (candidate != null)
+            {
+                return View(candidate);
+            }
+            else
+            {
+                return RedirectToAction("Create");
+            }
         }
 
 
@@ -203,27 +188,167 @@ namespace Prototype.Controllers
             return user;
         }
 
-        public List<Candidate> GetCandidateDetailsByUser(string userId)
+        public CandidateProfile GetCandidateDetailsByUser(string userId)
         {
-            var candidate = (from c in _db.Candidates
-                             where c.UserId == userId
-                             select new Candidate
-                             {
-                                 
-                                 Level = c.Level,
-                                 Rating = c.Rating,
-                                 Rate = c.Rate,
-                                 Skill = c.Skill,
-                                 CandidateID = c.CandidateID,
-                                 LevelEnum = c.LevelEnum
+            var candidate = CandidateHelper.GetCandidateDetailsByUser(_db, userId); 
 
-                             }).ToList();
+           
 
             return candidate; 
 
 
         }
 
+        public ActionResult UpdateCandidateSkill(List<int> skillsIds)
+        {
+            var user = GetUser();
+            var candidate = GetCandidateDetailsByUser(user.Id);
+            var skillsToBeAdded = new List<Skill>(); 
+
+           
+            foreach(int skillId in skillsIds)
+            {
+                Skill skill = _db.Skills.Where(s => s.SkillId == skillId).First();
+                //check if duplicate skill
+                if (!candidate.Skills.Contains(skill)){
+                    skillsToBeAdded.Add(skill); 
+                }              
+                 
+               
+           }
+            //clear candidate skills to avoid duplicate insert error 
+            candidate.Skills.Clear();
+            candidate.Skills = skillsToBeAdded; 
+
+            _db.Candidates.Update(candidate);
+            _db.SaveChanges(); 
+
+            return RedirectToAction("Edit"); 
+
+
+        }
+
+        public List<Skill> GetSkillsForCandidateUpdate()
+        {
+            return _db.Skills.ToList(); 
+        }
+
+       public ActionResult UpdateCandidateJobTitle(JobTitle jobtitle)
+        {
+            var user = GetUser();
+            var candidate = GetCandidateDetailsByUser(user.Id);
+            //set jobtitleenum
+            candidate.JobTitleEnum = jobtitle;
+            //need to clear skills so no conlfict 
+            candidate.Skills.Clear();
+            //update and save changes 
+            if (ModelState.IsValid) { 
+            _db.Candidates.Update(candidate);
+            _db.SaveChanges();
+                return RedirectToAction("Edit");
+            }
+
+            return View("Edit"); 
+            
+        }
+
+
+        public ActionResult UpdateCandidateLevel(Level level)
+        {
+            var user = GetUser();
+            var candidate = GetCandidateDetailsByUser(user.Id);
+            //set jobtitleenum
+        
+            candidate.LevelEnum = level;
+            //need to clear skills so no conlfict 
+            candidate.Skills.Clear();
+            //update and save changes 
+            if (ModelState.IsValid)
+            {
+                _db.Candidates.Update(candidate);
+                _db.SaveChanges();
+            }
+           
+
+
+            return RedirectToAction("Edit");
+        }
+
+        public ActionResult UpdateCandidateRate(double rate)
+        {
+            var user = GetUser();
+            var candidate = GetCandidateDetailsByUser(user.Id);
+            //set jobtitleenum
+
+            candidate.Rate = rate;
+            //need to clear skills so no conlfict 
+            candidate.Skills.Clear();
+            //update and save changes 
+            if (ModelState.IsValid)
+            {
+                _db.Candidates.Update(candidate);
+                _db.SaveChanges();
+            }
+          
+
+
+            return RedirectToAction("Edit");
+        }
+
+        public ActionResult UpdateCandidateAvailableDate(DateTime availableDate)
+        {
+            var user = GetUser();
+            var candidate = GetCandidateDetailsByUser(user.Id);
+            //set jobtitleenum
+
+            candidate.AvailableFrom = availableDate;
+            
+            //need to clear skills so no conlfict 
+            candidate.Skills.Clear();
+            //update and save changes 
+            if(ModelState.IsValid)
+            {
+                _db.Candidates.Update(candidate);
+                _db.SaveChanges();
+            }
+          
+
+
+            return RedirectToAction("Edit");
+        }
+
+        public ActionResult ToggleCandidateAvailability()
+        {
+            var user = GetUser();
+            var candidate = GetCandidateDetailsByUser(user.Id);
+            if (candidate.IsAvailable)
+            {
+                candidate.IsAvailable = false;
+            }
+            else
+            {
+                candidate.IsAvailable = true; 
+            }
+            candidate.Skills.Clear();
+            //update and save changes 
+
+            _db.Candidates.Update(candidate);
+            _db.SaveChanges();
+            return RedirectToAction("Edit");
+        }
+
+
+        public List<CandidateProfile> GetAvailableCandidates()
+        {
+
+
+            var availableCandidates = CandidateHelper.GetAvailableCandidates(_db); 
+
+
+            return availableCandidates; 
+          
+        }
+        
 
     }
 

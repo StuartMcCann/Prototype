@@ -1,9 +1,18 @@
 ﻿@model Prototype.Models.Job
 
-@{ 
-    ViewData["Title"] = "Create"; 
+@{
+    ViewData["Title"] = "Create";
 }
+<script type="text/javascript">
+    //javacript to restrict form for only dates in future 
+    var now = new Date(),
+        // minimum date the user can choose, in this case now and in the future
+        minDate = now.toISOString().substring(0, 10);
+    
+    $('#startDate').attr('min', minDate);
 
+
+    </script>
 <h3> Add Job</h3>
 
 
@@ -11,15 +20,21 @@
     <div asp-validation-summary="All" class="text-danger"></div>
 
     <div class="mb-3">
-        <label asp-for="JobTitle" class="form-label">Job Title</label>
-        <input asp-for="JobTitle" type="Text" class="form-control">
-        <span asp-validation-for="JobTitle" class="text-danger"></span>
-
+        <label asp-for="JobTitleEnum">Job Title</label>
+        <select required asp-for="JobTitleEnum" asp-items="Html.GetEnumSelectList<JobTitle>()" class="form-control"></select>
+        <span asp-validation-for="@Model.JobTitleEnum" class="text-danger"></span>
     </div>
     <div class="mb-3">
         <label asp-for="StartDate" class="form-label">Start Date</label>
-        <input asp-for="StartDate" type="date" class="form-control">
+        <input id="startDate" asp-for="StartDate" type="date" class="form-control">
         <span asp-validation-for="StartDate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Skills">Skills</label>
+        @*@Html.DropDownListFor(m => m.Skills,  (SelectList)ViewBag.Skills , htmlAttributes: new { @class = "form-control" })*@
+
+        @Html.ListBoxFor(m => m.SkillIds, (SelectList)ViewBag.Skills, htmlAttributes: new { @class = "form-control" })
+        <span asp-validation-for="Skills" class="text-danger"></span>
     </div>
     <div class="mb-3">
         <label asp-for="LowerRate" class="form-label">Rate From £:</label>
@@ -39,19 +54,32 @@
 
     <div class="mb-3">
         <label asp-for="JobDescription" class="form-label">Job Description</label>
-        <textarea asp-for="JobDescription" type="Text"class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+        <textarea asp-for="JobDescription" type="Text" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
     </div>
-    
     <div class="form-group">
-        <input asp-for="IsLive" data-val="true" value="True" type="hidden" class="control-label" />
-        <input asp-for="IsFilled" data-val="true" value="false" valuetype="hidden" class="control-label" />
-        <input asp-for="IsUnderContract" data-val="true" value="false" type="hidden" class="control-label" />
-        
+        <label asp-for="LevelEnum">Level Required</label>
+        <select asp-for="LevelEnum" asp-items="Html.GetEnumSelectList<Level>()" class="form-control"></select>
+        <span asp-validation-for="LevelEnum" class="text-danger"></span>
 
     </div>
+
+    @*<div class="form-group">
+            <input asp-for="IsLive" data-val="true" value="True" type="hidden" class="control-label" />
+            <input asp-for="IsFilled" data-val="true" value="false" valuetype="hidden" class="control-label" />
+            <input asp-for="IsUnderContract" data-val="true" value="false" type="hidden" class="control-label" />
+
+
+        </div>*@
 
 
     <button type="submit" class="btn btn-primary">Create</button>
 </form>
+
+@section Scripts{
+    @*code below for validation client side using javascript*@
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}
 
 

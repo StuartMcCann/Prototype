@@ -8,6 +8,7 @@
     $(document).ready(function () {
 
 
+
         $.ajax({
             url: '/Job/GetJobsLikeThis',
             dataType: "Json",
@@ -15,23 +16,27 @@
             contentType: 'application/json; charset=utf-8',
             cache: false,
             //this needs changed whe table fully normalised
-            data: { title: "@Model.Title"}  ,
+            data: { title: "@Model.JobTitle", jobId : @Model.JobId}  ,
             success: function (data) {
-
+                
                 //loops through values returned in json format by above url
-                $.each(data.data, function (key, val) {
+                $.each(data, function (key, val) {
                     //need to add validation that not empty here
+                     var url = '@Url.Action("JobProfile", "Job", new { id = "replaceToken" })';
+                    url = url.replace("replaceToken", val.jobId);
 
                     //$("#output").append(val.title);
                     $("#output").append(
                         "<div class='buffer'>"+
-                            "<div class='card'>"+
-                       "<h5 class= 'card-header'>"+val.title+"</h5>"+
+                        "<div class='card'>" +
+                        '<a href="' + url + '"><h5 class="card-header">' + val.jobTitle + '</h5></a>'+
+                       //"<h5 class= 'card-header'>"+val.jobTitle+"</h5>"+
                                 "<div class='card-body'>"+
-                                    "<h5 class='card-title'>Rate: £"+val.lowerRate+"-"+val.upperRate+"</h5>"+
+                                    "<h5 class='card-title'>Rate: £"+val.lowerRate+"-"+val.upperRate+" per hour</h5>"+
 
-                                "<h5 class='card-title'>"+val.companyName+"</h5>"+
-                               @*+ "@Html.ActionLink('View more', 'JobProfile', new { id = jobProfile.JobID })"+*@
+                        "<h5 class='card-title'>" + val.companyName + "</h5>" +
+                        "<h5 class='card-title'>Starting: " + val.displayStartDate + "</h5>" +
+
                             "</div>"+
                             "</div>"+
                         "</div>"
@@ -40,7 +45,7 @@
 
 
 
-                console.log(data);
+
             },
             error: function (xhr) {
                 alert('error');
@@ -58,14 +63,30 @@
             //this needs changed whe table fully normalised
             data: { jobId : @Model.JobId}  ,
             success: function (data) {
-                console.log(data);
+                //console.log(data);
                 //if already liked replace with unlike button
                 if (data == true) {
+                    var url = '@Url.Action("RemoveLikeForJob", "Like", new { jobId = Model.JobId })';
+                    //url = url.replace("replaceToken", val.jobId);
+
                     $("#like").html(
                         '<div id="like">' +
-                        ' <button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button>' +
+
+                        '<a href="' + url + '"><button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button></a>' +
                         '</div>'
                     );
+                } else {          
+             
+                     var url = '@Url.Action("CreateLikeJob", "Like", new { employerId = Model.EmployerId ,jobId = Model.JobId })';
+                                
+
+                    $("#like").html(
+                        '<div id="like">' +
+
+                        '<a href="' + url + '"><button type="button" class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button></a>' +
+                        '</div>'
+                    );
+
                 }
 
 
@@ -78,39 +99,7 @@
 
          }); //end ajax
 
-        $('#like').click(function () {
-
-
-                 var like = '@LikeType.CandidateLikesJob';
-                var jId = @Model.JobId;
-                var eId = @Model.EmployerId;
-                var data = { likeType : like, jobId : jId, employerId : eId };
-
-                $.ajax({
-                    url: '/Like/CreateLikeJob/',
-                    type: "POST",
-                    contentType: 'application/x-www-form-urlencoded',
-                    cache: false,
-                    data: data,
-            success: function () {
-                $("#like").html(
-                    '<div id="like">'+
-                       ' <button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button>'+
-                    '</div>'
-                    );
-
-
-            },
-            error: function (jqxhr, status, exception) {
-                alert('Exception:', exception);
-
-            }
-
-
-        }); //end ajax
-        }); //end click
-
-
+       
 
         //ajax to check if candidate has mutual like with employer and then allow messaging
         $.ajax({
@@ -119,10 +108,10 @@
             type: "GET",
             contentType: 'application/json; charset=utf-8',
             cache: false,
-            //this needs changed whe table fully normalised
+
             data: { id : @Model.EmployerId}  ,
             success: function (data) {
-                console.log(data);
+                //console.log(data);
                 //if mutual like true replace with message
                 if (data == true) {
                      var url = '@Url.Action("Index", "Chat", new { userId = @Model.UserId })';
@@ -130,7 +119,8 @@
                         '<div id="message">' +
                         //'<button onclick="location.href="' + url +'" class="btn btn-primary"  type="button"> Message</button>'
 
-                        '<a href="' + url +'"><button class="btn btn-primary">Message</button></a>'
+                        '<a href="' + url + '"><button class="btn btn-primary marginTop">Message</button></a>'
+                        + '<p><i class="fas fa-handshake"></i> Congrats you both liked each other!</p>'
                         +'</div>'
                     );
                 }
@@ -158,9 +148,10 @@
         </div>
         <div class="row buffer ">
             <div class="col-sm">
-                <h2>@Model.Title</h2>
+                <h2>@Model.JobTitleEnum.GetDisplayName()</h2>
 
                 <h2>FROM £@Model.LowerRate - @Model.UpperRate</h2>
+                <h2>Start Date: @Model.StartDate.ToShortDateString()</h2>
                 <h2>Duration: @Model.Duration weeks</h2>
             </div>
             <div class="col-sm">
@@ -168,7 +159,7 @@
             <div class="col-sm">
 
                 <div id="like">
-                    <button type="button" class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button>
+                    @*<button type="button" class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button>*@
                 </div>
                 <div id="message">
                     @*<a asp-controller="Chat" asp-action="Index" asp-route-userId="@Model.UserId">
@@ -182,34 +173,26 @@
 
         </div>
         <div class="row buffer ">
-            <div class="col-sm-9">
+            <div class="col-sm-8 ">
                 <h3>Company Profile</h3>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vestibulum eleifend odio, ut egestas urna pellentesque vitae. Cras euismod dolor augue, eu porta arcu rutrum vitae. Mauris lacinia placerat nunc vitae consectetur. Ut viverra ipsum justo, vitae tristique erat tincidunt accumsan. Mauris et sem et augue commodo pretium. Proin aliquet.</p>
                 <h3>Job Desription</h3>
                 <p>@Model.JobDescription</p>
-                <h3>Company Reviews</h3>
-                <!--Ajax call for company reviews if decide to include -->
-                <p>Test</p>
+                <h3>Skills Required</h3>
+                <h3>
+                    @foreach (var skill in Model.Skills)
+                    {
+                        <span class="badge skill">@skill.SkillName</span>
+
+                    }
+                </h3>
+
             </div>
-            <div class="col-sm-3 buffer">
+            <div class="col-sm-4 buffer">
                 <h3>More Like This</h3>
 
                 <div id="output"></div>
-                @*Ajax call for more like this all dynamic items need changed with id from ajax*@
-                @*@for (int loop = 0; loop < 2; loop++)
-                {
-                    <div class="buffer">
-                        <div class="card ">
-                            <h5 class="card-header">Job Title</h5>
-                            <div class="card-body">
-                                <h5 class="card-title">Rate: £@jobProfile.LowerRate-@jobProfile.UpperRate</h5>
-                               
-                                <h5 class="card-title">@jobProfile.CompanyName</h5>
-                                @Html.ActionLink("View more", "JobProfile", new { id = jobProfile.JobID })
-                            </div>
-                        </div>
-                    </div>
-                }*@
+            
 
             </div>
 

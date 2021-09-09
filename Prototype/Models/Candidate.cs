@@ -2,62 +2,134 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Prototype.Models
 {
-    public class Candidate 
+    public class Candidate
     {
+        private const double MinimumWage = 8.21;
 
-        /* public Candidate()
-         {
-             this.Jobs = new HashSet<Job>();
-             this.Employers = new HashSet<Employer>(); 
-         }*/
-
-        
         [Key]
-        public int CandidateID{get; set;}
+        public int CandidateID { get; set; }
         //remove level if enum works 
-        public String Level { get; set; }
 
-        public Boolean IsAvailable { get; set; } 
 
-        public DateTime AvailableFrom { get; set;  }
+        public Boolean IsAvailable { get; set; }
+        [NotMapped]
+        private DateTime _AvailableFrom;
+        [Required]
+        public DateTime AvailableFrom
+        {
+            get
+            {
+                return _AvailableFrom;
+            }
+            set
+            {
+                int result = DateTime.Compare(value, DateTime.Now);
+                //if availability is in future we set as not available
+                if (result > 0)
+                {
+                    this.IsAvailable = false;
+                }
+                else
+                {
+                    // if in past we set as available
+                    this.IsAvailable = true;
+                }
+                _AvailableFrom = value;
+            }
+        }
 
-        //skill will need one to many 
-        public String Skill { get; set; }
+        [NotMapped]
+        private double _Rating;
 
-        public double Rating { get; set; }
-        public double Rate { get; set; }
+        public double Rating
+        {
 
-        public Level LevelEnum { get; set;  }
-        
+            get
+            {
+                return _Rating;
+
+            }
+            set
+            {
+                if (value >= 0 && value <= 5)
+                {
+                    _Rating = value;
+                }
+                else
+                {
+                    throw new ArgumentException("Rating cannot be less than 0 or grater than 5");
+                }
+
+
+               ;
+            }
+        }
+
+
+
+
+
+        [NotMapped]
+        private double _Rate;
+        [Required]
+        [Range(MinimumWage, double.MaxValue, ErrorMessage = "Please select a value over national living wage")]
+        public double Rate
+        {
+            get { return _Rate; }
+            set
+            {
+                if (value >= MinimumWage)
+                {
+                    _Rate = value;
+                }
+                else
+                {
+                    throw new ArgumentException("Rate Cannot be below Minimum Wage");
+                }
+
+            }
+        }
+
+        public Level LevelEnum { get; set; }
+        //normalised JobTitle
+
+        public JobTitle JobTitleEnum { get; set; }
+
+
 
         //foreign Key with Users table
         public string UserId { get; set; }
         [ForeignKey("UserId")]
         public ApplicationUser ApplicationUser { get; set; }
-        //public virtual ApplicationUser ApplicationUser { get; set; }
 
-        //Forign Key for one to Many with Reviews
-        public ICollection<Review> Reviews { get; set; }
 
-        /*Many to many With Jobs and Employer for Likes
-        public ICollection<Job> Jobs { get; set; }
-        public ICollection<Employer> Employers { get; set; }*/
+        //foreign key one to many with Likes 
         public ICollection<Like> Likes { get; set; }
+        //foreign key one to many with Contracts
+        public ICollection<Contract> Contracts { get; set; }
+        //many to many with Skills
+        public virtual ICollection<Skill> Skills { get; set; }
+        [NotMapped]
+        [Required]
+        [MinLength(3, ErrorMessage = "Please select at least 3 skills")]
+        public IEnumerable<int> SkillIds { get; set; }
+
+
+        //default constructor 
+        public Candidate()
+        {
+            this.Skills = new HashSet<Skill>();
+
+
+        }
+
+
+
+
     }
 
-    public enum Level
-    {
-        [Display(Name = "Entry", Description = "1-2 years Experience" )]
-        Entry,
-        [Display(Name = "Intermediate", Description = "3-7 years Experience") ]
-        Intermedidate,
 
-        [Display(Name = "Expert", Description = "7+ years Experience")]
-        Expert
-    }
 }

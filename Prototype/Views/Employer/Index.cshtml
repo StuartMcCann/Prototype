@@ -4,6 +4,56 @@
     $(document).ready(function () {
 
 
+         $.ajax({
+            url: '/Job/GetJobsByEmployerId',
+            dataType: "Json",
+            type: "GET",
+            data: {employerId: @Model.EmployerId},
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+
+
+            success: function (data) {
+                console.log(data)
+               // loops through values returned in json format by above url
+                if (data != null) {
+
+
+                    $.each(data, function (key, val) {
+
+
+                        //action link use to generate url stringi
+                        var url = '@Url.Action("JobProfile", "Job", new { id = "replaceToken" })';
+                        url = url.replace("replaceToken", val.jobId);
+                        //bleow appende content to div with id passed as arg
+                        $("#jobsoutput").append(
+
+                            '<div class"card ">' +
+                            '<div class="card-body">' +
+
+                            '<a href="' + url + '"><h5 class="card-title">' + val.jobTitle + ' </h5></a>' +
+                            "<h5 class='card-text'>Duration:" + val.duration + ' weeks</h5>' +
+                            '<p class="card-text">Start Date: ' + val.startDate.substring(0, 10) + '</p>' +
+
+
+                            '</div>' +
+                            ' </div>'
+                        );//end of .append
+                    });//end of for loop
+                } else {
+                    $("#jobsoutput").append(
+                        '<h4> This employer has no live vacancies at the minute, feel free to give them a like or message for any speculative openings!</h4>'
+                    );
+                }
+            }, //end of success function
+            error: function (xhr) {
+                alert( 'error');
+            }
+
+        }); //end ajax
+
+
+
         //ajax to check if employer likes candidate and alter like button
          $.ajax({
             url: '/Like/AlreadyLiked',
@@ -17,11 +67,26 @@
                 console.log(data);
                 //if already liked replace with unlike button
                 if (data == true) {
+                    var url = '@Url.Action("RemoveLikeForEmployer", "Like", new { employerId = Model.EmployerId } )';
+
                     $("#like").html(
                         '<div id="like">' +
-                        ' <button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button>' +
+                        '<a href="' + url + '"><button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button></a>'+
+                     /*   ' <button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button>' +*/
                         '</div>'
                     );
+                }else {
+
+                     var url = '@Url.Action("CreateLikeEmployer", "Like", new { employerId = Model.EmployerId } )';
+
+
+                    $("#like").html(
+                        '<div id="like">' +
+
+                        '<a href="' + url + '"><button type="button" class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button></a>' +
+                        '</div>'
+                    );
+
                 }
 
 
@@ -52,7 +117,8 @@
                         '<div id="message">' +
                         //'<button onclick="location.href="' + url +'" class="btn btn-primary"  type="button"> Message</button>'
 
-                        '<a href="' + url +'"><button class="btn btn-primary">Message</button></a>'
+                        '<a href="' + url + '"><button class="btn btn-primary ">Message</button></a>'
+                        + '<p><i class="fas fa-handshake"></i> Congrats you both liked each other!</p>'
                         +'</div>'
                     );
                 }
@@ -68,41 +134,6 @@
         }); //end ajax
 
 
-
-
-
-
-            $('#like').click(function () {
-
-
-                 var like = '@LikeType.CandidateLikesEmployer';
-
-                var eId = @Model.EmployerId;
-                var data = { likeType : like, employerId : eId };
-
-                $.ajax({
-                    url: '/Like/CreateLikeEmployer/',
-                    type: "POST",
-                    contentType: 'application/x-www-form-urlencoded',
-                    cache: false,
-                    data: data,
-            success: function () {
-                $("#like").html(
-                    '<div id="like">'+
-                       ' <button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button>'+
-                    '</div>'
-                    );
-
-
-            },
-            error: function (jqxhr, status, exception) {
-                alert('Exception:', exception);
-
-            }
-
-
-        }); //end ajax
-        }); //end click
         }); //end document.load
 
 
@@ -113,24 +144,27 @@
         <div class="col-sm">
             <h1>@Model.CompanyName</h1>
         </div>
-        <div class="col-sm" id="like">
-            <button type="button" class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button>
-        </div>
-       
 
-        
+
+    </div>
+    <div class="row ">
+        <div class="col-sm">
+            @if (User.IsInRole("Candidate"))
+            {
+                <div id="message"></div>
+            }
+        </div>
+        <div class="col-sm">
+            @if (User.IsInRole("Candidate"))
+            {
+                <div id="like"></div>
+            }
+        </div>
 
     </div>
     <div class="row buffer">
 
-        <div class="col-sm-6">
-            <div id="message"></div>
-            <h3>Overview</h3>
-            <p>@Model.CompanyOverview</p>
-
-        </div>
-        <div class="col-sm-6">
-            <h3>Your Logo</h3>
+        <div class="col-sm">
 
             @if (Model.CompanyLogo != null)
             {
@@ -142,11 +176,26 @@
             }
 
 
+        </div>
+        <div class="col-sm">
+            <h3>Overview</h3>
+            <p>@Model.CompanyOverview</p>
+
+           
+
+
 
         </div>
 
 
     </div>
+    <h3>Jobs with @Model.CompanyName</h3>
+    <div class=" scrollgrid border ">
+        <div class="container buffer">
+
+            <!--ajax call to get jobs by user id content appened to this div -->
+            <div id="jobsoutput"></div>
+        </div>
 
 
 
@@ -157,4 +206,4 @@
 
 
 
-</div>
+    </div>
