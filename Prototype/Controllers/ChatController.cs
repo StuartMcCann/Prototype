@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Prototype.Data;
 using Prototype.Models;
 using Prototype.Service;
@@ -21,19 +20,7 @@ namespace Prototype.Controllers
             _db = applicationDbContext;
         }
 
-
-
-        //[HttpGet("users")]
-        public List<ApplicationUser> GetUsers()
-        {
-
-            //add query here to get only those who can message 
-            var userId = User.Claims.Where(a => a.Type == ClaimTypes.NameIdentifier).Select(a => a.Value).FirstOrDefault();
-            var allUsers = _db.Users.Where(user => user.Id != userId).ToList();
-            return allUsers;
-        }
-
-
+        #region CrudAndPageNav       
         [Authorize]
         public IActionResult Index(string userId)
         {
@@ -50,50 +37,11 @@ namespace Prototype.Controllers
                 userProfile = GetUserProfileEmployer(userId);
                 return View(userProfile);
             }
-
-
-
-
-
-        }
-
-
-
-        //[HttpGet("users/{userId}")]
-        public ApplicationUser GetUserDetails(string userId)
-        {
-            var user = _db.Users.Where(user => user.Id == userId).FirstOrDefault();
-            return user;
-        }
-
-        public UserProfile GetUserProfileCandidate(string userId)
-        {
-            UserProfile userProfile = ChatHelper.GetUserProfileCandidate(_db, userId); 
-
-            return userProfile;
-        }
-
-
-        public UserProfile GetUserProfileEmployer(string userId)
-        {
-            UserProfile userProfile = ChatHelper.GetUserProfileEmployer(_db, userId); 
-
-            return userProfile;
-        }
-
-        public IActionResult EmployerPageRedirect(int employerId)
-        {
-            var userId = _db.Users.Where(u => u.EmployerId == employerId).Select(i => i.Id).First();
-
-            return RedirectToAction("Index", new { userId = userId });
-
         }
 
         [HttpPost]
         public ActionResult SaveMessage(string toUserId, string messageContent)
         {
-
-            
             var userId = GetCurrentUserID();
             var fromUser = GetUserByUserId(userId);
             var toUser = GetUserByUserId(toUserId);
@@ -107,10 +55,38 @@ namespace Prototype.Controllers
             }
             return RedirectToAction("Index", new { userId = toUserId });
 
-
-
         }
 
+        #endregion
+
+        #region GetMethods
+        public ApplicationUser GetUserDetails(string userId)
+        {
+            var user = _db.Users.Where(user => user.Id == userId).FirstOrDefault();
+            return user;
+        }
+
+        public UserProfile GetUserProfileCandidate(string userId)
+        {
+            UserProfile userProfile = ChatHelper.GetUserProfileCandidate(_db, userId);
+            return userProfile;
+        }
+
+
+        public UserProfile GetUserProfileEmployer(string userId)
+        {
+            UserProfile userProfile = ChatHelper.GetUserProfileEmployer(_db, userId);
+
+            return userProfile;
+        }
+
+        public IActionResult EmployerPageRedirect(int employerId)
+        {
+            var userId = _db.Users.Where(u => u.EmployerId == employerId).Select(i => i.Id).First();
+
+            return RedirectToAction("Index", new { userId = userId });
+
+        }
         public string GetCurrentUserID()
         {
             var userId = User.Claims.Where(a => a.Type == ClaimTypes.NameIdentifier).Select(a => a.Value).FirstOrDefault();
@@ -123,27 +99,28 @@ namespace Prototype.Controllers
             return user;
         }
 
-        //need to pass id for cand/client here 
+        
         public List<ChatMessage> GetChatHistory(string toUserId)
         {
             var userId = GetCurrentUserID();
-            var messages = ChatHelper.GetChatHistory(_db, userId, toUserId); 
-
+            var messages = ChatHelper.GetChatHistory(_db, userId, toUserId);
             return messages;
         }
 
         public ActionResult GetConversations()
         {
-
             var userId = GetCurrentUserID();
-           
-            var messages = ChatHelper.GetConversations(_db, userId); 
-
-
-            return Json( messages);
-
-
+            var messages = ChatHelper.GetConversations(_db, userId);
+            return Json(messages);
         }
 
+
+        public List<ApplicationUser> GetUsers()
+        {
+            var userId = User.Claims.Where(a => a.Type == ClaimTypes.NameIdentifier).Select(a => a.Value).FirstOrDefault();
+            var allUsers = _db.Users.Where(user => user.Id != userId).ToList();
+            return allUsers;
+        }
+        #endregion
     }
 }

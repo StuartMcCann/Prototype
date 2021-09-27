@@ -86,36 +86,12 @@
         // create the grid passing in the div to use together with the columns & data we want to use
         new agGrid.Grid(eGridDiv, gridOptions);
 
-         //fetch the row data to use and one ready provide it to the Grid via the Grid API
-        //agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/row-data.json' })
-        //    .then(data => {
-        //        gridOptions.api.setRowData(data);
-        //    });
 
         agGrid.simpleHttpRequest({ url: '@Url.Action("GetAllLiveJobs", "Job")' })
             .then(data => {
                 gridOptions.api.setRowData(data);
             });
-          $.ajax({
-            url: '/Job/GetAllLiveJobs',
-            dataType: "Json",
-            type: "GET",
-            data: "",
-            contentType: 'application/x-www-form-urlencoded',
-            cache: false,
-
-
-            success: function (data) {
-                  //console.log(data)
-
-
-            }, //end of success function
-            error: function (xhr) {
-                alert( 'error');
-            }
-
-        }); //end ajax
-
+      
 
 
 </script>

@@ -2,7 +2,7 @@
   
 <script type="text/javascript">
 
-    //TODO: AJAX for Likes / AJAX for reviews / AJAx for Contracts
+  
 
     $(document).ready(function () {
 
@@ -23,9 +23,7 @@
 
 
                 $.each(data, function (key, val) {
-                   //need to add validation that not empty here
-                   //job id is jobId
-
+                 
                     //action link use to generate url string
                     var url = '@Url.Action("Edit", "Job", new { id = "replaceToken" })';
                     url = url.replace("replaceToken", val.jobId);
@@ -35,14 +33,10 @@
                         '<div class"card ">' +
                         '<div class="card-body">' +
 
-
-                        //change below if needs title normalised
-
                         '<a href="' + url + '"><h5 class="card-title">' + val.jobTitle + ' <i class="far fa-edit"></i></h5></a>' +
                         "<h5 class='card-text'>Duration:" + val.duration + ' weeks</h5>' +
                         '<p class="card-text">Start Date: ' + val.startDate.substring(0, 10)+'</p>'+
 
-                    // <a href="#" class="btn btn-primary">Go somewhere</a>
                     '</div>'+
                        ' </div>'
                     );//end of .append
@@ -57,7 +51,7 @@
 
 
 
-        // below ajax gets Jobs connected by user Id and displays them on the page
+        // below ajax gets likes connected by employer Id and displays them on the page
         $.ajax({
             url: '/Like/GetlikesByEmployerID',
             dataType: "Json",
@@ -71,9 +65,7 @@
                 
                // loops through values returned in json format by above url
                 $.each(data, function (key, val) {
-                   //need to add validation that not empty here
-                   //job id is jobId
-
+                  
                     //action link use to generate url string
                     var url = '@Url.Action("CandidateProfile", "Candidate", new { id = "replaceToken" })';
                     url = url.replace("replaceToken", val.candidateId);
@@ -116,8 +108,7 @@
               
 
                 $.each(data, function (key, val) {
-                   //need to add validation that not empty here
-
+                 
                     if (val.isUnderContract == true) {
                         //action link use to generate url string
                         var url = '@Url.Action("EmployerHubRedirect", "Contract", new { contractId = "replaceToken" })';
@@ -178,9 +169,7 @@
               
 
                 $.each(data, function (key, val) {
-                   //need to add validation that not empty here
-
-
+                 
                     //action link use to generate url string
                     var url = '@Url.Action("Index", "Chat", new { userId = "replaceToken" })';
                     url = url.replace("replaceToken", val.displayId);

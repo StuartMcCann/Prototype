@@ -22,6 +22,7 @@ namespace Prototype.Controllers
 
         public IActionResult Index()
         {
+            //check if user is signed in and redirect to approproate page 
             if (_signInManager.IsSignedIn(User)){
 
                 if (User.IsInRole("Candidate"))
@@ -36,10 +37,6 @@ namespace Prototype.Controllers
             return View();
         }
 
-        public IActionResult EmployerLogin()
-        {
-            return View();
-        }
 
         public IActionResult Privacy()
         {

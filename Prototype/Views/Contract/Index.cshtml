@@ -3,8 +3,15 @@
 
 
 <div class=" container  text">
+    @if (User.IsInRole("Employer"))
+    {
+        <h1 class=" heading buffer"> Your Contract with @Model.Candidate.ApplicationUser.FirstName</h1>
+    }
+    else
+    {
+        <h1 class=" heading buffer"> Your Contract with @Model.Employer.CompanyName</h1>
+    }
 
-    <h1 class=" heading buffer"> Your Contract with @Model.Candidate.ApplicationUser.FirstName</h1>
 
     <div class="row buffer add-margin">
 
@@ -12,9 +19,20 @@
 
             <h3>Contract Details</h3>
 
-            <h6>Status: @if(Model.IsUnderContract){ <span>In Progress</span> }
-            else {<span>Completed</span> }</h6>
-            <h6>Colleague: @Model.Candidate.ApplicationUser.FirstName   @Model.Candidate.ApplicationUser.LastName</h6>
+            <h6>
+                Status: @if (Model.IsUnderContract)
+                {<span>In Progress</span> }
+                else
+                {<span>Completed</span>}
+            </h6>
+            @if (User.IsInRole("Employer"))
+            {
+                <h6>Colleague: @Model.Candidate.ApplicationUser.FirstName   @Model.Candidate.ApplicationUser.LastName</h6>
+            }
+            else
+            {
+        <h6>Employer: @Model.Employer.CompanyName</h6>
+            }
             <h6>Agreed Rate: £@Model.AgreedRate per hour</h6>
             <h6>Job: @Model.Job.JobTitleEnum</h6>
             <h6>Start Date: @Model.StartDate.ToShortDateString()</h6>
@@ -90,8 +108,10 @@
                     <h5>This contract is completed!</h5>
                     <h6>You Rated this contract @Model.ContractRatingByEmployer/5 </h6>
 
-                    <h6>Vist @Model.Candidate.ApplicationUser.FirstName   @Model.Candidate.ApplicationUser.LastName's profile 
-            @Html.ActionLink("here", "CandidateProfile", "Candidate", new { id = Model.CandidateId })      to get back in touch </h6>
+                    <h6>
+                        Vist @Model.Candidate.ApplicationUser.FirstName   @Model.Candidate.ApplicationUser.LastName's profile
+                        @Html.ActionLink("here", "CandidateProfile", "Candidate", new { id = Model.CandidateId })      to get back in touch
+                    </h6>
                 }
             }
             else if (User.IsInRole("Candidate"))

@@ -3,7 +3,7 @@
 
     $(document).ready(function () {
 
-
+        //get all jobs for employer
          $.ajax({
             url: '/Job/GetJobsByEmployerId',
             dataType: "Json",
@@ -72,7 +72,6 @@
                     $("#like").html(
                         '<div id="like">' +
                         '<a href="' + url + '"><button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button></a>'+
-                     /*   ' <button type="button" class="btn btn-primary">UnLike <i class="fas fa-minus-circle"></i></button>' +*/
                         '</div>'
                     );
                 }else {
@@ -106,7 +105,6 @@
             type: "GET",
             contentType: 'application/json; charset=utf-8',
             cache: false,
-            //this needs changed whe table fully normalised
             data: { id : @Model.EmployerId}  ,
             success: function (data) {
                 console.log(data);
@@ -115,7 +113,6 @@
                      var url = '@Url.Action("EmployerPageRedirect", "Chat", new { employerId = @Model.EmployerId })';
                     $("#message").html(
                         '<div id="message">' +
-                        //'<button onclick="location.href="' + url +'" class="btn btn-primary"  type="button"> Message</button>'
 
                         '<a href="' + url + '"><button class="btn btn-primary ">Message</button></a>'
                         + '<p><i class="fas fa-handshake"></i> Congrats you both liked each other!</p>'
@@ -196,13 +193,6 @@
             <!--ajax call to get jobs by user id content appened to this div -->
             <div id="jobsoutput"></div>
         </div>
-
-
-
-
-
-
-
 
 
 

@@ -13,13 +13,9 @@
             data: "",
             contentType: 'application/x-www-form-urlencoded',
             cache: false,
-            //this needs changed whe table fully normalised
-
+            
             success: function (data) {
-
-
-
-                //loops through values returned in json format by above url
+                               //loops through values returned in json format by above url
                 var disabledOption = '<option selected value="" >Please Select A Job</option>';
                 $.each(data, function (key, val) {
                     disabledOption += '<option value="' + val.jobId + '">' + val.jobTitle +

@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Prototype.Data;
 using Prototype.Models;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,39 +11,35 @@ using System.Threading.Tasks;
 
 namespace Prototype.Controllers
 {
-    
+
     public class EmployerController : Controller
     {
 
         private readonly ApplicationDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
-        
+
         public EmployerController(ApplicationDbContext db, UserManager<ApplicationUser> userManager)
         {
             _db = db;
-           _userManager = userManager;
-            
+            _userManager = userManager;
+
         }
 
-        
+
         [Authorize]
         public IActionResult Index(int id)
         {
+            var employer = _db.Employers.Find(id);
 
-            var employer = _db.Employers.Find(id); 
-            
-                return View(employer);
-            
-
-
+            return View(employer);
         }
-
+        //get for empployer hub
         [Authorize(Roles = "Employer")]
         public IActionResult Hub()
         {
 
             var user = GetUser();
-         
+
             var employer = GetEmployer(user.EmployerId);
             if (employer != null)
             {
@@ -53,17 +47,17 @@ namespace Prototype.Controllers
             }
             else
             {
-                return RedirectToAction("Create"); 
+                return RedirectToAction("Create");
             }
-            
+
         }
 
         public Employer GetEmployer(int? employerID)
         {
             Employer employer = _db.Employers.Find(employerID);
-            
+
             return employer;
-            
+
 
         }
 
@@ -74,8 +68,8 @@ namespace Prototype.Controllers
 
             var user = GetUser();
             var employerId = user.EmployerId;
-          
-            if (employerId != null && employerId!=0)
+
+            if (employerId != null && employerId != 0)
             {
                 return RedirectToAction("Edit");
             }
@@ -84,7 +78,7 @@ namespace Prototype.Controllers
                 return View();
             }
 
-            
+
         }
         //post for create
         [HttpPost]
@@ -103,24 +97,24 @@ namespace Prototype.Controllers
                         await file.CopyToAsync(dataStream);
                         employer.CompanyLogo = dataStream.ToArray();
                     }
-                   
+
                 }
                 //add employer created to DB
                 _db.Employers.Add(employer);
                 //save changes exexutes action to DB
                 _db.SaveChanges();
-               
-                var  user = GetUser(); 
+
+                var user = GetUser();
                 user.EmployerId = employer.EmployerId;
-                user.Employer = employer; 
-                _db.SaveChanges(); 
+                user.Employer = employer;
+                _db.SaveChanges();
                 return RedirectToAction("Hub");
 
             }
             return View(employer);
-            
-        }
 
+        }
+        //get for edit 
         [Authorize(Roles = "Employer")]
         public IActionResult Edit()
         {
@@ -163,22 +157,20 @@ namespace Prototype.Controllers
             }
             else
             {
-                return View(employer); 
+                return View(employer);
             }
 
         }
-
-       
 
         public ApplicationUser GetUser()
         {
             var userId = _userManager.GetUserId(User);
             ApplicationUser user = _db.Users.Find(userId);
-            return user; 
+            return user;
         }
 
-       
-        
+
+
 
 
 

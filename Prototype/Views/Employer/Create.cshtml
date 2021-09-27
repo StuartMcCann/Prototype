@@ -1,9 +1,9 @@
 ﻿
 @model Employer
 
-@*<div class="container text buffer">*@
+<div class="container text buffer">
 
-    <h1>Add Your Company Details and Attract Quality Freelancers</h1>
+    <h1 class="heading">Add Your Company Details and Attract Quality Freelancers</h1>
 
     <form asp-action="Create" asp-controller="Employer" method="post" enctype="multipart/form-data">
        
@@ -32,14 +32,9 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group">
                     <label asp-for="@Model.CompanyLogo" style="width: 100%;"></label>
-                    @*@if (Model.CompanyLogo != null)
-                {
-                    <img id="profilePicture" style="width:350px;height:350px; object-fit:cover" src="data:image/*;base64,@(Convert.ToBase64String(Model.CompanyLogo))">
-                }
-                else*@
-                    @*{*@
+                   
                     <img id="profilePicture" style="width:350px;height:350px; object-fit:cover" src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png">
-                    @*}*@
+                   
                     <input type="file"
                            accept=".png,.jpg,.jpeg,.gif,.tif"
                            asp-for="@Model.CompanyLogo"
@@ -63,4 +58,4 @@
 
 
 
-@*</div>*@
+</div>

@@ -2,14 +2,6 @@
 <script type="text/javascript">
 
 
-        //function sendmessage() {
-        //    var message = $('#messagecontent').val();
-
-        //    console.log(message);
-
-        //}
-
-
          $(document).ready(function () {
 
 
@@ -21,8 +13,6 @@
             data: { toUserId: '@Model.Id'},
             contentType: 'application/x-www-form-urlencoded',
             cache: false,
-            //this needs changed whe table fully normalised
-
             success: function (data) {
                 console.log(data)
 
@@ -98,7 +88,7 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="input-group input-group-lg">
-                                @*<input name="toUserId" id="toUserId" value="@Model.Id" type="hidden" class="control-label" />*@
+                               
                                 @Html.Hidden("toUserId", Model.Id)
                                 <input name="messageContent" type="text" class="form-control input-lg" id="messagecontent" placeholder="Type your message here...">
                                 <span class="input-group-btn">

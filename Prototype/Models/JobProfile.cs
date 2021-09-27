@@ -8,10 +8,6 @@ namespace Prototype.Models
     public class JobProfile :Job
     {
 
-       
-        //remove below when normalisation completed 
-        
-        
         public  int EmployerId { get; set; }
         public String CompanyName { get; set; }
         public string UserId { get; set; }

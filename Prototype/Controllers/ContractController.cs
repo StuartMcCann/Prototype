@@ -23,6 +23,8 @@ namespace Prototype.Controllers
             _db = applicationDbContext;
         }
 
+
+        #region CrudAndPageNav
         [Authorize]
         public IActionResult Index(Contract contract)
         {
@@ -63,7 +65,7 @@ namespace Prototype.Controllers
 
         }
 
-        //change to in job model?
+       
         public void UpdateJobStatus(Contract contract)
         {
             contract.Job.IsLive = false;
@@ -160,11 +162,7 @@ namespace Prototype.Controllers
             }
 
         }
-
-
-
-
-        //post for create
+        //post for update Rate
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult UpdateRate(double rate, int contractId)
@@ -182,22 +180,27 @@ namespace Prototype.Controllers
 
         }
 
+        public IActionResult EmployerHubRedirect(int contractId)
+        {
+            var contract1 = _db.Contracts.Where(c => c.ContractId == contractId).First();
+            return RedirectToAction("Index", contract1);
+        }
+#endregion
+
+        #region GetMethods
         public ActionResult GetContractsEmployerHub(int employerId)
         {
-
-            // var contracts = _db.Contracts.Where(c => c.EmployerId == employerId).ToList();
+                       
             var contracts = ContractHelper.GetContractsForEmployerHub(_db, employerId); 
             //return contracts; 
             return Json( contracts);
         }
-
-        public ActionResult GetContractsCandidateHub(int candidateId)
+        [HttpGet]
+        public List<ContractProfile> GetContractsCandidateHub(int candidateId)
         {
-
-            // var contracts = _db.Contracts.Where(c => c.EmployerId == employerId).ToList();
+                        
             var contracts = ContractHelper.GetContractForCandidateHub(_db, candidateId); 
-            //return contracts; 
-            return Json(contracts);
+            return contracts;
         }
 
 
@@ -212,13 +215,7 @@ namespace Prototype.Controllers
             return Json(contracts);
         }
 
-
-
-
-        public IActionResult EmployerHubRedirect(int contractId)
-        {
-            var contract1 = _db.Contracts.Where(c => c.ContractId == contractId).First();
-            return RedirectToAction("Index", contract1);
-        }
+        
+        #endregion
     }
 }

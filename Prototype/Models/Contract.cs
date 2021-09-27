@@ -14,7 +14,7 @@ namespace Prototype.Models
 
         [Key]
         public int ContractId { get; set; }
-        
+
         [NotMapped]
         private double _AgreedRate;
         [Required]
@@ -49,7 +49,7 @@ namespace Prototype.Models
         //foreign key one to one with Job 
         public int JobId { get; set; }
         public virtual Job Job { get; set; }
-               
+
         [NotMapped]
         private int _ContractRatingByCandidate;
         [Range(MinRating, MaxRating, ErrorMessage = "Please select a number between 1 and 5 inclusive")]
@@ -82,7 +82,7 @@ namespace Prototype.Models
             //always sets this to true on creation 
             this.IsUnderContract = true;
         }
-        //ontructor with args 
+        //contructor with args 
         public Contract(int jobId, int candidateId, DateTime startDate, double rate, ApplicationDbContext db)
         {
             this.JobId = jobId;
@@ -101,12 +101,11 @@ namespace Prototype.Models
 
         }
 
-        //could pass use now?
+
         public void EndContract(DateTime endDate)
         {
             this.IsUnderContract = false;
             this.EndDate = endDate;
-            //this.EndDate = DateTime.UtcNow; 
         }
 
 

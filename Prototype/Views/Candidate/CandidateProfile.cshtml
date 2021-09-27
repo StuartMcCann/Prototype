@@ -13,7 +13,7 @@
             type: "GET",
             contentType: 'application/json; charset=utf-8',
             cache: false,
-            //this needs changed whe table fully normalised
+          
             data: { candidateId : @Model.CandidateID}  ,
             success: function (data) {
                 console.log(data);
@@ -22,7 +22,7 @@
 
 
                     $.each(data, function (key, val) {
-                        //need to add validation that not empty here
+                        
                         var url = '@Url.Action("CandidateProfile", "Candidate", new { id = "replaceToken" })';
                         url = url.replace("replaceToken", val.candidateID);
                         var skillscontent = "<h5>";
@@ -37,9 +37,6 @@
                             '<a href="' + url + '"><h5 class="card-header">' + val.firstName + ' ' + val.lastName + '</h5></a>' +
                             '<div class="card-body">' +
                             '<h5 class="card-title">Rate: £' + val.rate + "</h5>" +
-
-                            //add job title
-
                             "<h5 class='card-title'>" + val.level + "</h5>" +
                             skillscontent +
 
@@ -75,10 +72,10 @@
             type: "GET",
             contentType: 'application/json; charset=utf-8',
             cache: false,
-            //this needs changed whe table fully normalised
+           
             data: { id : @Model.CandidateID}  ,
             success: function (data) {
-               // console.log(data);
+              
                 //if already liked replace with unlike button
                 if (data == true) {
                     var url = '@Url.Action("RemoveLikeCandidate", "Like", new { candidateId = Model.CandidateID })';
@@ -119,17 +116,14 @@
             type: "GET",
             contentType: 'application/json; charset=utf-8',
             cache: false,
-            //this needs changed whe table fully normalised
-            data: { id : @Model.CandidateID}  ,            success: function (data) {
-                //console.log(data);
+             data: { id : @Model.CandidateID}  ,            success: function (data) {
+                
                 //if mutual like true replace with message
                 if (data == true) {
                      var url = '@Url.Action("Index", "Chat", new { userId = @Model.UserId })';
                     $("#message").html(
                         '<div id="message">' +
-                        //'<button onclick="location.href="' + url +'" class="btn btn-primary"  type="button"> Message</button>'
-
-                        '<a href="' + url + '"><button class="btn btn-primary marginTop">Message</button></a>'
+                                            '<a href="' + url + '"><button class="btn btn-primary marginTop">Message</button></a>'
                         +'<p><i class="fas fa-handshake"></i> Congrats you both liked each other!</p>'
                         +'</div>'
                     );
@@ -148,37 +142,7 @@
 
 
 
-         @*$('#unlike').click(function () {
-
-
-                 var like = '@LikeType.EmployerLikesCandidate';
-             var id = @Model.CandidateID;
-
-                var data = { likeType : like, candidateId: id };
-                console.log(id);
-                $.ajax({
-                    url: '/Like/RemoveLikeCandidate',
-                    type: "POST",
-                    contentType: 'application/x-www-form-urlencoded',
-                    cache: false,
-                    data: data,
-            success: function () {
-                $("#like").html(
-                    '<div id="like">'+
-                       ' <button type="button" class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button>'+
-                    '</div>'
-                    );
-
-                console.log(data);
-            },
-            error: function (jqxhr, status, exception) {
-                alert('Exception:', exception);
-                console.log(candId);
-            }
-
-
-        }); //end ajax
-        }); //end click*@
+     
 
     }); //end document.load
 
@@ -230,7 +194,6 @@
                     <button type="button" class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button>
                 </div>
                 <div id="message">
-                    @*<a asp-controller="Chat" asp-action="Index" asp-route-userId="@Model.UserId"><button type="button" class="btn btn-primary">Message <i class="fas fa-thumbs-up"></i></button></a>*@
                 </div>
 </div>
         </div>
@@ -249,7 +212,7 @@
             </h5>
 
                 </div>
-            @*<div class="col-sm">col-sm</div>*@
+          
             <div class="col-sm-3">
                 <h3>More Like This</h3>
                 <div id="output"></div>
@@ -274,4 +237,3 @@
 
 
 
-@*}*@

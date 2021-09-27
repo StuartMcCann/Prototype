@@ -1,5 +1,5 @@
 ﻿
-@model IEnumerable<Prototype.Models.CandidateProfile> //this adds object from method in controller
+@model IEnumerable<Prototype.Models.CandidateProfile> 
     <h1 class="heading add-margin">Check out who's available here!</h1>
     <div class=" container">
         <div id="myGrid" class="ag-theme-alpine" style="height: 600px; width:900px;"></div>
@@ -9,7 +9,7 @@
     var skillValueGetter = function (params) {
         var cellData = '';
         if (params.data.skills.length != 0) {
-            // console.log(params.data.skills);
+          
             for (var loop = 0; loop < params.data.skills.length; loop++) {
 
                 var skill = params.data.skills[loop].skillName;
@@ -105,26 +105,6 @@
             });
 
 
-    //below can be removed is just condole log 
-        //  $.ajax({
-        //    url: '/Candidate/GetAvailableCandidates',
-        //    dataType: "Json",
-        //    type: "GET",
-        //    data: "",
-        //    contentType: 'application/x-www-form-urlencoded',
-        //    cache: false,
-        //    //this needs changed whe table fully normalised
-
-        //    success: function (data) {
-        //          console.log(data)
-
-
-        //    }, //end of success function
-        //    error: function (xhr) {
-        //        alert( 'error');
-        //    }
-
-        //}); //end ajax
 
 
 

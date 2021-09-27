@@ -1,11 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Prototype.Enums;
 using Prototype.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Prototype.Data
 {
@@ -19,17 +15,10 @@ namespace Prototype.Data
         public DbSet<Candidate> Candidates { get; set; }
         public DbSet<Employer> Employers { get; set; }
         public DbSet<Job> Jobs { get; set; }
-
-      
         public DbSet<Like> Likes { get; set; }
-        
         public DbSet<ChatMessage> ChatMessages { get; set; }
-
         public DbSet<Contract> Contracts { get; set; }
-
         public DbSet<Skill> Skills { get; set; }
-
-      
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -74,12 +63,8 @@ namespace Prototype.Data
               new Skill { SkillId = 21, SkillName = "React.Js" },
               new Skill { SkillId = 22, SkillName = "MatLab" }
 
-
-
-
-
              );
-
+            //rename tables for identity
             builder.Entity<ApplicationUser>(entity =>
             {
                 entity.ToTable(name: "User");

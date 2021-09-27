@@ -1,19 +1,18 @@
 ﻿using Prototype.Data;
 using Prototype.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Prototype.Service
 {
     public class CandidateHelper
     {
-
-            public static List<CandidateProfile> GetCandidatesLikeThis(ApplicationDbContext _db, int candidateId)
+        //find candidates with matching job title
+        public static List<CandidateProfile> GetCandidatesLikeThis(ApplicationDbContext _db, int candidateId)
         {
+            //value to limit number of candidates 
             var numberOfCandidates = 3;
-
+            //get candidate by id 
             var candidate = (from c in _db.Candidates
                              where c.CandidateID == candidateId
                              select new Candidate
@@ -23,7 +22,7 @@ namespace Prototype.Service
                                  JobTitleEnum = c.JobTitleEnum
                              }).FirstOrDefault();
 
-            // change to job title??
+            //get candidates with matching job title 
             var candidatesLikeThis = (from c in _db.Candidates
                                       join u in _db.Users on
                                       c.UserId equals u.Id
@@ -37,51 +36,41 @@ namespace Prototype.Service
                                           LevelEnum = c.LevelEnum,
                                           Rating = c.Rating,
                                           Rate = c.Rate,
-                                          JobTitleEnum = c.JobTitleEnum, 
+                                          JobTitleEnum = c.JobTitleEnum,
                                           CandidateID = c.CandidateID,
                                           Level = c.LevelEnum.GetDisplayName(),
                                           Skills = c.Skills
 
 
                                       }).Take(numberOfCandidates).ToList();
-            //return candidatesLikeThis; 
-            return  candidatesLikeThis;
+          
+            return candidatesLikeThis;
 
 
 
         }
-
+        //get candidate information by candidate id 
         public static CandidateProfile GetCandidateProfile(ApplicationDbContext _db, int candidateId)
         {
-            
-            
             return ((from c in _db.Candidates
-                  
-              join u in _db.Users
-              on c.UserId equals u.Id
-              where c.CandidateID == candidateId
-              select new CandidateProfile
-              {
-                  CandidateID = c.CandidateID,
-                  LevelEnum = c.LevelEnum,
-
-                  Rating = c.Rating,
-                  Rate = c.Rate,
-                  UserId = u.Id,
-                  ProfilePicture = u.ProfilePicture,
-                  FirstName = u.FirstName,
-                  LastName = u.LastName,
-                  Skills = c.Skills,
-                  Likes = c.Likes,
-                  Contracts = c.Contracts, 
-                  AvailableFrom = c.AvailableFrom
-
-                
-
-              })).FirstOrDefault();
-         
-
-
+                     join u in _db.Users
+                     on c.UserId equals u.Id
+                     where c.CandidateID == candidateId
+                     select new CandidateProfile
+                     {
+                         CandidateID = c.CandidateID,
+                         LevelEnum = c.LevelEnum,
+                         Rating = c.Rating,
+                         Rate = c.Rate,
+                         UserId = u.Id,
+                         ProfilePicture = u.ProfilePicture,
+                         FirstName = u.FirstName,
+                         LastName = u.LastName,
+                         Skills = c.Skills,
+                         Likes = c.Likes,
+                         Contracts = c.Contracts,
+                         AvailableFrom = c.AvailableFrom
+                     })).FirstOrDefault();
         }
 
         public static CandidateProfile GetCandidateDetailsByUser(ApplicationDbContext _db, string userId)
@@ -108,10 +97,9 @@ namespace Prototype.Service
 
                     }).FirstOrDefault();
         }
-
+        //get all available candidates in db 
         public static List<CandidateProfile> GetAvailableCandidates(ApplicationDbContext _db)
         {
-
             return (from c in _db.Candidates
                     join u in _db.Users on
                     c.UserId equals u.Id
@@ -130,8 +118,6 @@ namespace Prototype.Service
                         JobTitle = c.JobTitleEnum.GetDisplayName(),
                         AvailableFrom = c.AvailableFrom,
                         Skills = c.Skills
-
-
                     }).ToList();
         }
 

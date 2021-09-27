@@ -1,16 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Prototype.Data;
-using Prototype.Enums;
 
 using Prototype.Models;
 using Prototype.Service;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,33 +16,41 @@ namespace Prototype.Controllers
     public class CandidateController : Controller
     {
         private readonly ApplicationDbContext _db;
-        private readonly UserManager<ApplicationUser> _userManager; 
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public CandidateController(ApplicationDbContext db, UserManager<ApplicationUser> userManager)
         {
             //creates a db objext for use in controller using dependency injection
             _db = db;
-            _userManager = userManager; 
+            _userManager = userManager;
         }
 
-        
-        public ActionResult GetCandidatesLikeThis( int candidateId)
+
+        public ActionResult GetCandidatesLikeThis(int candidateId)
         {
-
-
-            var candidatesLikeThis = CandidateHelper.GetCandidatesLikeThis(_db, candidateId); 
+            var candidatesLikeThis = CandidateHelper.GetCandidatesLikeThis(_db, candidateId);
 
             return Json(candidatesLikeThis);
 
         }
-        [Authorize(Roles="Candidate")]
+
+        #region PageNavAndCRUD
+
+        //Page Used For employers to browse candidates 
+        [Authorize(Roles = "Employer")]
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = "Candidate")]
         //get for edit 
         public IActionResult Edit()
         {
             //get the application user details 
             var user = GetUser();
-             var userId = user.Id;
-            var candidate = GetCandidateDetailsByUser(userId); 
+            var userId = user.Id;
+            var candidate = GetCandidateDetailsByUser(userId);
             //making sure a user has a candidate profile created 
             if (candidate == null)
             {
@@ -67,7 +72,7 @@ namespace Prototype.Controllers
 
             if (ModelState.IsValid)
             {
-                
+
                 _db.Candidates.Update(candidate);
                 _db.SaveChanges();
                 return View(candidate);
@@ -77,11 +82,7 @@ namespace Prototype.Controllers
                 return View(candidate);
             }
 
-
-
         }
-
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -105,18 +106,12 @@ namespace Prototype.Controllers
                 _db.Candidates.Add(candidate);
                 //save changes exexutes action to DB
                 _db.SaveChanges();
-
-                
                 return RedirectToAction("Edit");
 
             }
             return View(candidate);
 
         }
-
-
-
-
 
         //get for create
         [Authorize(Roles = "Candidate")]
@@ -138,24 +133,15 @@ namespace Prototype.Controllers
                 ViewBag.Skills = new SelectList(_db.Skills, "SkillId", "SkillName");
                 return View();
             }
-           
-           
         }
 
-        //Page Used For employers to browse candidates 
-        [Authorize(Roles = "Employer")]
-        public IActionResult Index()
-        {
-
-            return View();
-        }
-
+        //get for candidate profile
         [Authorize(Roles = "Employer")]
         public IActionResult CandidateProfile(int id)
         {
-            
-            var candidate = CandidateHelper.GetCandidateProfile(_db, id); 
-            
+
+            var candidate = CandidateHelper.GetCandidateProfile(_db, id);
+
 
             if (candidate == null)
             {
@@ -164,12 +150,12 @@ namespace Prototype.Controllers
             return View(candidate);
         }
         [Authorize(Roles = "Candidate")]
-        //get for hub
+        //get for  candidate hub
         public IActionResult Hub()
         {
             var user = GetUser();
 
-            var candidate = _db.Candidates.Where(c => c.UserId == user.Id).FirstOrDefault(); 
+            var candidate = _db.Candidates.Where(c => c.UserId == user.Id).FirstOrDefault();
             if (candidate != null)
             {
                 return View(candidate);
@@ -180,60 +166,33 @@ namespace Prototype.Controllers
             }
         }
 
-
-        public ApplicationUser GetUser()
-        {
-            var userId = _userManager.GetUserId(User);
-            ApplicationUser user = _db.Users.Find(userId);
-            return user;
-        }
-
-        public CandidateProfile GetCandidateDetailsByUser(string userId)
-        {
-            var candidate = CandidateHelper.GetCandidateDetailsByUser(_db, userId); 
-
-           
-
-            return candidate; 
-
-
-        }
-
         public ActionResult UpdateCandidateSkill(List<int> skillsIds)
         {
             var user = GetUser();
             var candidate = GetCandidateDetailsByUser(user.Id);
-            var skillsToBeAdded = new List<Skill>(); 
+            var skillsToBeAdded = new List<Skill>();
 
-           
-            foreach(int skillId in skillsIds)
+
+            foreach (int skillId in skillsIds)
             {
                 Skill skill = _db.Skills.Where(s => s.SkillId == skillId).First();
                 //check if duplicate skill
-                if (!candidate.Skills.Contains(skill)){
-                    skillsToBeAdded.Add(skill); 
-                }              
-                 
-               
-           }
+                if (!candidate.Skills.Contains(skill))
+                {
+                    skillsToBeAdded.Add(skill);
+                }
+            }
             //clear candidate skills to avoid duplicate insert error 
             candidate.Skills.Clear();
-            candidate.Skills = skillsToBeAdded; 
+            candidate.Skills = skillsToBeAdded;
 
             _db.Candidates.Update(candidate);
-            _db.SaveChanges(); 
+            _db.SaveChanges();
 
-            return RedirectToAction("Edit"); 
-
-
+            return RedirectToAction("Edit");
         }
 
-        public List<Skill> GetSkillsForCandidateUpdate()
-        {
-            return _db.Skills.ToList(); 
-        }
-
-       public ActionResult UpdateCandidateJobTitle(JobTitle jobtitle)
+        public ActionResult UpdateCandidateJobTitle(JobTitle jobtitle)
         {
             var user = GetUser();
             var candidate = GetCandidateDetailsByUser(user.Id);
@@ -242,14 +201,15 @@ namespace Prototype.Controllers
             //need to clear skills so no conlfict 
             candidate.Skills.Clear();
             //update and save changes 
-            if (ModelState.IsValid) { 
-            _db.Candidates.Update(candidate);
-            _db.SaveChanges();
+            if (ModelState.IsValid)
+            {
+                _db.Candidates.Update(candidate);
+                _db.SaveChanges();
                 return RedirectToAction("Edit");
             }
 
-            return View("Edit"); 
-            
+            return View("Edit");
+
         }
 
 
@@ -258,7 +218,7 @@ namespace Prototype.Controllers
             var user = GetUser();
             var candidate = GetCandidateDetailsByUser(user.Id);
             //set jobtitleenum
-        
+
             candidate.LevelEnum = level;
             //need to clear skills so no conlfict 
             candidate.Skills.Clear();
@@ -268,7 +228,7 @@ namespace Prototype.Controllers
                 _db.Candidates.Update(candidate);
                 _db.SaveChanges();
             }
-           
+
 
 
             return RedirectToAction("Edit");
@@ -289,7 +249,7 @@ namespace Prototype.Controllers
                 _db.Candidates.Update(candidate);
                 _db.SaveChanges();
             }
-          
+
 
 
             return RedirectToAction("Edit");
@@ -302,17 +262,15 @@ namespace Prototype.Controllers
             //set jobtitleenum
 
             candidate.AvailableFrom = availableDate;
-            
+
             //need to clear skills so no conlfict 
             candidate.Skills.Clear();
             //update and save changes 
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 _db.Candidates.Update(candidate);
                 _db.SaveChanges();
             }
-          
-
 
             return RedirectToAction("Edit");
         }
@@ -327,7 +285,7 @@ namespace Prototype.Controllers
             }
             else
             {
-                candidate.IsAvailable = true; 
+                candidate.IsAvailable = true;
             }
             candidate.Skills.Clear();
             //update and save changes 
@@ -336,19 +294,36 @@ namespace Prototype.Controllers
             _db.SaveChanges();
             return RedirectToAction("Edit");
         }
+        #endregion
 
+
+        #region GetMethods 
+
+        public CandidateProfile GetCandidateDetailsByUser(string userId)
+        {
+            var candidate = CandidateHelper.GetCandidateDetailsByUser(_db, userId);
+            return candidate;
+        }
+
+        public ApplicationUser GetUser()
+        {
+            var userId = _userManager.GetUserId(User);
+            ApplicationUser user = _db.Users.Find(userId);
+            return user;
+        }
+
+        public List<Skill> GetSkillsForCandidateUpdate()
+        {
+            return _db.Skills.ToList();
+        }
 
         public List<CandidateProfile> GetAvailableCandidates()
         {
+            var availableCandidates = CandidateHelper.GetAvailableCandidates(_db);
+            return availableCandidates;
 
-
-            var availableCandidates = CandidateHelper.GetAvailableCandidates(_db); 
-
-
-            return availableCandidates; 
-          
         }
-        
+        #endregion
 
     }
 

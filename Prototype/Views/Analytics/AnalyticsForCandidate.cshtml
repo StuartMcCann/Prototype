@@ -8,7 +8,7 @@
 
 <script type="text/javascript">
 
-
+    //ajax in this section requests data and renders to charts on page 
         $(document).ready(function () {
 
 
@@ -28,7 +28,7 @@
                         '<h4 class="buffer"> Your profile has recieved <span class="heading largeFont">'+data.NumberOfLikes+'</span> like(s). </h4> '+
                         '<h4 class="buffer"> <span class="heading largeFont">' + data.NumberOfEmployerLikes + '</span> employer(s) have liked your profile. </h4> ' +
                         '<h4 class="buffer"> <span class="heading largeFont">' + data.PercentageOfJobsWithSkillsMatch + '</span>% of live jobs require skills you have! </h4> ' +
-                        '<h4 class="buffer"> We found <span class="heading largeFont">' + data.NumberOfJobsWithJobTitle + '</span> jobs(s) that match your job title. </h4> ' 
+                        '<h4 class="buffer"> We found <span class="heading largeFont">' + data.NumberOfJobsWithJobTitle + '</span> job(s) that match your job title. </h4> ' 
                     ); 
 
 
@@ -116,7 +116,7 @@
                 data: "",
                 contentType: 'application/x-www-form-urlencoded',
                 cache: false,
-                //this needs changed whe table fully normalised
+              
 
                 success: function (data) {
 

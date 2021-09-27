@@ -1,13 +1,13 @@
 ﻿@model Prototype.Models.Candidate 
-<!-- TODO: AJAX call for likes / Messages / Reviews?/ Contracts -->
+
 
 <script type="text/javascript">
 
 
 
     $(document).ready(function () {
-
-        // below ajax gets Jobs connected by user Id and displays them on the page
+        var candidateId = { candidateId:@Model.CandidateID};
+        // below ajax gets likes connected by user Id and displays them on the page
         $.ajax({
             url: '/Like/GetlikesByCandidateId',
             dataType: "Json",
@@ -15,13 +15,11 @@
             data: { candidateId: @Model.CandidateID},
             contentType: 'application/x-www-form-urlencoded',
             cache: false,
-            //this needs changed whe table fully normalised
-
-            success: function (data) {
+                  success: function (data) {
 
                // loops through values returned in json format by above url
                 $.each(data, function (key, val) {
-                   
+
 
                     //action link use to generate url string
                     var url = '@Url.Action("Index", "Employer", new { id = "replaceToken" })';
@@ -48,24 +46,20 @@
             }
 
         }); //end ajax
-
+        //below ajax gets contracts for user 
          $.ajax({
              url: '/Contract/GetContractsCandidateHub',
-            dataType: "json",
-            type: "GET",
-            data: { candidateId: @Model.CandidateID},
-            contentType: 'application/x-www-form-urlencoded',
+             dataType: "Json",
+            type: "Get",
+             data: { candidateId: @Model.CandidateID},
+            contentType: 'application/json; charset=utf-8',
             cache: false,
 
             success: function (data) {
 
 
                 $.each(data, function (key, val) {
-                   //need to add validation that not empty here
 
-
-
-                    // add if for if contract not live
                     if (val.isUnderContract == true) {
                         //action link use to generate url string
                     var url = '@Url.Action("Index", "Employer", new { id = "replaceToken" })';
@@ -84,7 +78,7 @@
 
                         );//end of .append
 
-                    } else {
+                    }else {
 
                    var url = '@Url.Action("EmployerHubRedirect", "Contract", new { contractId = "replaceToken" })';
                     url = url.replace("replaceToken", val.employerId);
@@ -115,7 +109,7 @@
 
 
 
-
+        //ajax to get conversations 
          $.ajax({
             url: '/Chat/GetConversations',
             dataType: "Json",
@@ -126,10 +120,7 @@
 
             success: function (data) {
 
-
                 $.each(data, function (key, val) {
-                   //need to add validation that not empty here
-
 
                     //action link use to generate url string
                     var url = '@Url.Action("Index", "Chat", new { userId = "replaceToken" })';
@@ -152,12 +143,13 @@
 
             }, //end of success function
             error: function (xhr) {
-                alert( 'error');
+                alert('error');
+
             }
 
          }); //end ajax
 
-
+        //ajax to get contrc=acts that need rates 
 
         $.ajax({
             url: '/Contract/GetContractsToRate',
@@ -169,19 +161,14 @@
 
 
             success: function (data) {
-                console.log(data);
-                if (data != null) {
 
+                if (data.length>0) {
 
                     $.each(data, function (key, val) {
-                        //need to add validation that not empty here
-
-
-                        //action link use to generate url string
+                                                //action link use to generate url string
                     var url = '@Url.Action("EmployerHubRedirect", "Contract", new { @contractId = "replaceToken" })';
                         url = url.replace("replaceToken", val.contractId);
 
-                        console.log(url);
 
 
                         $("#toBeRatedOutput").html(
@@ -196,7 +183,7 @@
                 } else {
                     $("#toBeRatedOutput").append(
 
-                        "<h3>When you have a completed contract to rate you'll find it here</h3>"
+                        "<h6>When you have a completed contract to rate you'll find it here</h6>"
 
                     );
                 }
@@ -218,17 +205,13 @@
             data: { jobTitle: '@Model.JobTitleEnum'},
             contentType: 'application/x-www-form-urlencoded',
             cache: false,
-            //this needs changed whe table fully normalised
-
+          
             success: function (data) {
-                console.log(data)
 
-                if (data != null) {
+                if (data.length>0) {
 
 
                     $.each(data, function (key, val) {
-                        //need to add validation that not empty here
-                        //job id is jobId
 
                         //action link use to generate url string
                         var url = '@Url.Action("JobProfile", "Job", new { id = "replaceToken" })';
@@ -239,9 +222,6 @@
                             '<div class"card ">' +
                             '<div class="card-body">' +
 
-
-                            //change below if needs title normalised
-
                             '<a href="' + url + '"><h5 class="card-title">' + val.jobTitle + ' - '+val.companyName+' </h5></a>' +
                             "<h5 class='card-text'>Start Date: " + val.displayStartDate + '</h5>' +
                             '<p class="card-text">Rate: £' + val.lowerRate + ' - ' + val.upperRate + ' per hour </p>' +
@@ -249,7 +229,7 @@
 
                             '</div>' +
                             ' </div>'
-                            
+
                         );//end of .append
                     });//end of for loop
                 } else {
