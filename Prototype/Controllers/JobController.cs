@@ -23,6 +23,7 @@ namespace Prototype.Controllers
             _userManager = userManager;
 
         }
+        #region PageNavAndCrud
         //view for candidates to view jobs 
         [Authorize(Roles = "Candidate")]
         public IActionResult Index()
@@ -31,31 +32,13 @@ namespace Prototype.Controllers
             return View();
         }
 
-        public ActionResult GetJobsByEmployerId(int employerId)
-        {
-
-            
-            var userJobs = JobHelper.GetUserJobs(_db, (int)employerId);
-            return Json(userJobs); 
-            //return Json(new { data = userJobs });
-        }
-
-        public ActionResult GetJobsByUserId()
-        {
-           var user= GetUser(); 
-
-            var userJobs = JobHelper.GetUserJobs(_db, (int)user.EmployerId);
-
-            return Json(userJobs);
-        }
-
 
         [Authorize(Roles = "Employer")]
         //get for create
         public IActionResult Create()
         {
             //populate bag for dropdown menu 
-            ViewBag.Skills = new SelectList(_db.Skills, "SkillId", "SkillName"); 
+            ViewBag.Skills = new SelectList(_db.Skills, "SkillId", "SkillName");
 
             return View();
         }
@@ -66,16 +49,14 @@ namespace Prototype.Controllers
         public IActionResult Create(Job job)
         {
             //get all skills 
-            foreach(int skillId in job.SkillIds)
+            foreach (int skillId in job.SkillIds)
             {
-                job.Skills.Add(_db.Skills.Where(s => s.SkillId == skillId).First()); 
+                job.Skills.Add(_db.Skills.Where(s => s.SkillId == skillId).First());
             }
             var user = GetUser();
             int employerId = (int)user.EmployerId;
             Employer employer = _db.Employers.Where(e => e.EmployerId == employerId).First();
             job.AddEmployer(employer);
-
-
 
             //validation below 
             if (ModelState.IsValid)
@@ -89,45 +70,14 @@ namespace Prototype.Controllers
             }
             return View(job);
 
-
-
         }
-        [Authorize(Roles = "Employer")]
-        public IActionResult JobMatch(Job job)
-        {
-            //change to jobprofile? and add more complex logic 
-            var matchedCandidates = JobMatchHelper.JobMatchWithCandidates(_db, job); 
-
-            return View(matchedCandidates);
-
-        }
-
-        public ActionResult GetJobsLikeThis(JobTitle jobTitle, int jobId)
-        {
-
-
-
-            var jobsLikeThis = JobHelper.GetJobsLikesThis(_db, jobTitle, jobId); 
-
-            return Json(jobsLikeThis);
-
-        }
-
-
-
-
-
 
         [Authorize(Roles = "Candidate")]
         //get by id method
         public IActionResult JobProfile(int id)
         {
 
-
-            // var job = _db.Jobs.Find(id);
-            var job = JobHelper.GetJobProfile(_db, id); 
-
-
+            var job = JobHelper.GetJobProfile(_db, id);
 
             if (job == null)
             {
@@ -141,21 +91,21 @@ namespace Prototype.Controllers
 
         //GET for Edit
         [Authorize(Roles = "Employer")]
-        public IActionResult Edit(int? id)
+        public IActionResult Edit(int id)
         {
 
             ViewBag.Skills = new SelectList(_db.Skills, "SkillId", "SkillName");
-            if (id == null || id == 0)
+            if (id == 0)
             {
                 return NotFound();
             }
-            var obj = _db.Jobs.Find(id);
-            if (obj == null)
+            var job = JobHelper.GetJobProfile(_db, id);
+            if (job == null)
             {
                 return NotFound();
             }
 
-            return View(obj);
+            return View(job);
         }
 
         //Post for Edit
@@ -163,16 +113,20 @@ namespace Prototype.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Job job)
         {
+            var user = GetUser();
+            job.EmployerRefId = (int)user.EmployerId;
+            if (job.SkillIds != null)
+            {
+                var skillsToAdd = UpdateJobSkills(job); 
+                job.Skills.Clear();
+                job.Skills =skillsToAdd;
+
+            }
+            //required for validation
+            ModelState.Remove("SkillIds"); 
             //validation below 
             if (ModelState.IsValid)
             {
-                var user = GetUser();
-                job.EmployerRefId = (int)user.EmployerId;
-                if (job.SkillIds != null)
-                {
-                    job.Skills.Clear(); 
-                    job.Skills = UpdateJobSkills(job); 
-                }
                 //update needs primary key to update
                 _db.Jobs.Update(job);
                 //save changes exexutes action to DB
@@ -185,13 +139,10 @@ namespace Prototype.Controllers
 
         }
 
-
-
-
         public List<Skill> UpdateJobSkills(Job job)
         {
             var skillsToBeAdded = new List<Skill>();
-
+            
 
             foreach (int skillId in job.SkillIds)
             {
@@ -226,21 +177,63 @@ namespace Prototype.Controllers
         //Post for Delete
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteAction(int? JobId)
+        public IActionResult DeleteAction(int JobId)
         {
             var job = _db.Jobs.Find(JobId);
             if (job == null)
             {
                 return NotFound();
             }
-
+            //need to remoive associated likes 
+            var likes = LikeHelper.GetLikesByJobId(_db, JobId);
+            foreach (Like like in likes)
+            {
+                _db.Likes.Remove(like);
+            }
             //Remove needs primary key to update
-
             _db.Jobs.Remove(job);
             //save changes exexutes action to DB
             _db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("Hub", "Employer");
 
+        }
+
+
+        //job match page 
+        [Authorize(Roles = "Employer")]
+        public IActionResult JobMatch(Job job)
+        {
+            //change to jobprofile? and add more complex logic 
+            var matchedCandidates = JobMatchHelper.JobMatchWithCandidates(_db, job);
+            return View(matchedCandidates);
+
+        }
+
+        #endregion
+        #region GetMethods
+
+        public ActionResult GetJobsLikeThis(JobTitle jobTitle, int jobId)
+        {
+            var jobsLikeThis = JobHelper.GetJobsLikesThis(_db, jobTitle, jobId);
+
+            return Json(jobsLikeThis);
+
+        }
+
+        public ActionResult GetJobsByEmployerId(int employerId)
+        {
+            var userJobs = JobHelper.GetUserJobs(_db, (int)employerId);
+            return Json(userJobs);
+            //return Json(new { data = userJobs });
+        }
+
+        public ActionResult GetJobsByUserId()
+        {
+            var user = GetUser();
+
+            var userJobs = JobHelper.GetUserJobs(_db, (int)user.EmployerId);
+
+            return Json(userJobs);
         }
 
         public ApplicationUser GetUser()
@@ -252,11 +245,7 @@ namespace Prototype.Controllers
 
         public List<JobProfile> GetAllLiveJobs()
         {
-
-
-            var availableJobs = JobHelper.GetAllLiveJobs(_db); 
-
-
+            var availableJobs = JobHelper.GetAllLiveJobs(_db);
             return availableJobs;
 
         }
@@ -264,15 +253,13 @@ namespace Prototype.Controllers
 
         public List<JobProfile> GetJobsStartingSoon(JobTitle jobTitle)
         {
-
-
-            var jobsClosingSoon = JobMatchHelper.GetJobsStartingSoon(jobTitle, _db); 
-
-
+            var jobsClosingSoon = JobMatchHelper.GetJobsStartingSoon(jobTitle, _db);
             return jobsClosingSoon;
 
         }
 
+        
+        #endregion
 
     }
 }

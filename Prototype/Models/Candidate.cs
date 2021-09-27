@@ -11,10 +11,9 @@ namespace Prototype.Models
 
         [Key]
         public int CandidateID { get; set; }
-        //remove level if enum works 
-
-
         public Boolean IsAvailable { get; set; }
+
+
         [NotMapped]
         private DateTime _AvailableFrom;
         [Required]
@@ -26,15 +25,16 @@ namespace Prototype.Models
             }
             set
             {
+                //returns 1 if in future/ 0 if todays date/ -1 if in past 
                 int result = DateTime.Compare(value, DateTime.Now);
-                //if availability is in future we set as not available
+                //date time is in future therefore set available to false 
                 if (result > 0)
                 {
                     this.IsAvailable = false;
                 }
                 else
                 {
-                    // if in past we set as available
+                    // if in past or todays date  set as available
                     this.IsAvailable = true;
                 }
                 _AvailableFrom = value;
@@ -68,10 +68,6 @@ namespace Prototype.Models
             }
         }
 
-
-
-
-
         [NotMapped]
         private double _Rate;
         [Required]
@@ -94,8 +90,6 @@ namespace Prototype.Models
         }
 
         public Level LevelEnum { get; set; }
-        //normalised JobTitle
-
         public JobTitle JobTitleEnum { get; set; }
 
 

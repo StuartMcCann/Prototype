@@ -37,17 +37,13 @@ namespace Prototype.Models
         public Boolean IsUnderContract { get; set; }
 
 
-
-        //normalised level 
         [Required]
         public Level LevelEnum { get; set; }
 
         //One to Many with Employer Table 
         public int EmployerRefId { get; set; }
         public Employer Employer { get; set; }
-
-        /*Many to many With Candidates for Likes
-        public ICollection<Candidate> Candidates { get; set; }*/
+        //below represents relationship with likes      
         public ICollection<Like> Likes { get; set; }
 
         // one to one with relationship with Contract
@@ -72,7 +68,7 @@ namespace Prototype.Models
         }
 
 
-
+        //method to add employer to job
 
         public void AddEmployer(Employer employer)
         {

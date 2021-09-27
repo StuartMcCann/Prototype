@@ -1,27 +1,35 @@
 ﻿@model Prototype.Models.Job
 
+<div class="container text buffer">
+
+    <h3 class=" heading"> Remove Job</h3>
 
 
-<h3> Remove Job</h3>
+    <form method="post" asp-action="DeleteAction">
+
+        <div>
+            <h5>Are your sure you want to remove this job? </h5>
+            
+            <h5>Removing this job will also remove any likes associated with it, make sure you have contacted any suitable candidates before continuing!</h5>
 
 
-<form method="post" asp-action="DeleteAction">
-    
-
-    <div class="mb-3">
-        <label asp-for="JobTitleEnum" class="form-label">Job Title</label>
-        <input readonly asp-for="JobTitleEnum" type="Text" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label asp-for="JobTitleEnum" class="form-label">Job Title</label>
+            <input readonly asp-for="JobTitleEnum" type="Text" class="form-control">
 
 
-    </div>
-    
-    <div class="mb-3">
-        <label  asp-for="JobId" class="form-label">Job Id</label>
-        <input readonly asp-for="JobId" type="text" class="form-control">
+        </div>
 
-    </div>
-    
+        <div class="mb-3">
+            <label asp-for="JobId" class="form-label">Job Id</label>
+            <input readonly asp-for="JobId" type="text" class="form-control">
+
+        </div>
 
 
-    <button type="submit"  class="btn btn-primary">Delete</button>
-</form>
+
+        <button type="submit" class="btn btn-primary"><i class="fas fa-trash-alt"></i> Remove Job</button>
+    </form>
+
+</div>

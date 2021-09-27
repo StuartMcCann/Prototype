@@ -21,7 +21,7 @@ namespace Prototype.Data
         //this method seeds a default super user who will have admin priveledges for the website 
         public static async Task SeedSuperAdminAsync(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
-            //Seed Default User
+            //Seed Default User can be used for testing 
             var defaultUser = new ApplicationUser
             {
                 UserName = "superadmin",
@@ -65,11 +65,11 @@ namespace Prototype.Data
                 new Skill { SkillId = 13, SkillName = "Bootstrap" },
                 new Skill { SkillId = 14, SkillName = "Git" },
                 new Skill { SkillId = 15, SkillName = "Elastic Search" },
-                new Skill { SkillId = 16, SkillName = "Typscript" },
+                new Skill { SkillId = 16, SkillName = "Typescript" },
                 new Skill { SkillId = 17, SkillName = "Node.Js" },
                 new Skill { SkillId = 18, SkillName = "Angular" },
                 new Skill { SkillId = 19, SkillName = ".Net" },
-                new Skill { SkillId = 20, SkillName = "Kolen" },
+                new Skill { SkillId = 20, SkillName = "Kolten" },
                 new Skill { SkillId = 21, SkillName = "React.Js" },
                 new Skill { SkillId = 22, SkillName = "MatLab" }
 

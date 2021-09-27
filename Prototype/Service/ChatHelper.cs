@@ -10,18 +10,19 @@ namespace Prototype.Service
 {
     public class ChatHelper
     {
-
+        // get distinct conversations for a user 
         public static List<DisplayMessage> GetConversations(ApplicationDbContext _db, string userId)
         {
             return _db.ChatMessages.Where(m => m.ToUserId == userId || m.FromUserId == userId)
                 .Select(c => new DisplayMessage
                 {
+                    //conditional statements to check which user is reciever and sender for display purposes 
                     FullName = (c.ToUserId == userId) ? c.FromUser.FirstName + " " + c.FromUser.LastName : c.ToUser.FirstName + " " + c.ToUser.LastName,
                     DisplayId = (c.ToUserId == userId) ? c.FromUser.Id : c.ToUser.Id
                 }).Distinct().ToList();
 
         }
-
+        //get all chat messages between 2 users 
         public static List<ChatMessage> GetChatHistory(ApplicationDbContext _db, string userId, string toUserId)
         {
             return _db.ChatMessages
@@ -41,11 +42,9 @@ namespace Prototype.Service
                     }).ToList();
         }
 
-
+        //get user information for candidate 
         public static UserProfile GetUserProfileCandidate(ApplicationDbContext _db, string userId)
         {
-
-
             return (from u in _db.Users
 
                     join c in _db.Candidates
@@ -64,10 +63,9 @@ namespace Prototype.Service
 
         }
 
-
+        //get user information for employer 
         public static UserProfile GetUserProfileEmployer(ApplicationDbContext _db, string userId)
         {
-
             return (from u in _db.Users
 
                     join e in _db.Employers

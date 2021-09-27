@@ -8,7 +8,7 @@ namespace Prototype.Service
 {
     public class AnalyticsHelper
     {
-
+        //Gets Rate Analysis for specific job title and returns as dictionary for Json compatability 
         public static Dictionary<String, double> GetRateAnalysisForJobTitle(ApplicationDbContext _db, JobTitle jobTitle)
         {
             //initialised variables
@@ -66,7 +66,7 @@ namespace Prototype.Service
 
         }
 
-
+        //Find in demand skills  i.e most popular skills required by jobs
         public static Dictionary<string, double> InDemandSkills(ApplicationDbContext _db)
         {
             //get all skills and add to dictionary data structure 
@@ -89,10 +89,12 @@ namespace Prototype.Service
 
         }
 
+        // find number of jobs that require each skill
         public static Dictionary<Skill, int> CountJobSkills(ApplicationDbContext _db)
         {
 
             var skillsMapped = new Dictionary<Skill, int>();
+            //get all jobs in database 
             var allJobs = (from j in _db.Jobs
                            where j.IsLive == true
                            select new Job
@@ -100,9 +102,10 @@ namespace Prototype.Service
                                Skills = j.Skills
                            })
                             .ToList();
-            //get count for each skill in database 
+            //get count of jobs for each skill in database 
             foreach (Job job in allJobs)
             {
+                //check each skill for job 
                 foreach (Skill skill in job.Skills)
                 {
                     if (!skillsMapped.ContainsKey(skill))
@@ -123,7 +126,7 @@ namespace Prototype.Service
 
         }
 
-
+        //find popular skills i.e top skills that candodate users have 
         public static Dictionary<string, double> PopularSkills(ApplicationDbContext _db)
         {
             //get all skills and add to dictionary data structure 
@@ -143,11 +146,12 @@ namespace Prototype.Service
 
 
         }
-
+        //count number of candidates that have each skill
         public static Dictionary<Skill, int> CountCandidateSkills(ApplicationDbContext _db)
         {
 
             var skillsMapped = new Dictionary<Skill, int>();
+            //find all candidates 
             var allCandidates = (from c in _db.Candidates
 
                                  select new Candidate
@@ -156,17 +160,19 @@ namespace Prototype.Service
                                  })
                             .ToList();
             //get count for each 
-
             foreach (Candidate candidate in allCandidates)
             {
+                //check skills of candidate 
                 foreach (Skill skill in candidate.Skills)
                 {
                     if (!skillsMapped.ContainsKey(skill))
                     {
+                        //register new skill
                         skillsMapped.Add(skill, 1);
                     }
                     else
                     {
+                        //increase existing skill count 
                         skillsMapped[skill]++;
                     }
                 }
@@ -176,7 +182,7 @@ namespace Prototype.Service
 
 
         }
-
+        //find top 5 employers by average rating 
         public static List<Employer> GetTopRatedEmployers(ApplicationDbContext _db)
         {
             var topRatedEmployers = _db.Employers.OrderByDescending(e => e.Rating).Take(5).ToList();
@@ -185,7 +191,7 @@ namespace Prototype.Service
 
 
         }
-
+        //find counts of job titles for each job
         public static Dictionary<string, int> GetJobsTitlesCount(ApplicationDbContext _db)
         {
             //instantiate dictionary 
@@ -209,7 +215,7 @@ namespace Prototype.Service
             }
             return jobTitleCounts;
         }
-
+        //generates bespoke data for candidate to be displayed on Views/Analytics/AnalyticsForCandidate
         public static Dictionary<string, int> GetBespokeCandidateData(ApplicationDbContext _db, int candidateId)
         {
             var analysedData = new Dictionary<string, int>();
@@ -245,7 +251,7 @@ namespace Prototype.Service
 
             return analysedData;
         }
-
+        //find percentage of jobs that have a skill matching candidates skill
         public static int GetPercentageOfJobsWithSkills(Candidate candidate, ApplicationDbContext _db)
         {
             var allJobs = (from j in _db.Jobs where j.IsLive == true select new Job { Skills = j.Skills }).ToList();
@@ -253,6 +259,7 @@ namespace Prototype.Service
             var skillsMatchCount = 0;
             foreach (Job job in allJobs)
             {
+                //check for match 
                 if (job.Skills.Intersect(candidate.Skills).Any())
                 {
                     skillsMatchCount++;
@@ -264,7 +271,7 @@ namespace Prototype.Service
             return (int)percentage;
 
         }
-
+        //find job title counts for available candidates 
         public static Dictionary<string, int> GetJobsTitlesOfAvailableCandidates(ApplicationDbContext _db)
         {
 
@@ -287,7 +294,7 @@ namespace Prototype.Service
             return jobTitleCounts;
 
         }
-
+        //generates bespoke data for employer to be displayed on Views/Analytics/AnalyticsForEmployer
         public static Dictionary<string, int> GetBespokeEmployerData(ApplicationDbContext _db, int employerId)
         {
             var analysedData = new Dictionary<string, int>();
@@ -319,7 +326,7 @@ namespace Prototype.Service
 
             return analysedData;
         }
-
+        
         public static double PercentageFillRate(ICollection<Contract> contracts, ICollection<Job> jobs)
         {
             //instantiate var 
@@ -333,7 +340,7 @@ namespace Prototype.Service
 
             return fillRate;
         }
-
+        //counts number of candidates with a match to employers live jobs jobtitle
         public static int GetNumberOfJobsWithMatch(ApplicationDbContext _db, ICollection<Job> jobs)
         {
             int count = 0;

@@ -18,8 +18,7 @@
             data: "" ,
             contentType: 'application/x-www-form-urlencoded',
             cache: false,
-            //this needs changed whe table fully normalised
-
+            
             success: function (data) {
 
 
@@ -54,8 +53,6 @@
                 data:  { jobTitle: '@Model.JobTitleEnum'},
                 contentType: 'application/x-www-form-urlencoded',
                 cache: false,
-                //this needs changed whe table fully normalised
-
                 success: function (data) {
                     
                     //set up data for chart
@@ -121,7 +118,7 @@
 
             <h5 class="buffer">Job Title: @Model.JobTitle</h5>
             <h5 class="buffer">Requested Rate: @Model.Rate per hour</h5>
-            <!--ADD LOGIC HERE FOR RATE ADVISE-->
+          
             <h5 class="buffer">
                 Current Availablity: @if (Model.IsAvailable)
                 {<span>Available For Contracts <button type="button" onclick="location.href='@Url.Action("ToggleCandidateAvailability", "Candidate") '" class="btn btn-primary"><i class="fas fa-toggle-on"></i></button></span>}

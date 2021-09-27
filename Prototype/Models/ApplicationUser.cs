@@ -32,7 +32,7 @@ namespace Prototype.Models
         public int? CandidateId { get; set; }
 
         public string Skill { get; set; }
-        //move rating to user 
+        
         public double Rating { get; set; }
 
 

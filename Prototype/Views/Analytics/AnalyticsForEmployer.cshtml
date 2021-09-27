@@ -3,7 +3,7 @@
 <script type="text/javascript">
 
 
-
+     //ajax in this section requests data and renders to charts on page 
     function GetJobTitleData() {
 
         var value = document.getElementById("jobTitleDropDown");
@@ -19,8 +19,7 @@
                 data:  { jobTitle: getValue},
                 contentType: 'application/x-www-form-urlencoded',
                 cache: false,
-                //this needs changed whe table fully normalised
-
+                
                 success: function (data) {
                     console.log(data);
                     $("#jobTitleChart").remove();

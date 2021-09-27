@@ -1,8 +1,6 @@
 ﻿@model Prototype.Models.JobProfile
 
 
-
-
 <script type="text/javascript">
 
     $(document).ready(function () {
@@ -15,22 +13,22 @@
             type: "GET",
             contentType: 'application/json; charset=utf-8',
             cache: false,
-            //this needs changed whe table fully normalised
+          
             data: { title: "@Model.JobTitle", jobId : @Model.JobId}  ,
             success: function (data) {
                 
                 //loops through values returned in json format by above url
                 $.each(data, function (key, val) {
-                    //need to add validation that not empty here
+                  
                      var url = '@Url.Action("JobProfile", "Job", new { id = "replaceToken" })';
                     url = url.replace("replaceToken", val.jobId);
 
-                    //$("#output").append(val.title);
+                   
                     $("#output").append(
                         "<div class='buffer'>"+
                         "<div class='card'>" +
                         '<a href="' + url + '"><h5 class="card-header">' + val.jobTitle + '</h5></a>'+
-                       //"<h5 class= 'card-header'>"+val.jobTitle+"</h5>"+
+                      
                                 "<div class='card-body'>"+
                                     "<h5 class='card-title'>Rate: £"+val.lowerRate+"-"+val.upperRate+" per hour</h5>"+
 
@@ -60,10 +58,10 @@
             type: "GET",
             contentType: 'application/json; charset=utf-8',
             cache: false,
-            //this needs changed whe table fully normalised
+           
             data: { jobId : @Model.JobId}  ,
             success: function (data) {
-                //console.log(data);
+              
                 //if already liked replace with unlike button
                 if (data == true) {
                     var url = '@Url.Action("RemoveLikeForJob", "Like", new { jobId = Model.JobId })';
@@ -111,14 +109,12 @@
 
             data: { id : @Model.EmployerId}  ,
             success: function (data) {
-                //console.log(data);
+               
                 //if mutual like true replace with message
                 if (data == true) {
                      var url = '@Url.Action("Index", "Chat", new { userId = @Model.UserId })';
                     $("#message").html(
                         '<div id="message">' +
-                        //'<button onclick="location.href="' + url +'" class="btn btn-primary"  type="button"> Message</button>'
-
                         '<a href="' + url + '"><button class="btn btn-primary marginTop">Message</button></a>'
                         + '<p><i class="fas fa-handshake"></i> Congrats you both liked each other!</p>'
                         +'</div>'
@@ -159,12 +155,9 @@
             <div class="col-sm">
 
                 <div id="like">
-                    @*<button type="button" class="btn btn-primary">Like <i class="fas fa-thumbs-up"></i></button>*@
                 </div>
                 <div id="message">
-                    @*<a asp-controller="Chat" asp-action="Index" asp-route-userId="@Model.UserId">
-                    <button type="button" class="btn btn-primary">Message <i class="far fa-envelope"></i>
-                        </button></a>*@
+                   
                 </div>
             </div>
 

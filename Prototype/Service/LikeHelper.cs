@@ -26,11 +26,7 @@ namespace Prototype.Service
                         LikeType = l.LikeType,
                         FirstName = u.FirstName,
                         LastName = u.LastName
-
-
-
                     }).ToList();
-
         }
 
         public static List<EmployerLike> GetLikesByJobId(ApplicationDbContext _db, int jobId)
@@ -45,6 +41,7 @@ namespace Prototype.Service
                     (l.LikeType == LikeType.CandidateLikesEmployer || l.LikeType == LikeType.CandidateLikesJob)
                     select new EmployerLike
                     {
+                        LikeId = l.LikeId,
                         CandidateId = c.CandidateID,
                         EmployerId = l.EmployerId,
                         LikeType = l.LikeType,
@@ -54,9 +51,6 @@ namespace Prototype.Service
                         DateLiked = l.DateLiked,
                         Candidate = c,
                         JobId = l.JobId
-
-
-
                     }).ToList();
 
         }
@@ -80,13 +74,11 @@ namespace Prototype.Service
                         FirstName = u.FirstName,
                         LastName = u.LastName,
                         Employer = l.Employer
-
-
                     }).ToList();
 
         }
 
-
+        //checks if candidate has already liked a job
         public static bool CheckAlreadyLikedJob(int jobId, ApplicationUser user, ApplicationDbContext _db)
         {
             var candidateId = GetCandidateIdByUserID(user.Id, _db);
@@ -103,25 +95,23 @@ namespace Prototype.Service
 
 
                          }).ToList();
+            //if likes exist job not already likes 
             if (likes.Count() > 0)
             {
                 return true;
             }
-
-
             return false;
         }
 
-
+        //check if a candidate alread likes an employer 
         public static bool CheckCandidateLikesEmployer(int employerId, ApplicationUser user, ApplicationDbContext _db)
         {
             var liked = false;
-
             var candidateId = GetCandidateIdByUserID(user.Id, _db);
             var likes = (from l in _db.Likes
                          where l.EmployerId == employerId
                          && l.CandidateId == candidateId
-                         && (l.LikeType == LikeType.CandidateLikesEmployer /*|| l.LikeType == LikeType.CandidateLikesJob*/)
+                         && (l.LikeType == LikeType.CandidateLikesEmployer)
                          select new Like
                          {
                              LikeType = l.LikeType,
@@ -131,6 +121,7 @@ namespace Prototype.Service
 
 
                          }).ToList();
+            //if liks exist already liked
             if (likes.Count() > 0)
             {
                 liked = true;
@@ -141,7 +132,7 @@ namespace Prototype.Service
 
 
         }
-
+        //check Employer already likes candidate 
         public static bool CheckEmployerLikesCandidate(int candidateId, ApplicationUser user, ApplicationDbContext _db)
         {
             var liked = false;
@@ -159,25 +150,14 @@ namespace Prototype.Service
 
 
                          }).ToList();
+            //if likes exist already liked 
             if (likes.Count() > 0)
             {
                 liked = true;
             }
-
-
             return liked;
-
         }
-
-
-
-
-
-
-
-
-
-
+        //gets likes for employer and candidate to check for a mutual like 
         public static List<Like> GetLikesForMutualLikeCheck(ApplicationDbContext _db, int employerId, int candidateId)
         {
             return (from l in _db.Likes
@@ -191,12 +171,10 @@ namespace Prototype.Service
                         JobId = l.JobId,
                         EmployerId = l.EmployerId,
                         CandidateId = l.CandidateId
-
-
                     }).ToList();
         }
 
-
+        //counts like type to check if there is at least one instance of employer liking candidate AND candidate liking employer or job
         public static bool LikeTypeCount(List<Like> likes)
         {
             var mutual = false;
@@ -205,9 +183,11 @@ namespace Prototype.Service
             //loop through to check like types 
             foreach (Like like in likes)
             {
+                //conditional operator to increment relevant count 
                 employerCount = like.LikeType == LikeType.EmployerLikesCandidate ? ++employerCount : employerCount;
                 candidateCount = like.LikeType == LikeType.CandidateLikesEmployer || like.LikeType == LikeType.CandidateLikesJob ?
                     ++candidateCount : candidateCount;
+                //if at least one of each return true as there is a mutual like 
                 if (employerCount > 0 && candidateCount > 0)
                 {
                     mutual = true;
